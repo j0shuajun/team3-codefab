@@ -16,6 +16,7 @@ def test_assign_number(tokenizer):
                       Token(T.NUMBER, "37", value=37.0),
                       Token(T.EOF, "")]
 
+
 def test_if_statement(tokenizer):
     tokens = tokenizer.tokenize("if (x > 10)")
 
