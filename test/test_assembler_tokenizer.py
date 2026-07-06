@@ -1,6 +1,6 @@
 from assembler.tokenizer import Token, Tokenizer, TokenType as T
 
-def test_equal():
+def test_assign_number():
     tokenizer = Tokenizer()
     tokens = tokenizer.tokenize("age = 37")
 
