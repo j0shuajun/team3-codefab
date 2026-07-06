@@ -1,5 +1,5 @@
 from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, VariableExpr, AssignExpr
-from assembler.statement import PrintStmt, ExpressionStmt, VarStmt, BlockStmt
+from assembler.statement import PrintStmt, ExpressionStmt, VarStmt, BlockStmt, IfStmt
 from assembler.tokenizer import TokenType
 
 
@@ -70,6 +70,13 @@ class Executor:
             self.execute_block(stmt.statements, Environment(self.environment))
             return
 
+        if isinstance(stmt, IfStmt):
+            if self.is_truthy(self.evaluate(stmt.condition)):
+                self.execute_stmt(stmt.then_branch)
+            elif stmt.else_branch is not None:
+                self.execute_stmt(stmt.else_branch)
+            return
+
         raise RuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def evaluate(self, expr):
@@ -118,6 +125,24 @@ class Executor:
 
         if expr.operator.type == TokenType.SLASH:
             return left / right
+
+        if expr.operator.type == TokenType.GREATER:
+            return left > right
+
+        if expr.operator.type == TokenType.GREATER_EQUAL:
+            return left >= right
+
+        if expr.operator.type == TokenType.LESS:
+            return left < right
+
+        if expr.operator.type == TokenType.LESS_EQUAL:
+            return left <= right
+
+        if expr.operator.type == TokenType.EQUAL_EQUAL:
+            return left == right
+
+        if expr.operator.type == TokenType.BANG_EQUAL:
+            return left != right
 
         raise RuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 

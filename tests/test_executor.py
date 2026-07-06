@@ -1,7 +1,7 @@
 import pytest
 
 from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, AssignExpr, VariableExpr
-from assembler.statement import PrintStmt, VarStmt, ExpressionStmt, BlockStmt
+from assembler.statement import PrintStmt, VarStmt, ExpressionStmt, BlockStmt, IfStmt
 from assembler.tokenizer import Token, TokenType
 from executor.executor import Executor, RuntimeError
 
@@ -143,4 +143,27 @@ def test_inner_scope_shadows_outer_scope():
     ])
 
     assert executor.outputs == ["2", "1"]
+
+def test_if_statement_then_branch():
+    executor = run([
+        IfStmt(
+            LiteralExpr(True),
+            PrintStmt(LiteralExpr("then")),
+            PrintStmt(LiteralExpr("else")),
+        )
+    ])
+
+    assert executor.outputs == ["then"]
+
+
+def test_if_statement_else_branch():
+    executor = run([
+        IfStmt(
+            LiteralExpr(False),
+            PrintStmt(LiteralExpr("then")),
+            PrintStmt(LiteralExpr("else")),
+        )
+    ])
+
+    assert executor.outputs == ["else"]
 
