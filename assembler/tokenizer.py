@@ -55,6 +55,13 @@ class Token:
 
 
 class Tokenizer:
+    _SINGLE_CHARACTER_TOKENS = {
+        "=": TokenType.EQUAL,
+        "(": TokenType.LEFT_PAREN,
+        ")": TokenType.RIGHT_PAREN,
+        ">": TokenType.GREATER,
+    }
+
     def __init__(self):
         self._origin = ""
         self._idx = 0
@@ -65,23 +72,17 @@ class Tokenizer:
         tokens: list[Token] = []
 
         while self._idx_in_range():
-            character = self._peek()
-            if character.isspace():
+            ch = self._peek()
+            if ch.isspace():
                 self._idx += 1
-            elif character == "=":
-                tokens.append(self._read_equal())
-            elif character == "(":
-                tokens.append(self._read_left_paren())
-            elif character == ")":
-                tokens.append(self._read_right_paren())
-            elif character == ">":
-                tokens.append(self._read_greater())
-            elif character.isdigit():
+            elif ch in self._SINGLE_CHARACTER_TOKENS:
+                tokens.append(self._read_single_character())
+            elif ch.isdigit():
                 tokens.append(self._read_number())
-            elif character.isalpha():
+            elif ch.isalpha():
                 tokens.append(self._read_identifier())
             else:
-                raise ValueError(f"Unexpected character: {character!r}")
+                raise ValueError(f"Unexpected character: {ch!r}")
 
         tokens.append(Token(TokenType.EOF, ""))
         return tokens
@@ -92,34 +93,23 @@ class Tokenizer:
     def _peek(self) -> str:
         return self._origin[self._idx]
 
-    def _read_characters(self, type_checker) -> str:
+    def _read_multiple_characters(self, type_checker) -> str:
         start = self._idx
         while self._idx_in_range() and type_checker(self._peek()):
             self._idx += 1
         return self._origin[start:self._idx]
 
-    def _read_equal(self) -> Token:
+    def _read_single_character(self) -> Token:
+        ch = self._peek()
         self._idx += 1
-        return Token(TokenType.EQUAL, "=")
-
-    def _read_left_paren(self) -> Token:
-        self._idx += 1
-        return Token(TokenType.LEFT_PAREN, "(")
-
-    def _read_right_paren(self) -> Token:
-        self._idx += 1
-        return Token(TokenType.RIGHT_PAREN, ")")
-
-    def _read_greater(self) -> Token:
-        self._idx += 1
-        return Token(TokenType.GREATER, ">")
+        return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
 
     def _read_number(self) -> Token:
-        characters = self._read_characters(str.isdigit)
+        characters = self._read_multiple_characters(str.isdigit)
         return Token(TokenType.NUMBER, characters, value=float(characters))
 
     def _read_identifier(self) -> Token:
-        origin = self._read_characters(str.isalnum)
+        origin = self._read_multiple_characters(str.isalnum)
         if origin == "if":
             return Token(TokenType.IF, origin)
         return Token(TokenType.IDENTIFIER, origin)
