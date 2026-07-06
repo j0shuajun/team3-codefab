@@ -61,7 +61,7 @@ class Tokenizer:
         self._idx = 0
         tokens: list[Token] = []
 
-        while not self._at_end():
+        while self._idx_in_range():
             character = self._peek()
             if character.isspace():
                 self._idx += 1
@@ -77,15 +77,15 @@ class Tokenizer:
         tokens.append(Token(TokenType.EOF, ""))
         return tokens
 
-    def _at_end(self) -> bool:
-        return self._idx >= len(self._origin)
+    def _idx_in_range(self) -> bool:
+        return self._idx < len(self._origin)
 
     def _peek(self) -> str:
         return self._origin[self._idx]
 
     def _read_characters(self, type_checker) -> str:
         start = self._idx
-        while not self._at_end() and type_checker(self._peek()):
+        while self._idx_in_range() and type_checker(self._peek()):
             self._idx += 1
         return self._origin[start:self._idx]
 
