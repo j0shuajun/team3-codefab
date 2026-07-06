@@ -56,5 +56,34 @@ class Tokenizer:
         pass
 
     def tokenize(self, string: str) -> list[Token]:
-        ...
+        tokens = []
+        i = 0
+        n = len(string)
+        while i < n:
+            c = string[i]
+            if c.isspace():
+                i += 1
+                continue
+            if c == "=":
+                tokens.append(Token(TokenType.EQUAL, "="))
+                i += 1
+                continue
+            if c.isdigit():
+                start = i
+                while i < n and string[i].isdigit():
+                    i += 1
+                origin = string[start:i]
+                tokens.append(Token(TokenType.NUMBER, origin, value=float(origin)))
+                continue
+            if c.isalpha():
+                start = i
+                while i < n and string[i].isalnum():
+                    i += 1
+                origin = string[start:i]
+                tokens.append(Token(TokenType.IDENTIFIER, origin))
+                continue
+            raise ValueError(f"Unexpected character: {c!r}")
+
+        tokens.append(Token(TokenType.EOF, ""))
+        return tokens
 
