@@ -2,6 +2,10 @@ from assembler.expr import LiteralExpr
 from assembler.statement import PrintStmt
 
 
+class RuntimeError(Exception):
+    pass
+
+
 class Executor:
     def __init__(self):
         self.outputs = []
@@ -16,13 +20,13 @@ class Executor:
             self.outputs.append(self.stringify(value))
             return
 
-        raise Exception(f"Unknown statement type: {type(stmt).__name__}")
+        raise RuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def evaluate(self, expr):
         if isinstance(expr, LiteralExpr):
             return expr.value
 
-        raise Exception(f"Unknown expression type: {type(expr).__name__}")
+        raise RuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
     def stringify(self, value):
         return str(value)
