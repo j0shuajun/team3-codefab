@@ -1,5 +1,5 @@
 from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, VariableExpr, AssignExpr, LogicalExpr
-from assembler.statement import PrintStmt, ExpressionStmt, VarStmt, BlockStmt, IfStmt
+from assembler.statement import PrintStmt, ExpressionStmt, VarStmt, BlockStmt, IfStmt, ForStmt
 from assembler.tokenizer import TokenType
 
 
@@ -75,6 +75,10 @@ class Executor:
                 self.execute_stmt(stmt.then_branch)
             elif stmt.else_branch is not None:
                 self.execute_stmt(stmt.else_branch)
+            return
+
+        if isinstance(stmt, ForStmt):
+            self.execute_for(stmt)
             return
 
         raise RuntimeError(f"Unknown statement type: {type(stmt).__name__}")
@@ -196,3 +200,27 @@ class Executor:
             return self.evaluate(expr.right)
 
         raise RuntimeError(f"Unknown logical operator: {expr.operator.origin}")
+
+    def execute_for(self, stmt):
+        loop_environment = Environment(self.environment)
+        previous = self.environment
+
+        try:
+            self.environment = loop_environment
+
+            if stmt.initializer is not None:
+                self.execute_stmt(stmt.initializer)
+
+            while True:
+                if stmt.condition is not None:
+                    condition = self.evaluate(stmt.condition)
+                    if not self.is_truthy(condition):
+                        break
+
+                self.execute_stmt(stmt.body)
+
+                if stmt.increment is not None:
+                    self.evaluate(stmt.increment)
+
+        finally:
+            self.environment = previous

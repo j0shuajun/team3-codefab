@@ -1,7 +1,7 @@
 import pytest
 
 from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, AssignExpr, VariableExpr, LogicalExpr
-from assembler.statement import PrintStmt, VarStmt, ExpressionStmt, BlockStmt, IfStmt
+from assembler.statement import PrintStmt, VarStmt, ExpressionStmt, BlockStmt, IfStmt, ForStmt
 from assembler.tokenizer import Token, TokenType
 from executor.executor import Executor, RuntimeError
 
@@ -193,4 +193,27 @@ def test_logical_or():
     ])
 
     assert executor.outputs == ["true"]
+
+def test_for_statement():
+    executor = run([
+        ForStmt(
+            VarStmt(token(TokenType.IDENTIFIER, "i"), LiteralExpr(0)),
+            BinaryExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "i")),
+                token(TokenType.LESS, "<"),
+                LiteralExpr(3),
+            ),
+            AssignExpr(
+                token(TokenType.IDENTIFIER, "i"),
+                BinaryExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "i")),
+                    token(TokenType.PLUS, "+"),
+                    LiteralExpr(1),
+                ),
+            ),
+            PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "i"))),
+        )
+    ])
+
+    assert executor.outputs == ["0", "1", "2"]
 
