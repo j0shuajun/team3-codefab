@@ -1,7 +1,14 @@
+import pytest
+
 from assembler.tokenizer import Token, Tokenizer, TokenType as T
 
-def test_assign_number():
-    tokenizer = Tokenizer()
+
+@pytest.fixture
+def tokenizer():
+    return Tokenizer()
+
+
+def test_assign_number(tokenizer):
     tokens = tokenizer.tokenize("age = 37")
 
     assert tokens == [Token(T.IDENTIFIER, "age"),

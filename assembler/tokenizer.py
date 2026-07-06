@@ -1,5 +1,6 @@
 from enum import auto, Enum
 
+
 class TokenType(Enum):
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
@@ -37,6 +38,7 @@ class TokenType(Enum):
 
     EOF = auto()
 
+
 class Token:
     def __init__(self, token_type: TokenType, origin: str, value=None):
         self.type = token_type
@@ -50,6 +52,7 @@ class Token:
         return (self.type == other.type
                 and self.origin == other.origin
                 and getattr(self, "value", None) == getattr(other, "value", None))
+
 
 class Tokenizer:
     def __init__(self):
