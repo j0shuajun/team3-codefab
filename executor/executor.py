@@ -34,6 +34,22 @@ class Executor:
             if expr.operator.type == TokenType.PLUS:
                 return left + right
 
+        if isinstance(expr, BinaryExpr):
+            left = self.evaluate(expr.left)
+            right = self.evaluate(expr.right)
+
+            if expr.operator.type == TokenType.PLUS:
+                return left + right
+
+            if expr.operator.type == TokenType.MINUS:
+                return left - right
+
+            if expr.operator.type == TokenType.STAR:
+                return left * right
+
+            if expr.operator.type == TokenType.SLASH:
+                return left / right
+
         raise RuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
     def stringify(self, value):

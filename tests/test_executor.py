@@ -35,3 +35,20 @@ def test_binary_expression_plus():
 
     assert executor.outputs == ["5"]
 
+def test_operator_precedence_tree_is_respected():
+    expr = BinaryExpr(
+        LiteralExpr(3),
+        token(TokenType.PLUS, "+"),
+        BinaryExpr(
+            LiteralExpr(7),
+            token(TokenType.STAR, "*"),
+            LiteralExpr(5),
+        ),
+    )
+
+    executor = run([
+        PrintStmt(expr)
+    ])
+
+    assert executor.outputs == ["38"]
+
