@@ -1,6 +1,6 @@
 import pytest
 
-from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, AssignExpr, VariableExpr
+from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, AssignExpr, VariableExpr, LogicalExpr
 from assembler.statement import PrintStmt, VarStmt, ExpressionStmt, BlockStmt, IfStmt
 from assembler.tokenizer import Token, TokenType
 from executor.executor import Executor, RuntimeError
@@ -166,4 +166,31 @@ def test_if_statement_else_branch():
     ])
 
     assert executor.outputs == ["else"]
+
+def test_logical_and():
+    executor = run([
+        PrintStmt(
+            LogicalExpr(
+                LiteralExpr(True),
+                token(TokenType.AND, "and"),
+                LiteralExpr(False),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["false"]
+
+
+def test_logical_or():
+    executor = run([
+        PrintStmt(
+            LogicalExpr(
+                LiteralExpr(False),
+                token(TokenType.OR, "or"),
+                LiteralExpr(True),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["true"]
 

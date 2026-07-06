@@ -1,4 +1,4 @@
-from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, VariableExpr, AssignExpr
+from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, VariableExpr, AssignExpr, LogicalExpr
 from assembler.statement import PrintStmt, ExpressionStmt, VarStmt, BlockStmt, IfStmt
 from assembler.tokenizer import TokenType
 
@@ -108,6 +108,9 @@ class Executor:
             self.environment.assign(expr.name, value)
             return value
 
+        if isinstance(expr, LogicalExpr):
+            return self.evaluate_logical(expr)
+
         raise RuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
     def evaluate_binary(self, expr):
@@ -147,6 +150,17 @@ class Executor:
         raise RuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 
     def stringify(self, value):
+        if value is None:
+            return "nil"
+
+        if isinstance(value, bool):
+            return "true" if value else "false"
+
+        if isinstance(value, float):
+            if value.is_integer():
+                return str(int(value))
+            return str(value)
+
         return str(value)
 
     def is_truthy(self, value):
@@ -167,3 +181,18 @@ class Executor:
                 self.execute_stmt(statement)
         finally:
             self.environment = previous
+
+    def evaluate_logical(self, expr):
+        left = self.evaluate(expr.left)
+
+        if expr.operator.type == TokenType.OR:
+            if self.is_truthy(left):
+                return left
+            return self.evaluate(expr.right)
+
+        if expr.operator.type == TokenType.AND:
+            if not self.is_truthy(left):
+                return left
+            return self.evaluate(expr.right)
+
+        raise RuntimeError(f"Unknown logical operator: {expr.operator.origin}")
