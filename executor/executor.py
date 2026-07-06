@@ -6,6 +6,7 @@ from assembler.tokenizer import TokenType
 class RuntimeError(Exception):
     pass
 
+
 class Environment:
     def __init__(self, enclosing=None):
         self.values = {}
@@ -37,6 +38,7 @@ class Environment:
             return
 
         raise RuntimeError(f"Undefined variable '{name}'.")
+
 
 class Executor:
     def __init__(self):

@@ -37,6 +37,7 @@ def test_binary_expression_plus():
 
     assert executor.outputs == ["5"]
 
+
 def test_operator_precedence_tree_is_respected():
     expr = BinaryExpr(
         LiteralExpr(3),
@@ -53,6 +54,7 @@ def test_operator_precedence_tree_is_respected():
     ])
 
     assert executor.outputs == ["38"]
+
 
 def test_grouping_expression():
     expr = BinaryExpr(
@@ -86,6 +88,7 @@ def test_unary_minus():
 
     assert executor.outputs == ["-3"]
 
+
 def test_var_declaration_and_variable_reference():
     executor = run([
         VarStmt(token(TokenType.IDENTIFIER, "a"), LiteralExpr(10)),
@@ -108,6 +111,7 @@ def test_assign_variable():
     ])
 
     assert executor.outputs == ["20"]
+
 
 def test_block_scope_can_access_global_variable():
     executor = run([
@@ -144,6 +148,7 @@ def test_inner_scope_shadows_outer_scope():
 
     assert executor.outputs == ["2", "1"]
 
+
 def test_if_statement_then_branch():
     executor = run([
         IfStmt(
@@ -166,6 +171,7 @@ def test_if_statement_else_branch():
     ])
 
     assert executor.outputs == ["else"]
+
 
 def test_logical_and():
     executor = run([
@@ -194,6 +200,7 @@ def test_logical_or():
 
     assert executor.outputs == ["true"]
 
+
 def test_for_statement():
     executor = run([
         ForStmt(
@@ -216,6 +223,7 @@ def test_for_statement():
     ])
 
     assert executor.outputs == ["0", "1", "2"]
+
 
 def test_runtime_error_undefined_variable():
     with pytest.raises(RuntimeError):
@@ -248,4 +256,3 @@ def test_runtime_error_type_mismatch():
                 )
             )
         ])
-
