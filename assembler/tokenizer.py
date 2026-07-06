@@ -1,5 +1,6 @@
 from enum import auto, Enum
 
+
 class TokenType(Enum):
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
@@ -37,6 +38,7 @@ class TokenType(Enum):
 
     EOF = auto()
 
+
 class Token:
     def __init__(self, token_type: TokenType, origin: str, value=None):
         self.type = token_type
@@ -44,9 +46,60 @@ class Token:
         if value is not None:
             self.value = value
 
+    def __eq__(self, other):
+        if not isinstance(other, Token):
+            return NotImplemented
+        return (self.type == other.type
+                and self.origin == other.origin
+                and getattr(self, "value", None) == getattr(other, "value", None))
+
+
 class Tokenizer:
     def __init__(self):
-        pass
+        self._origin = ""
+        self._idx = 0
 
     def tokenize(self, string: str) -> list[Token]:
-        ...
+        self._origin = string
+        self._idx = 0
+        tokens: list[Token] = []
+
+        while self._idx_in_range():
+            character = self._peek()
+            if character.isspace():
+                self._idx += 1
+            elif character == "=":
+                tokens.append(self._read_equal())
+            elif character.isdigit():
+                tokens.append(self._read_number())
+            elif character.isalpha():
+                tokens.append(self._read_identifier())
+            else:
+                raise ValueError(f"Unexpected character: {character!r}")
+
+        tokens.append(Token(TokenType.EOF, ""))
+        return tokens
+
+    def _idx_in_range(self) -> bool:
+        return self._idx < len(self._origin)
+
+    def _peek(self) -> str:
+        return self._origin[self._idx]
+
+    def _read_characters(self, type_checker) -> str:
+        start = self._idx
+        while self._idx_in_range() and type_checker(self._peek()):
+            self._idx += 1
+        return self._origin[start:self._idx]
+
+    def _read_equal(self) -> Token:
+        self._idx += 1
+        return Token(TokenType.EQUAL, "=")
+
+    def _read_number(self) -> Token:
+        characters = self._read_characters(str.isdigit)
+        return Token(TokenType.NUMBER, characters, value=float(characters))
+
+    def _read_identifier(self) -> Token:
+        origin = self._read_characters(str.isalnum)
+        return Token(TokenType.IDENTIFIER, origin)
