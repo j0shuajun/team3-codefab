@@ -97,6 +97,7 @@ class Executor:
             right = self.evaluate(expr.right)
 
             if expr.operator.type == TokenType.MINUS:
+                self.check_number_operand(right)
                 return -right
 
             if expr.operator.type == TokenType.BANG:
@@ -120,17 +121,27 @@ class Executor:
     def evaluate_binary(self, expr):
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
-
         if expr.operator.type == TokenType.PLUS:
-            return left + right
+            if self.is_number(left) and self.is_number(right):
+                return left + right
+
+            if isinstance(left, str) and isinstance(right, str):
+                return left + right
+
+            raise RuntimeError("Operands must be two numbers or two strings.")
 
         if expr.operator.type == TokenType.MINUS:
+            self.check_number_operands(left, right)
             return left - right
 
         if expr.operator.type == TokenType.STAR:
+            self.check_number_operands(left, right)
             return left * right
 
         if expr.operator.type == TokenType.SLASH:
+            self.check_number_operands(left, right)
+            if right == 0:
+                raise RuntimeError("Division by zero.")
             return left / right
 
         if expr.operator.type == TokenType.GREATER:
@@ -224,3 +235,18 @@ class Executor:
 
         finally:
             self.environment = previous
+
+    def is_number(self, value):
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+    def check_number_operand(self, operand):
+        if self.is_number(operand):
+            return
+
+        raise RuntimeError("Operand must be a number.")
+
+    def check_number_operands(self, left, right):
+        if self.is_number(left) and self.is_number(right):
+            return
+
+        raise RuntimeError("Operands must be numbers.")

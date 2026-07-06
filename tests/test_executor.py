@@ -217,3 +217,35 @@ def test_for_statement():
 
     assert executor.outputs == ["0", "1", "2"]
 
+def test_runtime_error_undefined_variable():
+    with pytest.raises(RuntimeError):
+        run([
+            PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "x")))
+        ])
+
+
+def test_runtime_error_divide_by_zero():
+    with pytest.raises(RuntimeError):
+        run([
+            PrintStmt(
+                BinaryExpr(
+                    LiteralExpr(3),
+                    token(TokenType.SLASH, "/"),
+                    LiteralExpr(0),
+                )
+            )
+        ])
+
+
+def test_runtime_error_type_mismatch():
+    with pytest.raises(RuntimeError):
+        run([
+            PrintStmt(
+                BinaryExpr(
+                    LiteralExpr(3),
+                    token(TokenType.MINUS, "-"),
+                    LiteralExpr("hello"),
+                )
+            )
+        ])
+
