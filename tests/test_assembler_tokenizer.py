@@ -27,3 +27,10 @@ def test_if_statement(tokenizer):
                       Token(T.NUMBER, "10", value=10.0),
                       Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
+
+def test_plus_operation(tokenizer):
+    tokens = tokenizer.tokenize("a + b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.PLUS, "+"),
+                      Token(T.IDENTIFIER, "b")]
