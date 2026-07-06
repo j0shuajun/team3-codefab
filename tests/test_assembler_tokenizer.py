@@ -53,3 +53,18 @@ def test_plus_multiply_operator(tokenizer):
                       Token(T.STAR, "*"),
                       Token(T.NUMBER, "3", value=3.0),
                       Token(T.EOF, "")]
+
+def test_minus_operator(tokenizer):
+    tokens = tokenizer.tokenize("a - b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.MINUS, "-"),
+                      Token(T.IDENTIFIER, "b")]
+
+def test_divide_operator(tokenizer):
+    tokens = tokenizer.tokenize("10 / 2")
+
+    assert tokens == [Token(T.NUMBER, "10", value=10.0),
+                      Token(T.SLASH, "/"),
+                      Token(T.NUMBER, "2", value=2.0),
+                      Token(T.EOF, "")]
