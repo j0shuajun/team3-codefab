@@ -35,3 +35,11 @@ def test_plus_operation(tokenizer):
                       Token(T.PLUS, "+"),
                       Token(T.IDENTIFIER, "b"),
                       Token(T.EOF, "")]
+
+def test_multiply_operation(tokenizer):
+    tokens = tokenizer.tokenize("b * 3")
+
+    assert tokens == [Token(T.IDENTIFIER, "b"),
+                      Token(T.PLUS, "*"),
+                      Token(T.IDENTIFIER, "3"),
+                      Token(T.EOF, "")]
