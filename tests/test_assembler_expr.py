@@ -1,7 +1,6 @@
 import pytest
-
-from tokenizer import Token, TokenType
-from expr import (
+from assembler.tokenizer import Token, TokenType
+from assembler.expr import (
     Expr,
     LiteralExpr,
     VariableExpr,
