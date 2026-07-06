@@ -1,5 +1,5 @@
 from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, VariableExpr, AssignExpr
-from assembler.statement import PrintStmt, ExpressionStmt, VarStmt
+from assembler.statement import PrintStmt, ExpressionStmt, VarStmt, BlockStmt
 from assembler.tokenizer import TokenType
 
 
@@ -7,8 +7,9 @@ class RuntimeError(Exception):
     pass
 
 class Environment:
-    def __init__(self):
+    def __init__(self, enclosing=None):
         self.values = {}
+        self.enclosing = enclosing
 
     def define(self, name, value):
         self.values[name] = value
@@ -19,6 +20,9 @@ class Environment:
         if name in self.values:
             return self.values[name]
 
+        if self.enclosing is not None:
+            return self.enclosing.get(name_token)
+
         raise RuntimeError(f"Undefined variable '{name}'.")
 
     def assign(self, name_token, value):
@@ -28,11 +32,16 @@ class Environment:
             self.values[name] = value
             return
 
+        if self.enclosing is not None:
+            self.enclosing.assign(name_token, value)
+            return
+
         raise RuntimeError(f"Undefined variable '{name}'.")
 
 class Executor:
     def __init__(self):
-        self.environment = Environment()
+        self.globals = Environment()
+        self.environment = self.globals
         self.outputs = []
 
     def execute(self, statements):
@@ -55,6 +64,10 @@ class Executor:
                 value = self.evaluate(stmt.initializer)
 
             self.environment.define(stmt.name.origin, value)
+            return
+
+        if isinstance(stmt, BlockStmt):
+            self.execute_block(stmt.statements, Environment(self.environment))
             return
 
         raise RuntimeError(f"Unknown statement type: {type(stmt).__name__}")
@@ -119,3 +132,13 @@ class Executor:
             return value
 
         return True
+
+    def execute_block(self, statements, environment):
+        previous = self.environment
+
+        try:
+            self.environment = environment
+            for statement in statements:
+                self.execute_stmt(statement)
+        finally:
+            self.environment = previous

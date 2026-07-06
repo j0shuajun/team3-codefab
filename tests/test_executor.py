@@ -1,7 +1,9 @@
+import pytest
+
 from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, AssignExpr, VariableExpr
-from assembler.statement import PrintStmt, VarStmt, ExpressionStmt
+from assembler.statement import PrintStmt, VarStmt, ExpressionStmt, BlockStmt
 from assembler.tokenizer import Token, TokenType
-from executor.executor import Executor
+from executor.executor import Executor, RuntimeError
 
 
 def token(token_type, origin):
@@ -106,4 +108,39 @@ def test_assign_variable():
     ])
 
     assert executor.outputs == ["20"]
+
+def test_block_scope_can_access_global_variable():
+    executor = run([
+        VarStmt(token(TokenType.IDENTIFIER, "a"), LiteralExpr(10)),
+        BlockStmt([
+            PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "a"))),
+        ]),
+    ])
+
+    assert executor.outputs == ["10"]
+
+
+def test_block_scope_local_variable_removed_after_block():
+    statements = [
+        BlockStmt([
+            VarStmt(token(TokenType.IDENTIFIER, "a"), LiteralExpr(10)),
+        ]),
+        PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "a"))),
+    ]
+
+    with pytest.raises(RuntimeError):
+        run(statements)
+
+
+def test_inner_scope_shadows_outer_scope():
+    executor = run([
+        VarStmt(token(TokenType.IDENTIFIER, "a"), LiteralExpr(1)),
+        BlockStmt([
+            VarStmt(token(TokenType.IDENTIFIER, "a"), LiteralExpr(2)),
+            PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "a"))),
+        ]),
+        PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "a"))),
+    ])
+
+    assert executor.outputs == ["2", "1"]
 
