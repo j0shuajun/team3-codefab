@@ -40,6 +40,6 @@ def test_multiply_operation(tokenizer):
     tokens = tokenizer.tokenize("b * 3")
 
     assert tokens == [Token(T.IDENTIFIER, "b"),
-                      Token(T.PLUS, "*"),
-                      Token(T.IDENTIFIER, "3"),
+                      Token(T.STAR, "*"),
+                      Token(T.NUMBER, "3", value=3.0),
                       Token(T.EOF, "")]
