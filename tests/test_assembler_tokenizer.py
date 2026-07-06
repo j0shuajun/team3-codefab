@@ -28,7 +28,7 @@ def test_if_statement(tokenizer):
                       Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
 
-def test_plus_operation(tokenizer):
+def test_plus_operator(tokenizer):
     tokens = tokenizer.tokenize("a + b")
 
     assert tokens == [Token(T.IDENTIFIER, "a"),
@@ -36,10 +36,20 @@ def test_plus_operation(tokenizer):
                       Token(T.IDENTIFIER, "b"),
                       Token(T.EOF, "")]
 
-def test_multiply_operation(tokenizer):
+def test_multiply_operator(tokenizer):
     tokens = tokenizer.tokenize("b * 3")
 
     assert tokens == [Token(T.IDENTIFIER, "b"),
+                      Token(T.STAR, "*"),
+                      Token(T.NUMBER, "3", value=3.0),
+                      Token(T.EOF, "")]
+
+def test_plus_multiply_operator(tokenizer):
+    tokens = tokenizer.tokenize("a + b * 3")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.PLUS, "+"),
+                      Token(T.IDENTIFIER, "b"),
                       Token(T.STAR, "*"),
                       Token(T.NUMBER, "3", value=3.0),
                       Token(T.EOF, "")]
