@@ -1,5 +1,6 @@
-from assembler.expr import LiteralExpr
+from assembler.expr import LiteralExpr, BinaryExpr
 from assembler.statement import PrintStmt
+from assembler.tokenizer import TokenType
 
 
 class RuntimeError(Exception):
@@ -25,6 +26,13 @@ class Executor:
     def evaluate(self, expr):
         if isinstance(expr, LiteralExpr):
             return expr.value
+
+        if isinstance(expr, BinaryExpr):
+            left = self.evaluate(expr.left)
+            right = self.evaluate(expr.right)
+
+            if expr.operator.type == TokenType.PLUS:
+                return left + right
 
         raise RuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
