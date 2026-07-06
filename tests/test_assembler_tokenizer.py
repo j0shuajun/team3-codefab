@@ -59,7 +59,8 @@ def test_minus_operator(tokenizer):
 
     assert tokens == [Token(T.IDENTIFIER, "a"),
                       Token(T.MINUS, "-"),
-                      Token(T.IDENTIFIER, "b")]
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
 
 def test_divide_operator(tokenizer):
     tokens = tokenizer.tokenize("10 / 2")
