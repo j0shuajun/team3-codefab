@@ -44,9 +44,17 @@ class Token:
         if value is not None:
             self.value = value
 
+    def __eq__(self, other):
+        if not isinstance(other, Token):
+            return NotImplemented
+        return (self.type == other.type
+                and self.origin == other.origin
+                and getattr(self, "value", None) == getattr(other, "value", None))
+
 class Tokenizer:
     def __init__(self):
         pass
 
     def tokenize(self, string: str) -> list[Token]:
         ...
+
