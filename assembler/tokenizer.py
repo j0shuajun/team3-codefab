@@ -70,6 +70,12 @@ class Tokenizer:
                 self._idx += 1
             elif character == "=":
                 tokens.append(self._read_equal())
+            elif character == "(":
+                tokens.append(self._read_left_paren())
+            elif character == ")":
+                tokens.append(self._read_right_paren())
+            elif character == ">":
+                tokens.append(self._read_greater())
             elif character.isdigit():
                 tokens.append(self._read_number())
             elif character.isalpha():
@@ -96,10 +102,24 @@ class Tokenizer:
         self._idx += 1
         return Token(TokenType.EQUAL, "=")
 
+    def _read_left_paren(self) -> Token:
+        self._idx += 1
+        return Token(TokenType.LEFT_PAREN, "(")
+
+    def _read_right_paren(self) -> Token:
+        self._idx += 1
+        return Token(TokenType.RIGHT_PAREN, ")")
+
+    def _read_greater(self) -> Token:
+        self._idx += 1
+        return Token(TokenType.GREATER, ">")
+
     def _read_number(self) -> Token:
         characters = self._read_characters(str.isdigit)
         return Token(TokenType.NUMBER, characters, value=float(characters))
 
     def _read_identifier(self) -> Token:
         origin = self._read_characters(str.isalnum)
+        if origin == "if":
+            return Token(TokenType.IF, origin)
         return Token(TokenType.IDENTIFIER, origin)
