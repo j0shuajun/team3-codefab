@@ -64,7 +64,9 @@ class Tokenizer:
         ")": TokenType.RIGHT_PAREN,
         ">": TokenType.GREATER,
         "+": TokenType.PLUS,
+        "-": TokenType.MINUS,
         "*": TokenType.STAR,
+        "/": TokenType.SLASH,
     }
 
     def __init__(self):
