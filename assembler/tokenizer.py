@@ -1,3 +1,5 @@
+from enum import auto, Enum
+
 class TokenType(Enum):
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
@@ -36,10 +38,15 @@ class TokenType(Enum):
     EOF = auto()
 
 class Token:
-    def __init__(self, type: TokenType, origin: str):
-        self.type = type
+    def __init__(self, token_type: TokenType, origin: str, value=None):
+        self.type = token_type
         self.origin = origin
+        if value is not None:
+            self.value = value
 
 class Tokenizer:
-    def tokenize(self, str: str) -> list[Token]:
+    def __init__(self):
+        pass
+
+    def tokenize(self, string: str) -> list[Token]:
         ...
