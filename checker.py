@@ -1,4 +1,4 @@
-from statement import BlockStmt, VarStmt
+from assembler.statement import BlockStmt, VarStmt
 
 
 class Checker:

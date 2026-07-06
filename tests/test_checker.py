@@ -1,6 +1,6 @@
 from checker import Checker
-from expr import LiteralExpr
-from statement import BlockStmt, VarStmt
+from assembler.expr import LiteralExpr
+from assembler.statement import BlockStmt, VarStmt
 
 
 def check(statements):
