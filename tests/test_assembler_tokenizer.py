@@ -33,4 +33,5 @@ def test_plus_operation(tokenizer):
 
     assert tokens == [Token(T.IDENTIFIER, "a"),
                       Token(T.PLUS, "+"),
-                      Token(T.IDENTIFIER, "b")]
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
