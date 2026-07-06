@@ -1,4 +1,4 @@
-from assembler.expr import LiteralExpr, BinaryExpr
+from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr
 from assembler.statement import PrintStmt
 from assembler.tokenizer import TokenType
 
@@ -30,6 +30,20 @@ class Executor:
         if isinstance(expr, BinaryExpr):
             return self.evaluate_binary(expr)
 
+        if isinstance(expr, GroupingExpr):
+            return self.evaluate(expr.expression)
+
+        if isinstance(expr, UnaryExpr):
+            right = self.evaluate(expr.right)
+
+            if expr.operator.type == TokenType.MINUS:
+                return -right
+
+            if expr.operator.type == TokenType.BANG:
+                return not self.is_truthy(right)
+
+            raise RuntimeError(f"Unknown unary operator: {expr.operator.origin}")
+
         raise RuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
     def evaluate_binary(self, expr):
@@ -52,3 +66,12 @@ class Executor:
 
     def stringify(self, value):
         return str(value)
+
+    def is_truthy(self, value):
+        if value is None:
+            return False
+
+        if isinstance(value, bool):
+            return value
+
+        return True

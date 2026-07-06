@@ -1,4 +1,4 @@
-from assembler.expr import LiteralExpr, BinaryExpr
+from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr
 from assembler.statement import PrintStmt
 from assembler.tokenizer import Token, TokenType
 from executor.executor import Executor
@@ -51,4 +51,36 @@ def test_operator_precedence_tree_is_respected():
     ])
 
     assert executor.outputs == ["38"]
+
+def test_grouping_expression():
+    expr = BinaryExpr(
+        GroupingExpr(
+            BinaryExpr(
+                LiteralExpr(3),
+                token(TokenType.PLUS, "+"),
+                LiteralExpr(7),
+            )
+        ),
+        token(TokenType.STAR, "*"),
+        LiteralExpr(5),
+    )
+
+    executor = run([
+        PrintStmt(expr)
+    ])
+
+    assert executor.outputs == ["50"]
+
+
+def test_unary_minus():
+    executor = run([
+        PrintStmt(
+            UnaryExpr(
+                token(TokenType.MINUS, "-"),
+                LiteralExpr(3),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["-3"]
 
