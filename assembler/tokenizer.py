@@ -53,6 +53,9 @@ class Token:
                 and self.origin == other.origin
                 and getattr(self, "value", None) == getattr(other, "value", None))
 
+    def __repr__(self):
+        return f"Token({self.type}, {self.origin!r}, {getattr(self, "value", None) !r})"
+
 
 class Tokenizer:
     _SINGLE_CHARACTER_TOKENS = {
@@ -60,6 +63,7 @@ class Tokenizer:
         "(": TokenType.LEFT_PAREN,
         ")": TokenType.RIGHT_PAREN,
         ">": TokenType.GREATER,
+        "+": TokenType.PLUS,
     }
 
     def __init__(self):
