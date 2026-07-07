@@ -1,5 +1,5 @@
 from assembler.assembler import Assembler
-from assembler.expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr
+from assembler.expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr
 from assembler.statement import ExpressionStmt
 from assembler.tokenizer import Token, TokenType
 
@@ -103,3 +103,19 @@ def test_parse_unary_minus_expression():
     assert isinstance(expr, UnaryExpr)
     assert expr.operator.type == TokenType.MINUS
     assert expr.right.value == 3
+
+def test_parse_string_boolean_and_variable():
+    statements = parse([
+        token(TokenType.STRING, "hello", "hello"),
+        token(TokenType.SEMICOLON, ";"),
+        token(TokenType.TRUE, "true"),
+        token(TokenType.SEMICOLON, ";"),
+        token(TokenType.IDENTIFIER, "a"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    assert statements[0].expression.value == "hello"
+    assert statements[1].expression.value is True
+    assert isinstance(statements[2].expression, VariableExpr)
+    assert statements[2].expression.name.origin == "a"
+

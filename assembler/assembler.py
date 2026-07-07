@@ -1,4 +1,4 @@
-from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr
+from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr
 from .statement import ExpressionStmt
 from .tokenizer import TokenType
 
@@ -32,13 +32,22 @@ class Assembler:
         return self.term()
 
     def primary(self):
-        if self.match(TokenType.NUMBER):
+        if self.match(TokenType.FALSE):
+            return LiteralExpr(False)
+
+        if self.match(TokenType.TRUE):
+            return LiteralExpr(True)
+
+        if self.match(TokenType.NUMBER, TokenType.STRING):
             return LiteralExpr(self.previous().value)
 
+        if self.match(TokenType.IDENTIFIER):
+            return VariableExpr(self.previous())
+
         if self.match(TokenType.LEFT_PAREN):
-            expression = self.expression()
+            expr = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
-            return GroupingExpr(expression)
+            return GroupingExpr(expr)
 
         raise AssemblerError("Expected expression.")
 
