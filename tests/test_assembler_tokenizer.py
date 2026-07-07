@@ -304,3 +304,26 @@ def test_less_equal(tokenizer):
                       Token(T.LESS_EQUAL, "<="),
                       Token(T.IDENTIFIER, "b"),
                       Token(T.EOF, "")]
+
+
+def test_for_condition(tokenizer):
+    tokens = tokenizer.tokenize("for (var i=0; i<5; i=i+1)")
+
+    assert tokens == [Token(T.FOR, "for"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.VAR, "var"),
+                      Token(T.IDENTIFIER, "i"),
+                      Token(T.EQUAL, "="),
+                      Token(T.NUMBER, "0", value=0.0),
+                      Token(T.SEMICOLON, ";"),
+                      Token(T.IDENTIFIER, "i"),
+                      Token(T.LESS, "<"),
+                      Token(T.NUMBER, "5", value=5.0),
+                      Token(T.SEMICOLON, ";"),
+                      Token(T.IDENTIFIER, "i"),
+                      Token(T.EQUAL, "="),
+                      Token(T.IDENTIFIER, "i"),
+                      Token(T.PLUS, "+"),
+                      Token(T.NUMBER, "1", value=1.0),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
