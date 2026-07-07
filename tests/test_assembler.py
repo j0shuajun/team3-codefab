@@ -158,6 +158,21 @@ def test_parse_print_statement():
     assert statements[0].expression.value == 3
 
 
+def test_parse_var_declaration_empty():
+    statements = parse(
+        [
+            token(TokenType.VAR, "var"),
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, VarStmt)
+    assert stmt.name.origin == "a"
+
+
 def test_parse_var_declaration():
     statements = parse(
         [
