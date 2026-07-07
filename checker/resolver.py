@@ -87,7 +87,9 @@ class StatementResolver(Resolver):
     def resolve(self, statement):
         resolver = self._resolvers.get(type(statement))
         if resolver is None:
-            raise CodeFabTypeError(f"Unknown statement type: {type(statement).__name__}")
+            raise CodeFabTypeError(
+                f"Unknown statement type: {type(statement).__name__}"
+            )
         resolver(statement)
 
     def _resolve_var_stmt(self, statement):

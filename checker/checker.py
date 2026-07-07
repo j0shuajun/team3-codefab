@@ -7,7 +7,9 @@ class Checker:
     def __init__(self):
         self._scopes = ScopeStack()
         self._error_reporter = ErrorReporter()
-        self._expression_resolver = ExpressionResolver(self._scopes, self._error_reporter)
+        self._expression_resolver = ExpressionResolver(
+            self._scopes, self._error_reporter
+        )
         self._statement_resolver = StatementResolver(
             self._scopes, self._error_reporter, self._expression_resolver
         )

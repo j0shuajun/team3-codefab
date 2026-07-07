@@ -1,4 +1,3 @@
-from checker.checker import Checker
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
@@ -10,6 +9,7 @@ from assembler.expr import (
 )
 from assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
+from checker.checker import Checker
 
 
 def token(origin):
@@ -42,10 +42,12 @@ class TestDuplicateDeclaration:
 
     def test_duplicate_declaration_inside_same_block_is_error(self):
         statements = [
-            BlockStmt([
-                VarStmt(token("x"), LiteralExpr(1)),
-                VarStmt(token("x"), LiteralExpr(2)),
-            ]),
+            BlockStmt(
+                [
+                    VarStmt(token("x"), LiteralExpr(1)),
+                    VarStmt(token("x"), LiteralExpr(2)),
+                ]
+            ),
         ]
 
         errors = check(statements)
@@ -56,9 +58,11 @@ class TestDuplicateDeclaration:
     def test_shadowing_in_nested_block_is_allowed(self):
         statements = [
             VarStmt(token("x"), LiteralExpr(1)),
-            BlockStmt([
-                VarStmt(token("x"), LiteralExpr(2)),
-            ]),
+            BlockStmt(
+                [
+                    VarStmt(token("x"), LiteralExpr(2)),
+                ]
+            ),
         ]
 
         assert check(statements) == []
@@ -106,9 +110,11 @@ class TestSelfReferenceInInitializer:
 
     def test_self_reference_inside_nested_block_is_error(self):
         statements = [
-            BlockStmt([
-                VarStmt(token("y"), VariableExpr(token("y"))),
-            ]),
+            BlockStmt(
+                [
+                    VarStmt(token("y"), VariableExpr(token("y"))),
+                ]
+            ),
         ]
 
         errors = check(statements)
@@ -152,10 +158,12 @@ class TestDfsTraversalOverControlFlow:
         statements = [
             IfStmt(
                 condition=LiteralExpr(True),
-                then_branch=BlockStmt([
-                    VarStmt(token("z"), LiteralExpr(1)),
-                    VarStmt(token("z"), LiteralExpr(2)),
-                ]),
+                then_branch=BlockStmt(
+                    [
+                        VarStmt(token("z"), LiteralExpr(1)),
+                        VarStmt(token("z"), LiteralExpr(2)),
+                    ]
+                ),
             ),
         ]
 
@@ -170,9 +178,11 @@ class TestDfsTraversalOverControlFlow:
             IfStmt(
                 condition=LiteralExpr(False),
                 then_branch=BlockStmt([]),
-                else_branch=BlockStmt([
-                    ExpressionStmt(VariableExpr(token("a"))),
-                ]),
+                else_branch=BlockStmt(
+                    [
+                        ExpressionStmt(VariableExpr(token("a"))),
+                    ]
+                ),
             ),
         ]
 
@@ -213,14 +223,20 @@ class TestDfsTraversalOverControlFlow:
 class TestComplexNestedTraversal:
     def test_duplicate_declaration_detected_four_levels_deep(self):
         statements = [
-            BlockStmt([
-                BlockStmt([
-                    BlockStmt([
-                        VarStmt(token("v"), LiteralExpr(1)),
-                        VarStmt(token("v"), LiteralExpr(2)),
-                    ]),
-                ]),
-            ]),
+            BlockStmt(
+                [
+                    BlockStmt(
+                        [
+                            BlockStmt(
+                                [
+                                    VarStmt(token("v"), LiteralExpr(1)),
+                                    VarStmt(token("v"), LiteralExpr(2)),
+                                ]
+                            ),
+                        ]
+                    ),
+                ]
+            ),
         ]
 
         errors = check(statements)
@@ -232,16 +248,22 @@ class TestComplexNestedTraversal:
         # 같은 이름 "v" 를 매 레벨마다 새로 선언(shadowing)하는 것은 허용되지만,
         # 가장 안쪽 스코프에서 같은 이름을 두 번 선언하는 것만 오류다.
         statements = [
-            BlockStmt([
-                VarStmt(token("v"), LiteralExpr(0)),
-                BlockStmt([
-                    VarStmt(token("v"), LiteralExpr(1)),
-                    BlockStmt([
-                        VarStmt(token("v"), LiteralExpr(2)),
-                        VarStmt(token("v"), LiteralExpr(3)),
-                    ]),
-                ]),
-            ]),
+            BlockStmt(
+                [
+                    VarStmt(token("v"), LiteralExpr(0)),
+                    BlockStmt(
+                        [
+                            VarStmt(token("v"), LiteralExpr(1)),
+                            BlockStmt(
+                                [
+                                    VarStmt(token("v"), LiteralExpr(2)),
+                                    VarStmt(token("v"), LiteralExpr(3)),
+                                ]
+                            ),
+                        ]
+                    ),
+                ]
+            ),
         ]
 
         errors = check(statements)
@@ -254,7 +276,9 @@ class TestComplexNestedTraversal:
         initializer = LogicalExpr(
             UnaryExpr(
                 token("!"),
-                GroupingExpr(BinaryExpr(LiteralExpr(1), token("+"), VariableExpr(token("a")))),
+                GroupingExpr(
+                    BinaryExpr(LiteralExpr(1), token("+"), VariableExpr(token("a")))
+                ),
             ),
             token("and"),
             LiteralExpr(True),
@@ -273,19 +297,27 @@ class TestComplexNestedTraversal:
             VarStmt(token("count")),
             ForStmt(
                 initializer=VarStmt(token("i"), LiteralExpr(0)),
-                condition=BinaryExpr(VariableExpr(token("i")), token("<"), LiteralExpr(10)),
+                condition=BinaryExpr(
+                    VariableExpr(token("i")), token("<"), LiteralExpr(10)
+                ),
                 increment=AssignExpr(
                     token("i"),
                     BinaryExpr(VariableExpr(token("i")), token("+"), LiteralExpr(1)),
                 ),
-                body=BlockStmt([
-                    IfStmt(
-                        condition=BinaryExpr(VariableExpr(token("i")), token("=="), LiteralExpr(5)),
-                        then_branch=BlockStmt([
-                            ExpressionStmt(VariableExpr(token("count"))),
-                        ]),
-                    ),
-                ]),
+                body=BlockStmt(
+                    [
+                        IfStmt(
+                            condition=BinaryExpr(
+                                VariableExpr(token("i")), token("=="), LiteralExpr(5)
+                            ),
+                            then_branch=BlockStmt(
+                                [
+                                    ExpressionStmt(VariableExpr(token("count"))),
+                                ]
+                            ),
+                        ),
+                    ]
+                ),
             ),
         ]
 
@@ -302,22 +334,28 @@ class TestComplexNestedTraversal:
             VarStmt(token("shared"), LiteralExpr(1)),
             IfStmt(
                 condition=VariableExpr(token("shared")),
-                then_branch=BlockStmt([
-                    VarStmt(token("dup"), LiteralExpr(1)),
-                    VarStmt(token("dup"), LiteralExpr(2)),
-                ]),
-                else_branch=BlockStmt([
-                    VarStmt(token("u")),
-                    ExpressionStmt(VariableExpr(token("u"))),
-                ]),
+                then_branch=BlockStmt(
+                    [
+                        VarStmt(token("dup"), LiteralExpr(1)),
+                        VarStmt(token("dup"), LiteralExpr(2)),
+                    ]
+                ),
+                else_branch=BlockStmt(
+                    [
+                        VarStmt(token("u")),
+                        ExpressionStmt(VariableExpr(token("u"))),
+                    ]
+                ),
             ),
             ForStmt(
                 initializer=VarStmt(token("k"), VariableExpr(token("k"))),
                 condition=None,
                 increment=None,
-                body=BlockStmt([
-                    ExpressionStmt(VariableExpr(token("shared"))),
-                ]),
+                body=BlockStmt(
+                    [
+                        ExpressionStmt(VariableExpr(token("shared"))),
+                    ]
+                ),
             ),
         ]
 
@@ -334,14 +372,18 @@ class TestComplexNestedTraversal:
         statements = [
             IfStmt(
                 condition=LiteralExpr(True),
-                then_branch=BlockStmt([
-                    VarStmt(token("dup"), LiteralExpr(1)),
-                    VarStmt(token("dup"), LiteralExpr(2)),
-                ]),
-                else_branch=BlockStmt([
-                    VarStmt(token("ok"), LiteralExpr(1)),
-                    ExpressionStmt(VariableExpr(token("ok"))),
-                ]),
+                then_branch=BlockStmt(
+                    [
+                        VarStmt(token("dup"), LiteralExpr(1)),
+                        VarStmt(token("dup"), LiteralExpr(2)),
+                    ]
+                ),
+                else_branch=BlockStmt(
+                    [
+                        VarStmt(token("ok"), LiteralExpr(1)),
+                        ExpressionStmt(VariableExpr(token("ok"))),
+                    ]
+                ),
             ),
         ]
 
