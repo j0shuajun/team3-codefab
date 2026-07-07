@@ -69,3 +69,10 @@ def test_divide_operator(tokenizer):
                       Token(T.SLASH, "/"),
                       Token(T.NUMBER, "2", value=2.0),
                       Token(T.EOF, "")]
+
+def test_block_scope(tokenizer):
+    tokens = tokenizer.tokenize("{ a }")
+
+    assert tokens == [Token(T.LEFT_BRACE, "{"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.RIGHT_BRACE, "}")]
