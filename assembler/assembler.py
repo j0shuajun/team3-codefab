@@ -1,5 +1,5 @@
 from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr
-from .statement import ExpressionStmt
+from .statement import ExpressionStmt, PrintStmt
 from .tokenizer import TokenType
 
 
@@ -21,7 +21,15 @@ class Assembler:
         return statements
 
     def statement(self):
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+
         return self.expression_statement()
+
+    def print_statement(self):
+        expr = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expected ';' after value.")
+        return PrintStmt(expr)
 
     def expression_statement(self):
         expression = self.expression()

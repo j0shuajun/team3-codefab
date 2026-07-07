@@ -1,6 +1,6 @@
 from assembler.assembler import Assembler
 from assembler.expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr
-from assembler.statement import ExpressionStmt
+from assembler.statement import ExpressionStmt, PrintStmt
 from assembler.tokenizer import Token, TokenType
 
 
@@ -118,4 +118,14 @@ def test_parse_string_boolean_and_variable():
     assert statements[1].expression.value is True
     assert isinstance(statements[2].expression, VariableExpr)
     assert statements[2].expression.name.origin == "a"
+
+def test_parse_print_statement():
+    statements = parse([
+        token(TokenType.PRINT, "print"),
+        token(TokenType.NUMBER, "3", 3),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    assert isinstance(statements[0], PrintStmt)
+    assert statements[0].expression.value == 3
 
