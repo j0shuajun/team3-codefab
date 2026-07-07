@@ -162,6 +162,28 @@ def test_if_condition(tokenizer):
                       Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
 
+def test_else_if_condition(tokenizer):
+    tokens = tokenizer.tokenize("else if (x > 10)")
+
+    assert tokens == [Token(T.ELSE, "else"),
+                      Token(T.IF, "if"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.IDENTIFIER, "x"),
+                      Token(T.GREATER, ">"),
+                      Token(T.NUMBER, "10", value=10.0),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
+
+def test_else_block(tokenizer):
+    tokens = tokenizer.tokenize("else {a=1}")
+
+    assert tokens == [Token(T.ELSE, "else"),
+                      Token(T.LEFT_BRACE, "{"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.NUMBER, "1", value=1.0),
+                      Token(T.RIGHT_BRACE, "}"),
+                      Token(T.EOF, "")]
 
 def test_var_statement(tokenizer):
     tokens = tokenizer.tokenize("var a = 37")
