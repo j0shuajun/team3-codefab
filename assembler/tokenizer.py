@@ -174,6 +174,10 @@ class Tokenizer:
 
     def _read_number(self) -> Token:
         characters = self._read_multiple_characters(str.isdigit)
+        if self._idx_in_range() and self._peek() == ".":
+            characters += self._peek()
+            self._idx += 1
+            characters += self._read_multiple_characters(str.isdigit)
         return Token(TokenType.NUMBER, characters, value=float(characters))
 
     def _read_identifier(self) -> Token:
