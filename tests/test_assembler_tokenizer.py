@@ -191,3 +191,13 @@ def test_false(tokenizer):
                       Token(T.EQUAL, "="),
                       Token(T.FALSE, "false"),
                       Token(T.EOF, "")]
+
+
+def test_print_statement(tokenizer):
+    tokens = tokenizer.tokenize("print(a)")
+
+    assert tokens == [Token(T.PRINT, "print"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
