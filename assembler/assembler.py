@@ -1,5 +1,5 @@
 from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr
-from .statement import ExpressionStmt, PrintStmt
+from .statement import ExpressionStmt, PrintStmt, VarStmt
 from .tokenizer import TokenType
 
 
@@ -16,7 +16,7 @@ class Assembler:
         statements = []
 
         while not self.is_at_end():
-            statements.append(self.statement())
+            statements.append(self.declaration())
 
         return statements
 
@@ -117,3 +117,19 @@ class Assembler:
             return UnaryExpr(operator, right)
 
         return self.primary()
+
+    def declaration(self):
+        if self.match(TokenType.VAR):
+            return self.var_declaration()
+
+        return self.statement()
+
+    def var_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected variable name.")
+
+        initializer = None
+        if self.match(TokenType.EQUAL):
+            initializer = self.expression()
+
+        self.consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.")
+        return VarStmt(name, initializer)
