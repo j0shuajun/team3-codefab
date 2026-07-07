@@ -7,9 +7,8 @@ from executor.executor import Executor
 
 
 class PromptShell:
-    def __init__(self, assembler_class=Assembler, history_size=10):
+    def __init__(self, history_size=10):
         self.tokenizer = Tokenizer()
-        self.assembler_class = assembler_class
         self.checker = Checker()
         self.executor = Executor()
 
@@ -17,6 +16,7 @@ class PromptShell:
         self.history = []
         self.recommended_command = None
         self.is_running = True
+
 
     def run(self):
         print("CodeFab Prompt Shell")
@@ -52,7 +52,7 @@ class PromptShell:
         try:
             tokens = self.tokenizer.tokenize(source)
 
-            assembler = self.assembler_class(tokens)
+            assembler = Assembler(tokens)
             statements = assembler.parse()
 
             errors = self.checker.check(statements)
@@ -67,7 +67,6 @@ class PromptShell:
 
         except Exception as error:
             return [f"Error: {error}"]
-
     def save_history(self, source):
         self.history.append(source)
 
