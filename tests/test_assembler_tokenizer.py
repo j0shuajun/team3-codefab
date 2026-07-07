@@ -23,7 +23,7 @@ def test_assign_number(tokenizer):
     ]
 
 
-def test_assign__decimal_number(tokenizer):
+def test_assign_number_dot_number(tokenizer):
     tokens = tokenizer.tokenize("point = 10.1")
 
     assert tokens == [
@@ -32,6 +32,38 @@ def test_assign__decimal_number(tokenizer):
         Token(T.NUMBER, "10.1", value=10.1),
         Token(T.EOF, ""),
     ]
+
+
+def test_assign_number_dot_number_2_digit(tokenizer):
+    tokens = tokenizer.tokenize("point = 10.11")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "point"),
+        Token(T.EQUAL, "="),
+        Token(T.NUMBER, "10.11", value=10.11),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_assign_zero_dot_number(tokenizer):
+    tokens = tokenizer.tokenize("point = 0.11")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "point"),
+        Token(T.EQUAL, "="),
+        Token(T.NUMBER, "0.11", value=0.11),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_error_assign_dot_number(tokenizer):
+    with pytest.raises(ValueError):
+        tokens = tokenizer.tokenize("point = .11")
+
+
+def test_error_assign_number_dot_number_dot_number(tokenizer):
+    with pytest.raises(ValueError):
+        tokens = tokenizer.tokenize("point = 10.10.10")
 
 
 def test_plus_operator(tokenizer):
