@@ -134,8 +134,10 @@ class Tokenizer:
     def _read_string(self) -> Token:
         start = self._idx
         self._idx += 1
-        while self._peek() != '"':
+        while self._idx_in_range() and self._peek() != '"':
             self._idx += 1
+        if not self._idx_in_range():
+            raise ValueError("Unterminated string")
         self._idx += 1
         origin = self._origin[start:self._idx]
         return Token(TokenType.STRING, origin, value=origin[1:-1])
