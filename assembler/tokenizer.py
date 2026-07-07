@@ -2,57 +2,51 @@ from enum import Enum, auto
 
 
 class TokenType(Enum):
-    def _generate_next_value_(name, start, count, last_values):  # Enum
-        # auto() 호출 시 실행되는 함수
-        return f"_{name}"
-
-    # 할당
+    # End Of File
+    EOF = auto()
+    # Literal
+    IDENTIFIER = auto()
+    STRING = auto()
+    NUMBER = auto()
+    # Operation
+    PLUS = "+"
+    MINUS = "-"
+    STAR = "*"
+    SLASH = "/"
+    # Assignment
     EQUAL = "="
-    # 그룹핑
-    LEFT_PAREN = "("
-    RIGHT_PAREN = ")"
-    # 블록스코프
-    LEFT_BRACE = "{"
-    RIGHT_BRACE = "}"
-    # 비교
+    # Variable declaration
+    VAR = "var"
+    # Boolean
+    TRUE = "true"
+    FALSE = "false"
+    # Comparison
     LESS = "<"
     GREATER = ">"
     LESS_EQUAL = "<="
     GREATER_EQUAL = ">="
     EQUAL_EQUAL = "=="
     BANG_EQUAL = "!="
-    # 산술연산
-    PLUS = "+"
-    MINUS = "-"
-    STAR = "*"
-    SLASH = "/"
-    # 논리연산
+    # Logical
     BANG = "!"
     AND = "and"
     OR = "or"
-    # 구분자
+    # Delimiter
     SEMICOLON = ";"
     COMMA = ","
-    # 변수선언
-    VAR = "var"
-    # 불리언
-    TRUE = "true"
-    FALSE = "false"
-    # 출력문
+    # Print statement
     PRINT = "print"
-    # 조건문
+    # Conditional
     IF = "if"
     ELSE = "else"
-    # 반복문
+    # Loop
     FOR = "for"
-
-    # 리터럴
-    IDENTIFIER = auto()
-    STRING = auto()
-    NUMBER = auto()
-
-    # 기타
-    EOF = auto()
+    # Grouping
+    LEFT_PAREN = "("
+    RIGHT_PAREN = ")"
+    # Block scope
+    LEFT_BRACE = "{"
+    RIGHT_BRACE = "}"
 
 
 class Token:
