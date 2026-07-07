@@ -75,8 +75,11 @@ class Tokenizer:
         "-": TokenType.MINUS,
         "*": TokenType.STAR,
         "/": TokenType.SLASH,
+        # 논리연산
+        "!": TokenType.BANG,
         # 구분자
-        ";": TokenType.SEMICOLON
+        ";": TokenType.SEMICOLON,
+        ",": TokenType.COMMA,
     }
 
     def __init__(self):
