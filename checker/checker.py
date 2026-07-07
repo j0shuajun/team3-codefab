@@ -1,5 +1,13 @@
-from assembler.expr import AssignExpr, BinaryExpr, LiteralExpr, VariableExpr
-from assembler.statement import BlockStmt, ExpressionStmt, VarStmt
+from assembler.expr import (
+    AssignExpr,
+    BinaryExpr,
+    GroupingExpr,
+    LiteralExpr,
+    LogicalExpr,
+    UnaryExpr,
+    VariableExpr,
+)
+from assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, VarStmt
 
 
 class Checker:
@@ -24,6 +32,10 @@ class Checker:
             self._resolve_block_stmt(statement)
         elif isinstance(statement, ExpressionStmt):
             self._resolve_expr(statement.expression)
+        elif isinstance(statement, IfStmt):
+            self._resolve_if_stmt(statement)
+        elif isinstance(statement, ForStmt):
+            self._resolve_for_stmt(statement)
 
     def _resolve_var_stmt(self, statement):
         scope = self.scopes[-1]
@@ -43,6 +55,21 @@ class Checker:
         self._resolve_statements(statement.statements)
         self.scopes.pop()
 
+    def _resolve_if_stmt(self, statement):
+        self._resolve_expr(statement.condition)
+        self._resolve_statement(statement.then_branch)
+        if statement.else_branch is not None:
+            self._resolve_statement(statement.else_branch)
+
+    def _resolve_for_stmt(self, statement):
+        if statement.initializer is not None:
+            self._resolve_statement(statement.initializer)
+        if statement.condition is not None:
+            self._resolve_expr(statement.condition)
+        if statement.increment is not None:
+            self._resolve_expr(statement.increment)
+        self._resolve_statement(statement.body)
+
     def _resolve_expr(self, expr):
         if isinstance(expr, VariableExpr):
             self._resolve_variable_expr(expr)
@@ -51,6 +78,13 @@ class Checker:
         elif isinstance(expr, BinaryExpr):
             self._resolve_expr(expr.left)
             self._resolve_expr(expr.right)
+        elif isinstance(expr, LogicalExpr):
+            self._resolve_expr(expr.left)
+            self._resolve_expr(expr.right)
+        elif isinstance(expr, UnaryExpr):
+            self._resolve_expr(expr.right)
+        elif isinstance(expr, GroupingExpr):
+            self._resolve_expr(expr.expression)
         elif isinstance(expr, LiteralExpr):
             pass
 
