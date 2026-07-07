@@ -101,3 +101,19 @@ def test_semicolon(tokenizer):
                       Token(T.EQUAL, "="),
                       Token(T.NUMBER, "4", value=4.0),
                       Token(T.EOF, "")]
+
+def test_less_than(tokenizer):
+    tokens = tokenizer.tokenize("a < 3")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.LESS, "<"),
+                      Token(T.NUMBER, "3", value=3.0),
+                      Token(T.EOF, "")]
+
+def test_greater_than(tokenizer):
+    tokens = tokenizer.tokenize("a > 3")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.GREATER, ">"),
+                      Token(T.NUMBER, "3", value=3.0),
+                      Token(T.EOF, "")]
