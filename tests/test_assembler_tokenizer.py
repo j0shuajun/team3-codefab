@@ -34,6 +34,17 @@ def test_assign_zero(tokenizer):
     ]
 
 
+def test_assign_zero_dot_zero(tokenizer):
+    tokens = tokenizer.tokenize("age = 0.0")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "age"),
+        Token(T.EQUAL, "="),
+        Token(T.NUMBER, "0.0", value=0.0),
+        Token(T.EOF, ""),
+    ]
+
+
 def test_error_assign_number_start_with_zero(tokenizer):
     with pytest.raises(ValueError, match="cannot start with zero"):
         tokenizer.tokenize("age = 01")
