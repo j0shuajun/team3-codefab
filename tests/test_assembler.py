@@ -1,12 +1,21 @@
 from assembler.assembler import Assembler
 from assembler.expr import (
+    AssignExpr,
     BinaryExpr,
     GroupingExpr,
     LiteralExpr,
+    LogicalExpr,
     UnaryExpr,
-    VariableExpr, AssignExpr, LogicalExpr,
+    VariableExpr,
 )
-from assembler.statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt, IfStmt, ForStmt
+from assembler.statement import (
+    BlockStmt,
+    ExpressionStmt,
+    ForStmt,
+    IfStmt,
+    PrintStmt,
+    VarStmt,
+)
 from assembler.tokenizer import Token, TokenType
 
 
@@ -192,12 +201,14 @@ def test_parse_var_declaration():
 
 
 def test_parse_assignment_expression():
-    statements = parse([
-        token(TokenType.IDENTIFIER, "a"),
-        token(TokenType.EQUAL, "="),
-        token(TokenType.NUMBER, "20", 20),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.EQUAL, "="),
+            token(TokenType.NUMBER, "20", 20),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 
@@ -207,14 +218,16 @@ def test_parse_assignment_expression():
 
 
 def test_parse_comparison_and_equality_expression():
-    statements = parse([
-        token(TokenType.IDENTIFIER, "a"),
-        token(TokenType.GREATER, ">"),
-        token(TokenType.NUMBER, "3", 3),
-        token(TokenType.EQUAL_EQUAL, "=="),
-        token(TokenType.TRUE, "true"),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.GREATER, ">"),
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.EQUAL_EQUAL, "=="),
+            token(TokenType.TRUE, "true"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 
@@ -225,14 +238,16 @@ def test_parse_comparison_and_equality_expression():
 
 
 def test_parse_logical_expression():
-    statements = parse([
-        token(TokenType.TRUE, "true"),
-        token(TokenType.AND, "and"),
-        token(TokenType.FALSE, "false"),
-        token(TokenType.OR, "or"),
-        token(TokenType.TRUE, "true"),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.TRUE, "true"),
+            token(TokenType.AND, "and"),
+            token(TokenType.FALSE, "false"),
+            token(TokenType.OR, "or"),
+            token(TokenType.TRUE, "true"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 
@@ -243,18 +258,20 @@ def test_parse_logical_expression():
 
 
 def test_parse_block_statement():
-    statements = parse([
-        token(TokenType.LEFT_BRACE, "{"),
-        token(TokenType.VAR, "var"),
-        token(TokenType.IDENTIFIER, "a"),
-        token(TokenType.EQUAL, "="),
-        token(TokenType.NUMBER, "1", 1),
-        token(TokenType.SEMICOLON, ";"),
-        token(TokenType.PRINT, "print"),
-        token(TokenType.IDENTIFIER, "a"),
-        token(TokenType.SEMICOLON, ";"),
-        token(TokenType.RIGHT_BRACE, "}"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.LEFT_BRACE, "{"),
+            token(TokenType.VAR, "var"),
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.EQUAL, "="),
+            token(TokenType.NUMBER, "1", 1),
+            token(TokenType.SEMICOLON, ";"),
+            token(TokenType.PRINT, "print"),
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.SEMICOLON, ";"),
+            token(TokenType.RIGHT_BRACE, "}"),
+        ]
+    )
 
     stmt = statements[0]
 
@@ -265,21 +282,23 @@ def test_parse_block_statement():
 
 
 def test_parse_if_else_statement():
-    statements = parse([
-        token(TokenType.IF, "if"),
-        token(TokenType.LEFT_PAREN, "("),
-        token(TokenType.IDENTIFIER, "a"),
-        token(TokenType.GREATER, ">"),
-        token(TokenType.NUMBER, "3", 3),
-        token(TokenType.RIGHT_PAREN, ")"),
-        token(TokenType.PRINT, "print"),
-        token(TokenType.NUMBER, "1", 1),
-        token(TokenType.SEMICOLON, ";"),
-        token(TokenType.ELSE, "else"),
-        token(TokenType.PRINT, "print"),
-        token(TokenType.NUMBER, "2", 2),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.IF, "if"),
+            token(TokenType.LEFT_PAREN, "("),
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.GREATER, ">"),
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.RIGHT_PAREN, ")"),
+            token(TokenType.PRINT, "print"),
+            token(TokenType.NUMBER, "1", 1),
+            token(TokenType.SEMICOLON, ";"),
+            token(TokenType.ELSE, "else"),
+            token(TokenType.PRINT, "print"),
+            token(TokenType.NUMBER, "2", 2),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     stmt = statements[0]
 
@@ -290,32 +309,30 @@ def test_parse_if_else_statement():
 
 
 def test_parse_for_statement():
-    statements = parse([
-        token(TokenType.FOR, "for"),
-        token(TokenType.LEFT_PAREN, "("),
-
-        token(TokenType.VAR, "var"),
-        token(TokenType.IDENTIFIER, "i"),
-        token(TokenType.EQUAL, "="),
-        token(TokenType.NUMBER, "0", 0),
-        token(TokenType.SEMICOLON, ";"),
-
-        token(TokenType.IDENTIFIER, "i"),
-        token(TokenType.LESS, "<"),
-        token(TokenType.NUMBER, "3", 3),
-        token(TokenType.SEMICOLON, ";"),
-
-        token(TokenType.IDENTIFIER, "i"),
-        token(TokenType.EQUAL, "="),
-        token(TokenType.IDENTIFIER, "i"),
-        token(TokenType.PLUS, "+"),
-        token(TokenType.NUMBER, "1", 1),
-
-        token(TokenType.RIGHT_PAREN, ")"),
-        token(TokenType.PRINT, "print"),
-        token(TokenType.IDENTIFIER, "i"),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.FOR, "for"),
+            token(TokenType.LEFT_PAREN, "("),
+            token(TokenType.VAR, "var"),
+            token(TokenType.IDENTIFIER, "i"),
+            token(TokenType.EQUAL, "="),
+            token(TokenType.NUMBER, "0", 0),
+            token(TokenType.SEMICOLON, ";"),
+            token(TokenType.IDENTIFIER, "i"),
+            token(TokenType.LESS, "<"),
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.SEMICOLON, ";"),
+            token(TokenType.IDENTIFIER, "i"),
+            token(TokenType.EQUAL, "="),
+            token(TokenType.IDENTIFIER, "i"),
+            token(TokenType.PLUS, "+"),
+            token(TokenType.NUMBER, "1", 1),
+            token(TokenType.RIGHT_PAREN, ")"),
+            token(TokenType.PRINT, "print"),
+            token(TokenType.IDENTIFIER, "i"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     stmt = statements[0]
 

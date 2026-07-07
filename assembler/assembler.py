@@ -1,10 +1,19 @@
-from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr, AssignExpr, LogicalExpr
-from .statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt, IfStmt, ForStmt
+from .expr import (
+    AssignExpr,
+    BinaryExpr,
+    GroupingExpr,
+    LiteralExpr,
+    LogicalExpr,
+    UnaryExpr,
+    VariableExpr,
+)
+from .statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt
 from .tokenizer import TokenType
 
 
 class AssemblerError(Exception):
     pass
+
 
 # expression grammar
 # assignment -> IDENTIFIER "=" assignment | logic_or
@@ -16,6 +25,7 @@ class AssemblerError(Exception):
 # factor     -> unary (("*" | "/") unary)*
 # unary      -> ("!" | "-") unary | primary
 # primary    -> NUMBER | STRING | true | false | IDENTIFIER | "(" expression ")"
+
 
 class Assembler:
     def __init__(self, tokens):
@@ -153,10 +163,10 @@ class Assembler:
         expression = self.term()
 
         while self.match(
-                TokenType.GREATER,
-                TokenType.GREATER_EQUAL,
-                TokenType.LESS,
-                TokenType.LESS_EQUAL,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
         ):
             operator = self.previous()
             right = self.term()
