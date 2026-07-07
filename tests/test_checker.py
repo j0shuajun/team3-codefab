@@ -1,4 +1,4 @@
-from checker import Checker
+from checker.checker import Checker
 from assembler.expr import LiteralExpr, VariableExpr, BinaryExpr
 from assembler.statement import BlockStmt, VarStmt
 
