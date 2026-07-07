@@ -59,14 +59,23 @@ class Token:
 
 class Tokenizer:
     _SINGLE_CHARACTER_TOKENS = {
+        # 할당
         "=": TokenType.EQUAL,
+        # 그룹핑
         "(": TokenType.LEFT_PAREN,
         ")": TokenType.RIGHT_PAREN,
+        # 블록스코프
+        "{": TokenType.LEFT_BRACE,
+        "}": TokenType.RIGHT_BRACE,
+        # 비교
         ">": TokenType.GREATER,
+        #
+        # 산술연산
         "+": TokenType.PLUS,
         "-": TokenType.MINUS,
         "*": TokenType.STAR,
         "/": TokenType.SLASH,
+        # 구분자
     }
 
     def __init__(self):
