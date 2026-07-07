@@ -176,4 +176,6 @@ class Tokenizer:
             return Token(TokenType.AND, origin)
         if origin == "or":
             return Token(TokenType.OR, origin)
+        if origin == "for":
+            return Token(TokenType.FOR, origin)
         return Token(TokenType.IDENTIFIER, origin)
