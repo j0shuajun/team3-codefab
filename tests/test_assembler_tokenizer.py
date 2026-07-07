@@ -24,8 +24,13 @@ def test_assign_number(tokenizer):
 
 
 def test_error_assign_number_start_with_zero(tokenizer):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="cannot start with zero"):
         tokenizer.tokenize("age = 01")
+
+
+def test_error_assign_number_dot_number_start_with_zero(tokenizer):
+    with pytest.raises(ValueError, match="cannot start with zero"):
+        tokenizer.tokenize("age = 01.01")
 
 
 def test_assign_number_dot_number(tokenizer):
