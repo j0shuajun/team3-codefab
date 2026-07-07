@@ -28,7 +28,6 @@
 ### Ground Rules 준수
 - [ ] Branch 이름이 `feature/<기능>` 형식을 따름
 - [ ] Commit message가 [커밋 메시지 규칙](https://wikidocs.net/332862)을 따름
-- [ ] 코드 자동정렬 실행됨 (`Ctrl + Alt + L`)
 - [ ] 테스트 코드는 `tests/` 디렉토리의 올바른 위치에 있음
 
 ### 코드 품질
