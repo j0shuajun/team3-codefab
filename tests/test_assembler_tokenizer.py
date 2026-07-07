@@ -70,9 +70,22 @@ def test_divide_operator(tokenizer):
                       Token(T.NUMBER, "2", value=2.0),
                       Token(T.EOF, "")]
 
+def test_grouping(tokenizer):
+    tokens = tokenizer.tokenize("( a + b )")
+
+    assert tokens == [Token(T.LEFT_PAREN, "("),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.PLUS, "+"),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
+
 def test_block_scope(tokenizer):
     tokens = tokenizer.tokenize("{ a }")
 
-    assert tokens == [Token(T.LEFT_BRACE, "{"),
+    assert tokens == [Token(T.LEFT_BRACE, "("),
                       Token(T.IDENTIFIER, "a"),
-                      Token(T.RIGHT_BRACE, "}")]
+                      Token(T.PLUS, "+"),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.RIGHT_BRACE, ")"),
+                      Token(T.EOF, "")]
