@@ -150,6 +150,8 @@ class Tokenizer:
         origin = self._read_multiple_characters(str.isalnum)
         if origin == "if":
             return Token(TokenType.IF, origin)
+        if origin == "else":
+            return Token(TokenType.ELSE, origin)
         if origin == "var":
             return Token(TokenType.VAR, origin)
         if origin == "true":
