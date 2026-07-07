@@ -1,4 +1,4 @@
-from .expr import LiteralExpr
+from .expr import LiteralExpr, BinaryExpr
 from .statement import ExpressionStmt
 from .tokenizer import TokenType
 
@@ -29,7 +29,7 @@ class Assembler:
         return ExpressionStmt(expression)
 
     def expression(self):
-        return self.primary()
+        return self.term()
 
     def primary(self):
         if self.match(TokenType.NUMBER):
@@ -67,3 +67,13 @@ class Assembler:
 
     def previous(self):
         return self.tokens[self.current - 1]
+
+    def term(self):
+        expr = self.primary()
+
+        while self.match(TokenType.PLUS, TokenType.MINUS):
+            operator = self.previous()
+            right = self.primary()
+            expr = BinaryExpr(expr, operator, right)
+
+        return expr
