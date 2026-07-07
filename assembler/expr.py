@@ -1,5 +1,6 @@
 class Expr:
     """Base class for every expression node."""
+
     pass
 
 
@@ -27,8 +28,8 @@ class AssignExpr(Expr):
     """변수에 값을 대입하는 노드"""
 
     def __init__(self, name, value):
-        self.name = name      # Token
-        self.value = value    # Expr
+        self.name = name  # Token
+        self.value = value  # Expr
 
     def __repr__(self):
         return f"AssignExpr({self.name.origin}, {self.value})"
@@ -38,9 +39,9 @@ class BinaryExpr(Expr):
     """left operator right 형태의 이항 연산 노드"""
 
     def __init__(self, left, operator, right):
-        self.left = left          # Expr
+        self.left = left  # Expr
         self.operator = operator  # Token
-        self.right = right        # Expr
+        self.right = right  # Expr
 
     def __repr__(self):
         return f"BinaryExpr({self.left}, {self.operator.origin}, {self.right})"
@@ -51,7 +52,7 @@ class UnaryExpr(Expr):
 
     def __init__(self, operator, right):
         self.operator = operator  # Token
-        self.right = right        # Expr
+        self.right = right  # Expr
 
     def __repr__(self):
         return f"UnaryExpr({self.operator.origin}, {self.right})"
@@ -71,9 +72,9 @@ class LogicalExpr(Expr):
     """and / or 논리 연산 노드"""
 
     def __init__(self, left, operator, right):
-        self.left = left          # Expr
+        self.left = left  # Expr
         self.operator = operator  # Token
-        self.right = right        # Expr
+        self.right = right  # Expr
 
     def __repr__(self):
         return f"LogicalExpr({self.left}, {self.operator.origin}, {self.right})"
