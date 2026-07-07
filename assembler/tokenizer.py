@@ -1,9 +1,8 @@
 from enum import Enum, auto
-from typing import override
 
 
 class TokenType(Enum):
-    def _generate_next_value_(name, start, count, last_values): # Enum
+    def _generate_next_value_(name, start, count, last_values):  # Enum
         # auto() 호출 시 실행되는 함수
         return f"_{name}"
 
@@ -56,7 +55,6 @@ class TokenType(Enum):
     EOF = auto()
 
 
-
 class Token:
     def __init__(self, token_type: TokenType, origin: str, value=None):
         self.type = token_type
@@ -83,7 +81,8 @@ class Tokenizer:
     )
 
     _CHARACTERS_WITH_EQUAL = frozenset(
-        t.value for t in TokenType
+        t.value
+        for t in TokenType
         if isinstance(t.value, str) and len(t.value) == 2 and t.value.endswith("=")
     )
 
