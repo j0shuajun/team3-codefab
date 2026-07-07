@@ -298,6 +298,15 @@ def test_equal_equal(tokenizer):
                       Token(T.EOF, "")]
 
 
+def test_equal_equal_without_blank(tokenizer):
+    tokens = tokenizer.tokenize("a==b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL_EQUAL, "=="),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
 def test_greater_equal(tokenizer):
     tokens = tokenizer.tokenize("a >= b")
 
@@ -307,8 +316,26 @@ def test_greater_equal(tokenizer):
                       Token(T.EOF, "")]
 
 
+def test_greater_equal_without_blank(tokenizer):
+    tokens = tokenizer.tokenize("a>=b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.GREATER_EQUAL, ">="),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
 def test_less_equal(tokenizer):
     tokens = tokenizer.tokenize("a <= b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.LESS_EQUAL, "<="),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
+def test_less_equal_without_blank(tokenizer):
+    tokens = tokenizer.tokenize("a<=b")
 
     assert tokens == [Token(T.IDENTIFIER, "a"),
                       Token(T.LESS_EQUAL, "<="),
