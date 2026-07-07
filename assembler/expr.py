@@ -12,16 +12,25 @@ class LiteralExpr(Expr):
     def __init__(self, value):
         self.value = value
 
+    def __repr__(self):
+        return f"LiteralExpr({self.value})"
+
 
 class VariableExpr(Expr):
     def __init__(self, name: Token):
         self.name = name
+
+    def __repr__(self):
+        return f"VariableExpr({self.name.origin})"
 
 
 class AssignExpr(Expr):
     def __init__(self, name: Token, value: Expr):
         self.name = name
         self.value = value
+
+    def __repr__(self):
+        return f"AssignExpr({self.name.origin}, {self.value})"
 
 
 class BinaryExpr(Expr):
@@ -30,16 +39,25 @@ class BinaryExpr(Expr):
         self.operator = operator
         self.right = right
 
+    def __repr__(self):
+        return f"BinaryExpr({self.left}, {self.operator.origin}, {self.right})"
+
 
 class UnaryExpr(Expr):
     def __init__(self, operator: Token, right: Expr):
         self.operator = operator
         self.right = right
 
+    def __repr__(self):
+        return f"UnaryExpr({self.operator.origin}, {self.right})"
+
 
 class GroupingExpr(Expr):
     def __init__(self, expression: Expr):
         self.expression = expression
+
+    def __repr__(self):
+        return f"GroupingExpr({self.expression})"
 
 
 class LogicalExpr(Expr):
@@ -47,3 +65,6 @@ class LogicalExpr(Expr):
         self.left = left
         self.operator = operator
         self.right = right
+
+    def __repr__(self):
+        return f"LogicalExpr({self.left}, {self.operator.origin}, {self.right})"
