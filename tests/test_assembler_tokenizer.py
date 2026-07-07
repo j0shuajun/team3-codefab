@@ -194,10 +194,22 @@ def test_false(tokenizer):
 
 
 def test_print_statement(tokenizer):
-    tokens = tokenizer.tokenize("print(a)")
+    tokens = tokenizer.tokenize('print("hi")')
+
+    assert tokens == [Token(T.PRINT, "print"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.STRING, '"hi"', value="hi"),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
+
+
+def test_print_expression(tokenizer):
+    tokens = tokenizer.tokenize("print(a+b)")
 
     assert tokens == [Token(T.PRINT, "print"),
                       Token(T.LEFT_PAREN, "("),
                       Token(T.IDENTIFIER, "a"),
+                      Token(T.PLUS, "+"),
+                      Token(T.IDENTIFIER, "b"),
                       Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
