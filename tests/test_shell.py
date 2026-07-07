@@ -1,5 +1,6 @@
 from shell import PromptShell
 
+
 def make_shell():
     return PromptShell()
 
