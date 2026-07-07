@@ -117,3 +117,30 @@ def test_greater_than(tokenizer):
                       Token(T.GREATER, ">"),
                       Token(T.NUMBER, "3", value=3.0),
                       Token(T.EOF, "")]
+
+def test_comma(tokenizer):
+    tokens = tokenizer.tokenize("a, b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.COMMA, ","),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+def test_assign_with_comma(tokenizer):
+    tokens = tokenizer.tokenize("a, b = 3, 4")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.COMMA, ","),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.NUMBER, "3", value=3.0),
+                      Token(T.COMMA, ","),
+                      Token(T.NUMBER, "4", value=4.0),
+                      Token(T.EQUAL, "="),
+                      Token(T.EOF, "")]
+
+def test_bang(tokenizer):
+    tokens = tokenizer.tokenize("!a")
+
+    assert tokens == [Token(T.BANG, "!"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EOF, "")]
