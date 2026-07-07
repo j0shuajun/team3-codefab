@@ -89,3 +89,15 @@ def test_block_scope(tokenizer):
                       Token(T.IDENTIFIER, "b"),
                       Token(T.RIGHT_BRACE, "}"),
                       Token(T.EOF, "")]
+
+def test_semicolon(tokenizer):
+    tokens = tokenizer.tokenize("a=3;b=4")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.NUMBER, "3", value=3.0),
+                      Token(T.SEMICOLON, ";"),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EQUAL, "="),
+                      Token(T.NUMBER, "4", value=4.0),
+                      Token(T.EOF, "")]
