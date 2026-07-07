@@ -6,7 +6,7 @@ from assembler.expr import (
     UnaryExpr,
     VariableExpr, AssignExpr, LogicalExpr,
 )
-from assembler.statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt
+from assembler.statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt, IfStmt
 from assembler.tokenizer import Token, TokenType
 
 
@@ -263,3 +263,27 @@ def test_parse_block_statement():
     assert isinstance(stmt.statements[0], VarStmt)
     assert isinstance(stmt.statements[1], PrintStmt)
 
+
+def test_parse_if_else_statement():
+    statements = parse([
+        token(TokenType.IF, "if"),
+        token(TokenType.LEFT_PAREN, "("),
+        token(TokenType.IDENTIFIER, "a"),
+        token(TokenType.GREATER, ">"),
+        token(TokenType.NUMBER, "3", 3),
+        token(TokenType.RIGHT_PAREN, ")"),
+        token(TokenType.PRINT, "print"),
+        token(TokenType.NUMBER, "1", 1),
+        token(TokenType.SEMICOLON, ";"),
+        token(TokenType.ELSE, "else"),
+        token(TokenType.PRINT, "print"),
+        token(TokenType.NUMBER, "2", 2),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, IfStmt)
+    assert isinstance(stmt.condition, BinaryExpr)
+    assert isinstance(stmt.then_branch, PrintStmt)
+    assert isinstance(stmt.else_branch, PrintStmt)

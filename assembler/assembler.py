@@ -1,5 +1,5 @@
 from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr, AssignExpr, LogicalExpr
-from .statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt
+from .statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt, IfStmt
 from .tokenizer import TokenType
 
 
@@ -24,10 +24,26 @@ class Assembler:
         if self.match(TokenType.PRINT):
             return self.print_statement()
 
+        if self.match(TokenType.IF):
+            return self.if_statement()
+
         if self.match(TokenType.LEFT_BRACE):
             return BlockStmt(self.block())
 
         return self.expression_statement()
+
+    def if_statement(self):
+        self.consume(TokenType.LEFT_PAREN, "Expected '(' after if.")
+        condition = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Expected ')' after if condition.")
+
+        then_branch = self.statement()
+
+        else_branch = None
+        if self.match(TokenType.ELSE):
+            else_branch = self.statement()
+
+        return IfStmt(condition, then_branch, else_branch)
 
     def block(self):
         statements = []
