@@ -200,6 +200,11 @@ def test_string(tokenizer):
                       Token(T.EOF, "")]
 
 
+def test_string_not_closed(tokenizer):
+    with pytest.raises(ValueError):
+        tokenizer.tokenize('"hi')
+
+
 def test_print_statement(tokenizer):
     tokens = tokenizer.tokenize('print("hi")')
 
