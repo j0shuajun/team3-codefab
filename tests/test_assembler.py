@@ -4,7 +4,7 @@ from assembler.expr import (
     GroupingExpr,
     LiteralExpr,
     UnaryExpr,
-    VariableExpr, AssignExpr,
+    VariableExpr, AssignExpr, LogicalExpr,
 )
 from assembler.statement import ExpressionStmt, PrintStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
@@ -222,4 +222,21 @@ def test_parse_comparison_and_equality_expression():
     assert expr.operator.type == TokenType.EQUAL_EQUAL
     assert isinstance(expr.left, BinaryExpr)
     assert expr.left.operator.type == TokenType.GREATER
+
+def test_parse_logical_expression():
+    statements = parse([
+        token(TokenType.TRUE, "true"),
+        token(TokenType.AND, "and"),
+        token(TokenType.FALSE, "false"),
+        token(TokenType.OR, "or"),
+        token(TokenType.TRUE, "true"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, LogicalExpr)
+    assert expr.operator.type == TokenType.OR
+    assert isinstance(expr.left, LogicalExpr)
+    assert expr.left.operator.type == TokenType.AND
 

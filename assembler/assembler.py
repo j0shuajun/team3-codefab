@@ -1,4 +1,4 @@
-from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr, AssignExpr
+from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr, AssignExpr, LogicalExpr
 from .statement import ExpressionStmt, PrintStmt, VarStmt
 from .tokenizer import TokenType
 
@@ -40,7 +40,7 @@ class Assembler:
         return self.assignment()
 
     def assignment(self):
-        expr = self.equality()
+        expr = self.logic_or()
 
         if self.match(TokenType.EQUAL):
             value = self.assignment()
@@ -49,6 +49,26 @@ class Assembler:
                 return AssignExpr(expr.name, value)
 
             raise AssemblerError("Invalid assignment target.")
+
+        return expr
+
+    def logic_or(self):
+        expr = self.logic_and()
+
+        while self.match(TokenType.OR):
+            operator = self.previous()
+            right = self.logic_and()
+            expr = LogicalExpr(expr, operator, right)
+
+        return expr
+
+    def logic_and(self):
+        expr = self.equality()
+
+        while self.match(TokenType.AND):
+            operator = self.previous()
+            right = self.equality()
+            expr = LogicalExpr(expr, operator, right)
 
         return expr
 
