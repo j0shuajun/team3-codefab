@@ -8,24 +8,14 @@ def tokenizer():
     return Tokenizer()
 
 
+# ===== 단일문자 토큰 =====
+
 def test_assign_number(tokenizer):
     tokens = tokenizer.tokenize("age = 37")
 
     assert tokens == [Token(T.IDENTIFIER, "age"),
                       Token(T.EQUAL, "="),
                       Token(T.NUMBER, "37", value=37.0),
-                      Token(T.EOF, "")]
-
-
-def test_if_statement(tokenizer):
-    tokens = tokenizer.tokenize("if (x > 10)")
-
-    assert tokens == [Token(T.IF, "if"),
-                      Token(T.LEFT_PAREN, "("),
-                      Token(T.IDENTIFIER, "x"),
-                      Token(T.GREATER, ">"),
-                      Token(T.NUMBER, "10", value=10.0),
-                      Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
 
 
@@ -156,4 +146,122 @@ def test_bang(tokenizer):
 
     assert tokens == [Token(T.BANG, "!"),
                       Token(T.IDENTIFIER, "a"),
+                      Token(T.EOF, "")]
+
+
+# ===== 여러문자 토큰 =====
+
+def test_if_condition(tokenizer):
+    tokens = tokenizer.tokenize("if (x > 10)")
+
+    assert tokens == [Token(T.IF, "if"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.IDENTIFIER, "x"),
+                      Token(T.GREATER, ">"),
+                      Token(T.NUMBER, "10", value=10.0),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
+
+def test_else_if_condition(tokenizer):
+    tokens = tokenizer.tokenize("else if (x > 10)")
+
+    assert tokens == [Token(T.ELSE, "else"),
+                      Token(T.IF, "if"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.IDENTIFIER, "x"),
+                      Token(T.GREATER, ">"),
+                      Token(T.NUMBER, "10", value=10.0),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
+
+def test_else_block(tokenizer):
+    tokens = tokenizer.tokenize("else {a=1}")
+
+    assert tokens == [Token(T.ELSE, "else"),
+                      Token(T.LEFT_BRACE, "{"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.NUMBER, "1", value=1.0),
+                      Token(T.RIGHT_BRACE, "}"),
+                      Token(T.EOF, "")]
+
+def test_var_statement(tokenizer):
+    tokens = tokenizer.tokenize("var a = 37")
+
+    assert tokens == [Token(T.VAR, "var"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.NUMBER, "37", value=37.0),
+                      Token(T.EOF, "")]
+
+
+def test_true(tokenizer):
+    tokens = tokenizer.tokenize("var a = true")
+
+    assert tokens == [Token(T.VAR, "var"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.TRUE, "true"),
+                      Token(T.EOF, "")]
+
+
+def test_false(tokenizer):
+    tokens = tokenizer.tokenize("var a = false")
+
+    assert tokens == [Token(T.VAR, "var"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.FALSE, "false"),
+                      Token(T.EOF, "")]
+
+
+def test_and(tokenizer):
+    tokens = tokenizer.tokenize("a and b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.AND, "and"),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
+def test_or(tokenizer):
+    tokens = tokenizer.tokenize("a or b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.OR, "or"),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
+def test_string(tokenizer):
+    tokens = tokenizer.tokenize('"hi"')
+
+    assert tokens == [Token(T.STRING, '"hi"', value="hi"),
+                      Token(T.EOF, "")]
+
+
+def test_string_not_closed(tokenizer):
+    with pytest.raises(ValueError):
+        tokenizer.tokenize('"hi')
+
+
+def test_print_statement(tokenizer):
+    tokens = tokenizer.tokenize('print("hi")')
+
+    assert tokens == [Token(T.PRINT, "print"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.STRING, '"hi"', value="hi"),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
+
+
+def test_print_expression(tokenizer):
+    tokens = tokenizer.tokenize("print(a+b)")
+
+    assert tokens == [Token(T.PRINT, "print"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.PLUS, "+"),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
