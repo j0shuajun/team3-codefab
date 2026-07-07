@@ -1,15 +1,14 @@
-import pytest
-from assembler.tokenizer import Token, TokenType
 from assembler.expr import (
-    Expr,
-    LiteralExpr,
-    VariableExpr,
     AssignExpr,
     BinaryExpr,
-    UnaryExpr,
+    Expr,
     GroupingExpr,
+    LiteralExpr,
     LogicalExpr,
+    UnaryExpr,
+    VariableExpr,
 )
+from assembler.tokenizer import Token, TokenType
 
 
 def test_literal_expr_has_value():

@@ -1,6 +1,7 @@
 from checker.checker import Checker
 from assembler.expr import LiteralExpr, VariableExpr, BinaryExpr
 from assembler.statement import BlockStmt, VarStmt
+from checker import Checker
 
 
 def check(statements):
@@ -29,10 +30,12 @@ class TestDuplicateDeclaration:
 
     def test_duplicate_declaration_inside_same_block_is_error(self):
         statements = [
-            BlockStmt([
-                VarStmt("x", LiteralExpr(1)),
-                VarStmt("x", LiteralExpr(2)),
-            ]),
+            BlockStmt(
+                [
+                    VarStmt("x", LiteralExpr(1)),
+                    VarStmt("x", LiteralExpr(2)),
+                ]
+            ),
         ]
 
         errors = check(statements)
@@ -43,9 +46,11 @@ class TestDuplicateDeclaration:
     def test_shadowing_in_nested_block_is_allowed(self):
         statements = [
             VarStmt("x", LiteralExpr(1)),
-            BlockStmt([
-                VarStmt("x", LiteralExpr(2)),
-            ]),
+            BlockStmt(
+                [
+                    VarStmt("x", LiteralExpr(2)),
+                ]
+            ),
         ]
 
         assert check(statements) == []
