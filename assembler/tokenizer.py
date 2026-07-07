@@ -3,44 +3,49 @@ from typing import override
 
 
 class TokenType(Enum):
-    @override
-    def _generate_next_value_(self, start, count, last_values):
-        """ auto() 시 호출됨 """
-        print(self, start, count, last_values)
-        return self
+    def _generate_next_value_(name, start, count, last_values): # Enum
+        # auto() 호출 시 실행되는 함수
+        return f"_{name}"
 
-    # 단일문자
+    # 할당
+    EQUAL = "="
+    # 그룹핑
     LEFT_PAREN = "("
     RIGHT_PAREN = ")"
+    # 블록스코프
     LEFT_BRACE = "{"
     RIGHT_BRACE = "}"
-    COMMA = ","
-    SEMICOLON = ";"
-
+    # 비교
+    LESS = "<"
+    GREATER = ">"
+    LESS_EQUAL = "<="
+    GREATER_EQUAL = ">="
+    EQUAL_EQUAL = "=="
+    BANG_EQUAL = "!="
+    # 산술연산
     PLUS = "+"
     MINUS = "-"
     STAR = "*"
     SLASH = "/"
+    # 논리연산
     BANG = "!"
-    EQUAL = "="
-    GREATER = ">"
-    LESS = "<"
-
-    # 여러문자
-    VAR = "var"
-    TRUE = "true"
-    FALSE = "false"
-    PRINT = "print"
     AND = "and"
     OR = "or"
+    # 구분자
+    SEMICOLON = ";"
+    COMMA = ","
+    # 변수선언
+    VAR = "var"
+    # 불리언
+    TRUE = "true"
+    FALSE = "false"
+    # 출력문
+    PRINT = "print"
+    # 조건문
     IF = "if"
     ELSE = "else"
+    # 반복문
     FOR = "for"
-
-    BANG_EQUAL = "!="
-    EQUAL_EQUAL = "=="
-    GREATER_EQUAL = ">="
-    LESS_EQUAL = "<="
 
     # 리터럴
     IDENTIFIER = auto()
