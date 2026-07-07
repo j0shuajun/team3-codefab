@@ -69,9 +69,19 @@ class Assembler:
         return self.tokens[self.current - 1]
 
     def term(self):
-        expr = self.primary()
+        expr = self.factor()
 
         while self.match(TokenType.PLUS, TokenType.MINUS):
+            operator = self.previous()
+            right = self.factor()
+            expr = BinaryExpr(expr, operator, right)
+
+        return expr
+
+    def factor(self):
+        expr = self.primary()
+
+        while self.match(TokenType.STAR, TokenType.SLASH):
             operator = self.previous()
             right = self.primary()
             expr = BinaryExpr(expr, operator, right)

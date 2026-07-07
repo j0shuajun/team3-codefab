@@ -40,3 +40,24 @@ def test_parse_binary_plus_expression_tree():
     assert expr.right.value == 2
 
 
+def test_parse_operator_precedence_tree():
+    statements = parse([
+        token(TokenType.NUMBER, "3", 3),
+        token(TokenType.PLUS, "+"),
+        token(TokenType.NUMBER, "7", 7),
+        token(TokenType.STAR, "*"),
+        token(TokenType.NUMBER, "5", 5),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, BinaryExpr)
+    assert expr.operator.type == TokenType.PLUS
+    assert expr.left.value == 3
+
+    assert isinstance(expr.right, BinaryExpr)
+    assert expr.right.operator.type == TokenType.STAR
+    assert expr.right.left.value == 7
+    assert expr.right.right.value == 5
+
