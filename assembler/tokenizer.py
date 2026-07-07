@@ -68,8 +68,8 @@ class Tokenizer:
         "{": TokenType.LEFT_BRACE,
         "}": TokenType.RIGHT_BRACE,
         # 비교
+        "<": TokenType.LESS,
         ">": TokenType.GREATER,
-        #
         # 산술연산
         "+": TokenType.PLUS,
         "-": TokenType.MINUS,
