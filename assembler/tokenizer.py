@@ -55,13 +55,33 @@ class Token:
             and getattr(self, "value", None) == getattr(other, "value", None)
         )
 
+    def __repr__(self):
+        return f"Token({self.type}, {self.origin!r}, {getattr(self, "value", None) !r})"
+
 
 class Tokenizer:
     _SINGLE_CHARACTER_TOKENS = {
+        # 할당
         "=": TokenType.EQUAL,
+        # 그룹핑
         "(": TokenType.LEFT_PAREN,
         ")": TokenType.RIGHT_PAREN,
+        # 블록스코프
+        "{": TokenType.LEFT_BRACE,
+        "}": TokenType.RIGHT_BRACE,
+        # 비교
+        "<": TokenType.LESS,
         ">": TokenType.GREATER,
+        # 산술연산
+        "+": TokenType.PLUS,
+        "-": TokenType.MINUS,
+        "*": TokenType.STAR,
+        "/": TokenType.SLASH,
+        # 논리연산
+        "!": TokenType.BANG,
+        # 구분자
+        ";": TokenType.SEMICOLON,
+        ",": TokenType.COMMA,
     }
 
     def __init__(self):
