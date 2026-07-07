@@ -17,7 +17,6 @@ class PromptShell:
         self.recommended_command = None
         self.is_running = True
 
-
     def run(self):
         print("CodeFab Prompt Shell")
         print("Type exit to quit, ctrlc to recommend, ctrlv to rerun.")
@@ -67,6 +66,7 @@ class PromptShell:
 
         except Exception as error:
             return [f"Error: {error}"]
+
     def save_history(self, source):
         self.history.append(source)
 
