@@ -262,10 +262,8 @@ class Executor:
         if self.is_number(left) or self.is_number(right):
             if self.is_number(left) and self.is_number(right):
                 return
-            raise CodeFabRuntimeError("Left/Rightt type mismatch.")
+            raise CodeFabRuntimeError("Left/Right type mismatch.")
 
         if left.type == right.type:
             return
-
-        raise CodeFabRuntimeError("Left/Rightt type mismatch.")
-
+        raise CodeFabRuntimeError("Left/Right type mismatch.")
