@@ -391,3 +391,27 @@ class TestComplexNestedTraversal:
 
         assert len(errors) == 1
         assert "dup" in errors[0]
+
+
+class TestFlowSensitiveInitialization:
+    def test_else_branch_still_uninitialized_when_only_then_branch_assigns(self):
+        # then_branch 에서 a 를 초기화하더라도, 실제 실행 시 else_branch 를 타면
+        # a 는 여전히 미초기화 상태다. 두 분기는 서로 배타적인 실행 경로이므로
+        # 한쪽 분기의 초기화가 다른 쪽 분기에 영향을 주면 안 된다.
+        statements = [
+            VarStmt(token("a")),
+            IfStmt(
+                condition=LiteralExpr(False),
+                then_branch=BlockStmt([
+                    ExpressionStmt(AssignExpr(token("a"), LiteralExpr(1))),
+                ]),
+                else_branch=BlockStmt([
+                    ExpressionStmt(VariableExpr(token("a"))),
+                ]),
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "a" in errors[0]

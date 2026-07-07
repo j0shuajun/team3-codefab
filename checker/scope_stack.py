@@ -48,6 +48,14 @@ class ScopeStack:
         scope = self._find_scope(name)
         return scope is not None and scope[name] is False
 
+    def snapshot(self):
+        """현재 스코프 스택 상태를 복사해서 반환한다."""
+        return [dict(scope) for scope in self._scopes]
+
+    def restore(self, snapshot):
+        """snapshot() 으로 저장해둔 상태로 스코프 스택을 되돌린다."""
+        self._scopes = [dict(scope) for scope in snapshot]
+
     def _find_scope(self, name):
         for scope in reversed(self._scopes):
             if name in scope:

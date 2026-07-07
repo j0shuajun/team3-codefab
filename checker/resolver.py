@@ -126,9 +126,30 @@ class StatementResolver(Resolver):
 
     def _resolve_if_stmt(self, statement):
         self._expression_resolver.resolve(statement.condition)
+
+        before = self._scopes.snapshot()
         self.resolve(statement.then_branch)
+        then_snapshot = self._scopes.snapshot()
+
         if statement.else_branch is not None:
+            self._scopes.restore(before)
             self.resolve(statement.else_branch)
+            else_snapshot = self._scopes.snapshot()
+        else:
+            else_snapshot = before
+
+        self._scopes.restore(self._merge_snapshots(then_snapshot, else_snapshot))
+
+    @staticmethod
+    def _merge_snapshots(then_snapshot, else_snapshot):
+        """두 분기 모두에서 초기화된 변수만 초기화된 것으로 취급한다."""
+        return [
+            {
+                name: initialized and else_scope.get(name, False)
+                for name, initialized in then_scope.items()
+            }
+            for then_scope, else_scope in zip(then_snapshot, else_snapshot)
+        ]
 
     def _resolve_for_stmt(self, statement):
         if statement.initializer is not None:
