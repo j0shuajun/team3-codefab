@@ -102,6 +102,8 @@ class Tokenizer:
                 self._idx += 1
             elif ch in self._SINGLE_CHARACTER_TOKENS:
                 tokens.append(self._read_single_character())
+            elif ch == '"':
+                tokens.append(self._read_string())
             elif ch.isdigit():
                 tokens.append(self._read_number())
             elif ch.isalpha():
@@ -129,6 +131,15 @@ class Tokenizer:
         self._idx += 1
         return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
 
+    def _read_string(self) -> Token:
+        start = self._idx
+        self._idx += 1
+        while self._peek() != '"':
+            self._idx += 1
+        self._idx += 1
+        origin = self._origin[start:self._idx]
+        return Token(TokenType.STRING, origin, value=origin[1:-1])
+
     def _read_number(self) -> Token:
         characters = self._read_multiple_characters(str.isdigit)
         return Token(TokenType.NUMBER, characters, value=float(characters))
@@ -143,4 +154,6 @@ class Tokenizer:
             return Token(TokenType.TRUE, origin)
         if origin == "false":
             return Token(TokenType.FALSE, origin)
+        if origin == "print":
+            return Token(TokenType.PRINT, origin)
         return Token(TokenType.IDENTIFIER, origin)
