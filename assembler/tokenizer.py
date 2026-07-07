@@ -1,7 +1,8 @@
-from enum import auto, Enum
+from enum import Enum, auto
 
 
 class TokenType(Enum):
+    # 단일문자
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
     LEFT_BRACE = auto()
@@ -14,28 +15,32 @@ class TokenType(Enum):
     STAR = auto()
     SLASH = auto()
     BANG = auto()
-    BANG_EQUAL = auto()
     EQUAL = auto()
-    EQUAL_EQUAL = auto()
     GREATER = auto()
-    GREATER_EQUAL = auto()
     LESS = auto()
+
+    # 여러문자
+    VAR = auto()
+    TRUE = auto()
+    FALSE = auto()
+    PRINT = auto()
+    AND = auto()
+    OR = auto()
+    IF = auto()
+    ELSE = auto()
+    FOR = auto()
+
+    BANG_EQUAL = auto()
+    EQUAL_EQUAL = auto()
+    GREATER_EQUAL = auto()
     LESS_EQUAL = auto()
 
+    # 리터럴
     IDENTIFIER = auto()
     STRING = auto()
     NUMBER = auto()
 
-    AND = auto()
-    ELSE = auto()
-    FALSE = auto()
-    FOR = auto()
-    IF = auto()
-    OR = auto()
-    PRINT = auto()
-    TRUE = auto()
-    VAR = auto()
-
+    # 기타
     EOF = auto()
 
 
@@ -49,9 +54,11 @@ class Token:
     def __eq__(self, other):
         if not isinstance(other, Token):
             return NotImplemented
-        return (self.type == other.type
-                and self.origin == other.origin
-                and getattr(self, "value", None) == getattr(other, "value", None))
+        return (
+            self.type == other.type
+            and self.origin == other.origin
+            and getattr(self, "value", None) == getattr(other, "value", None)
+        )
 
     def __repr__(self):
         return f"Token({self.type}, {self.origin!r}, {getattr(self, "value", None) !r})"
@@ -82,6 +89,25 @@ class Tokenizer:
         ",": TokenType.COMMA,
     }
 
+    _CHARACTER_WITH_EQUAL_TOKENS = {
+        "!": TokenType.BANG_EQUAL,
+        "=": TokenType.EQUAL_EQUAL,
+        ">": TokenType.GREATER_EQUAL,
+        "<": TokenType.LESS_EQUAL,
+    }
+
+    _RESERVED_TOKENS = {
+        "if": TokenType.IF,
+        "else": TokenType.ELSE,
+        "var": TokenType.VAR,
+        "true": TokenType.TRUE,
+        "false": TokenType.FALSE,
+        "print": TokenType.PRINT,
+        "and": TokenType.AND,
+        "or": TokenType.OR,
+        "for": TokenType.FOR,
+    }
+
     def __init__(self):
         self._origin = ""
         self._idx = 0
@@ -97,6 +123,8 @@ class Tokenizer:
                 self._idx += 1
             elif ch in self._SINGLE_CHARACTER_TOKENS:
                 tokens.append(self._read_single_character())
+            elif ch == '"':
+                tokens.append(self._read_string())
             elif ch.isdigit():
                 tokens.append(self._read_number())
             elif ch.isalpha():
@@ -117,12 +145,32 @@ class Tokenizer:
         start = self._idx
         while self._idx_in_range() and type_checker(self._peek()):
             self._idx += 1
-        return self._origin[start:self._idx]
+        return self._origin[start : self._idx]
 
     def _read_single_character(self) -> Token:
         ch = self._peek()
         self._idx += 1
+
+        if (
+            ch in self._CHARACTER_WITH_EQUAL_TOKENS
+            and self._idx_in_range()
+            and self._peek() == "="
+        ):
+            self._idx += 1
+            return Token(self._CHARACTER_WITH_EQUAL_TOKENS[ch], ch + "=")
+
         return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
+
+    def _read_string(self) -> Token:
+        start = self._idx
+        self._idx += 1
+        while self._idx_in_range() and self._peek() != '"':
+            self._idx += 1
+        if not self._idx_in_range():
+            raise ValueError("Unterminated string")
+        self._idx += 1
+        origin = self._origin[start : self._idx]
+        return Token(TokenType.STRING, origin, value=origin[1:-1])
 
     def _read_number(self) -> Token:
         characters = self._read_multiple_characters(str.isdigit)
@@ -130,6 +178,4 @@ class Tokenizer:
 
     def _read_identifier(self) -> Token:
         origin = self._read_multiple_characters(str.isalnum)
-        if origin == "if":
-            return Token(TokenType.IF, origin)
-        return Token(TokenType.IDENTIFIER, origin)
+        return Token(self._RESERVED_TOKENS.get(origin, TokenType.IDENTIFIER), origin)

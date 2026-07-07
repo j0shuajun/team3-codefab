@@ -1,5 +1,20 @@
-from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, VariableExpr, AssignExpr, LogicalExpr
-from assembler.statement import PrintStmt, ExpressionStmt, VarStmt, BlockStmt, IfStmt, ForStmt
+from assembler.expr import (
+    AssignExpr,
+    BinaryExpr,
+    GroupingExpr,
+    LiteralExpr,
+    LogicalExpr,
+    UnaryExpr,
+    VariableExpr,
+)
+from assembler.statement import (
+    BlockStmt,
+    ExpressionStmt,
+    ForStmt,
+    IfStmt,
+    PrintStmt,
+    VarStmt,
+)
 from assembler.tokenizer import TokenType
 
 
