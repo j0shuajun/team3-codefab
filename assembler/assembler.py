@@ -36,9 +36,9 @@ class Assembler:
             return LiteralExpr(self.previous().value)
 
         if self.match(TokenType.LEFT_PAREN):
-            expr = self.expression()
+            expression = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
-            return GroupingExpr(expr)
+            return GroupingExpr(expression)
 
         raise AssemblerError("Expected expression.")
 
@@ -74,24 +74,24 @@ class Assembler:
         return self.tokens[self.current - 1]
 
     def term(self):
-        expr = self.factor()
+        expression = self.factor()
 
         while self.match(TokenType.PLUS, TokenType.MINUS):
             operator = self.previous()
             right = self.factor()
-            expr = BinaryExpr(expr, operator, right)
+            expression = BinaryExpr(expression, operator, right)
 
-        return expr
+        return expression
 
     def factor(self):
-        expr = self.unary()
+        expression = self.unary()
 
         while self.match(TokenType.STAR, TokenType.SLASH):
             operator = self.previous()
             right = self.unary()
-            expr = BinaryExpr(expr, operator, right)
+            expression = BinaryExpr(expression, operator, right)
 
-        return expr
+        return expression
 
     def unary(self):
         if self.match(TokenType.BANG, TokenType.MINUS):
