@@ -1,6 +1,12 @@
 from assembler.assembler import Assembler
-from assembler.expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr
-from assembler.statement import ExpressionStmt
+from assembler.expr import (
+    BinaryExpr,
+    GroupingExpr,
+    LiteralExpr,
+    UnaryExpr,
+    VariableExpr,
+)
+from assembler.statement import ExpressionStmt, PrintStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
 
 
@@ -103,3 +109,83 @@ def test_parse_unary_minus_expression():
     assert isinstance(expr, UnaryExpr)
     assert expr.operator.type == TokenType.MINUS
     assert expr.right.value == 3
+
+
+def test_parse_string():
+    statements = parse(
+        [
+            token(TokenType.STRING, "hello", "hello"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    assert statements[0].expression.value == "hello"
+
+
+def test_parse_boolean():
+    statements = parse(
+        [
+            token(TokenType.TRUE, "true"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    assert statements[0].expression.value is True
+
+
+def test_parse_variable():
+    statements = parse(
+        [
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    assert isinstance(statements[0].expression, VariableExpr)
+    assert statements[0].expression.name.origin == "a"
+
+
+def test_parse_print_statement():
+    statements = parse(
+        [
+            token(TokenType.PRINT, "print"),
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    assert isinstance(statements[0], PrintStmt)
+    assert statements[0].expression.value == 3
+
+
+def test_parse_var_declaration_empty():
+    statements = parse(
+        [
+            token(TokenType.VAR, "var"),
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, VarStmt)
+    assert stmt.name.origin == "a"
+
+
+def test_parse_var_declaration():
+    statements = parse(
+        [
+            token(TokenType.VAR, "var"),
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.EQUAL, "="),
+            token(TokenType.NUMBER, "10", 10),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, VarStmt)
+    assert stmt.name.origin == "a"
+    assert stmt.initializer.value == 10

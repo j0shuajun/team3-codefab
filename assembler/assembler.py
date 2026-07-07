@@ -1,5 +1,5 @@
-from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr
-from .statement import ExpressionStmt
+from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr
+from .statement import ExpressionStmt, PrintStmt, VarStmt
 from .tokenizer import TokenType
 
 
@@ -16,12 +16,20 @@ class Assembler:
         statements = []
 
         while not self.is_at_end():
-            statements.append(self.statement())
+            statements.append(self.declaration())
 
         return statements
 
     def statement(self):
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+
         return self.expression_statement()
+
+    def print_statement(self):
+        expression = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expected ';' after value.")
+        return PrintStmt(expression)
 
     def expression_statement(self):
         expression = self.expression()
@@ -32,8 +40,17 @@ class Assembler:
         return self.term()
 
     def primary(self):
-        if self.match(TokenType.NUMBER):
+        if self.match(TokenType.FALSE):
+            return LiteralExpr(False)
+
+        if self.match(TokenType.TRUE):
+            return LiteralExpr(True)
+
+        if self.match(TokenType.NUMBER, TokenType.STRING):
             return LiteralExpr(self.previous().value)
+
+        if self.match(TokenType.IDENTIFIER):
+            return VariableExpr(self.previous())
 
         if self.match(TokenType.LEFT_PAREN):
             expression = self.expression()
@@ -100,3 +117,19 @@ class Assembler:
             return UnaryExpr(operator, right)
 
         return self.primary()
+
+    def declaration(self):
+        if self.match(TokenType.VAR):
+            return self.var_declaration()
+
+        return self.statement()
+
+    def var_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected variable name.")
+
+        initializer = None
+        if self.match(TokenType.EQUAL):
+            initializer = self.expression()
+
+        self.consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.")
+        return VarStmt(name, initializer)
