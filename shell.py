@@ -1,14 +1,15 @@
 from collections import Counter
 
+from assembler.assembler import Assembler
 from assembler.tokenizer import Tokenizer
-from checker import Checker
+from checker.checker import Checker
 from executor.executor import Executor
 
 
 class PromptShell:
-    def __init__(self, parser_class, history_size=10):
+    def __init__(self, assembler_class=Assembler, history_size=10):
         self.tokenizer = Tokenizer()
-        self.parser_class = parser_class
+        self.assembler_class = assembler_class
         self.checker = Checker()
         self.executor = Executor()
 
@@ -51,8 +52,8 @@ class PromptShell:
         try:
             tokens = self.tokenizer.tokenize(source)
 
-            parser = self.parser_class(tokens)
-            statements = parser.parse()
+            assembler = self.assembler_class(tokens)
+            statements = assembler.parse()
 
             errors = self.checker.check(statements)
             if errors:
