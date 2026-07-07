@@ -38,17 +38,18 @@ class Checker:
             self._resolve_for_stmt(statement)
 
     def _resolve_var_stmt(self, statement):
+        name = statement.name.origin
         scope = self.scopes[-1]
-        if statement.name in scope:
+        if name in scope:
             self.errors.append(
-                f"Variable '{statement.name}' already declared in this scope."
+                f"Variable '{name}' already declared in this scope."
             )
         else:
-            scope[statement.name] = False
+            scope[name] = False
 
         if statement.initializer is not None:
             self._resolve_expr(statement.initializer)
-            scope[statement.name] = True
+            scope[name] = True
 
     def _resolve_block_stmt(self, statement):
         self.scopes.append({})
@@ -89,17 +90,19 @@ class Checker:
             pass
 
     def _resolve_variable_expr(self, expr):
+        name = expr.name.origin
         for scope in reversed(self.scopes):
-            if expr.name in scope:
-                if scope[expr.name] is False:
+            if name in scope:
+                if scope[name] is False:
                     self.errors.append(
-                        f"Variable '{expr.name}' is used before initialization."
+                        f"Variable '{name}' is used before initialization."
                     )
                 return
 
     def _resolve_assign_expr(self, expr):
         self._resolve_expr(expr.value)
+        name = expr.name.origin
         for scope in reversed(self.scopes):
-            if expr.name in scope:
-                scope[expr.name] = True
+            if name in scope:
+                scope[name] = True
                 return

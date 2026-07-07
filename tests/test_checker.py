@@ -9,6 +9,11 @@ from assembler.expr import (
     VariableExpr,
 )
 from assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, VarStmt
+from assembler.tokenizer import Token, TokenType
+
+
+def token(origin):
+    return Token(TokenType.IDENTIFIER, origin)
 
 
 def check(statements):
@@ -18,8 +23,8 @@ def check(statements):
 class TestDuplicateDeclaration:
     def test_duplicate_declaration_in_global_scope_is_error(self):
         statements = [
-            VarStmt("a", LiteralExpr(1)),
-            VarStmt("a", LiteralExpr(2)),
+            VarStmt(token("a"), LiteralExpr(1)),
+            VarStmt(token("a"), LiteralExpr(2)),
         ]
 
         errors = check(statements)
@@ -29,8 +34,8 @@ class TestDuplicateDeclaration:
 
     def test_unique_declarations_produce_no_error(self):
         statements = [
-            VarStmt("a", LiteralExpr(1)),
-            VarStmt("b", LiteralExpr(2)),
+            VarStmt(token("a"), LiteralExpr(1)),
+            VarStmt(token("b"), LiteralExpr(2)),
         ]
 
         assert check(statements) == []
@@ -38,8 +43,8 @@ class TestDuplicateDeclaration:
     def test_duplicate_declaration_inside_same_block_is_error(self):
         statements = [
             BlockStmt([
-                VarStmt("x", LiteralExpr(1)),
-                VarStmt("x", LiteralExpr(2)),
+                VarStmt(token("x"), LiteralExpr(1)),
+                VarStmt(token("x"), LiteralExpr(2)),
             ]),
         ]
 
@@ -50,9 +55,9 @@ class TestDuplicateDeclaration:
 
     def test_shadowing_in_nested_block_is_allowed(self):
         statements = [
-            VarStmt("x", LiteralExpr(1)),
+            VarStmt(token("x"), LiteralExpr(1)),
             BlockStmt([
-                VarStmt("x", LiteralExpr(2)),
+                VarStmt(token("x"), LiteralExpr(2)),
             ]),
         ]
 
@@ -60,8 +65,8 @@ class TestDuplicateDeclaration:
 
     def test_sibling_blocks_may_reuse_same_name(self):
         statements = [
-            BlockStmt([VarStmt("x", LiteralExpr(1))]),
-            BlockStmt([VarStmt("x", LiteralExpr(2))]),
+            BlockStmt([VarStmt(token("x"), LiteralExpr(1))]),
+            BlockStmt([VarStmt(token("x"), LiteralExpr(2))]),
         ]
 
         assert check(statements) == []
@@ -70,7 +75,7 @@ class TestDuplicateDeclaration:
 class TestSelfReferenceInInitializer:
     def test_direct_self_reference_is_error(self):
         statements = [
-            VarStmt("a", VariableExpr("a")),
+            VarStmt(token("a"), VariableExpr(token("a"))),
         ]
 
         errors = check(statements)
@@ -80,7 +85,10 @@ class TestSelfReferenceInInitializer:
 
     def test_self_reference_inside_expression_is_error(self):
         statements = [
-            VarStmt("a", BinaryExpr(VariableExpr("a"), "+", LiteralExpr(1))),
+            VarStmt(
+                token("a"),
+                BinaryExpr(VariableExpr(token("a")), token("+"), LiteralExpr(1)),
+            ),
         ]
 
         errors = check(statements)
@@ -90,8 +98,8 @@ class TestSelfReferenceInInitializer:
 
     def test_initializer_referencing_other_declared_variable_is_allowed(self):
         statements = [
-            VarStmt("a", LiteralExpr(1)),
-            VarStmt("b", VariableExpr("a")),
+            VarStmt(token("a"), LiteralExpr(1)),
+            VarStmt(token("b"), VariableExpr(token("a"))),
         ]
 
         assert check(statements) == []
@@ -99,7 +107,7 @@ class TestSelfReferenceInInitializer:
     def test_self_reference_inside_nested_block_is_error(self):
         statements = [
             BlockStmt([
-                VarStmt("y", VariableExpr("y")),
+                VarStmt(token("y"), VariableExpr(token("y"))),
             ]),
         ]
 
@@ -112,8 +120,8 @@ class TestSelfReferenceInInitializer:
 class TestUninitializedVariableAccess:
     def test_reading_uninitialized_variable_is_error(self):
         statements = [
-            VarStmt("a"),
-            ExpressionStmt(VariableExpr("a")),
+            VarStmt(token("a")),
+            ExpressionStmt(VariableExpr(token("a"))),
         ]
 
         errors = check(statements)
@@ -123,17 +131,17 @@ class TestUninitializedVariableAccess:
 
     def test_reading_initialized_variable_is_allowed(self):
         statements = [
-            VarStmt("a", LiteralExpr(1)),
-            ExpressionStmt(VariableExpr("a")),
+            VarStmt(token("a"), LiteralExpr(1)),
+            ExpressionStmt(VariableExpr(token("a"))),
         ]
 
         assert check(statements) == []
 
     def test_variable_becomes_initialized_after_assignment(self):
         statements = [
-            VarStmt("a"),
-            ExpressionStmt(AssignExpr("a", LiteralExpr(1))),
-            ExpressionStmt(VariableExpr("a")),
+            VarStmt(token("a")),
+            ExpressionStmt(AssignExpr(token("a"), LiteralExpr(1))),
+            ExpressionStmt(VariableExpr(token("a"))),
         ]
 
         assert check(statements) == []
@@ -145,8 +153,8 @@ class TestDfsTraversalOverControlFlow:
             IfStmt(
                 condition=LiteralExpr(True),
                 then_branch=BlockStmt([
-                    VarStmt("z", LiteralExpr(1)),
-                    VarStmt("z", LiteralExpr(2)),
+                    VarStmt(token("z"), LiteralExpr(1)),
+                    VarStmt(token("z"), LiteralExpr(2)),
                 ]),
             ),
         ]
@@ -158,12 +166,12 @@ class TestDfsTraversalOverControlFlow:
 
     def test_uninitialized_access_detected_inside_else_branch(self):
         statements = [
-            VarStmt("a"),
+            VarStmt(token("a")),
             IfStmt(
                 condition=LiteralExpr(False),
                 then_branch=BlockStmt([]),
                 else_branch=BlockStmt([
-                    ExpressionStmt(VariableExpr("a")),
+                    ExpressionStmt(VariableExpr(token("a"))),
                 ]),
             ),
         ]
@@ -176,7 +184,7 @@ class TestDfsTraversalOverControlFlow:
     def test_self_reference_detected_inside_for_initializer(self):
         statements = [
             ForStmt(
-                initializer=VarStmt("i", VariableExpr("i")),
+                initializer=VarStmt(token("i"), VariableExpr(token("i"))),
                 condition=None,
                 increment=None,
                 body=BlockStmt([]),
@@ -190,9 +198,9 @@ class TestDfsTraversalOverControlFlow:
 
     def test_multiple_independent_errors_are_all_reported(self):
         statements = [
-            VarStmt("a", VariableExpr("a")),
-            VarStmt("b", LiteralExpr(1)),
-            VarStmt("b", LiteralExpr(2)),
+            VarStmt(token("a"), VariableExpr(token("a"))),
+            VarStmt(token("b"), LiteralExpr(1)),
+            VarStmt(token("b"), LiteralExpr(2)),
         ]
 
         errors = check(statements)
@@ -208,8 +216,8 @@ class TestComplexNestedTraversal:
             BlockStmt([
                 BlockStmt([
                     BlockStmt([
-                        VarStmt("v", LiteralExpr(1)),
-                        VarStmt("v", LiteralExpr(2)),
+                        VarStmt(token("v"), LiteralExpr(1)),
+                        VarStmt(token("v"), LiteralExpr(2)),
                     ]),
                 ]),
             ]),
@@ -225,12 +233,12 @@ class TestComplexNestedTraversal:
         # 가장 안쪽 스코프에서 같은 이름을 두 번 선언하는 것만 오류다.
         statements = [
             BlockStmt([
-                VarStmt("v", LiteralExpr(0)),
+                VarStmt(token("v"), LiteralExpr(0)),
                 BlockStmt([
-                    VarStmt("v", LiteralExpr(1)),
+                    VarStmt(token("v"), LiteralExpr(1)),
                     BlockStmt([
-                        VarStmt("v", LiteralExpr(2)),
-                        VarStmt("v", LiteralExpr(3)),
+                        VarStmt(token("v"), LiteralExpr(2)),
+                        VarStmt(token("v"), LiteralExpr(3)),
                     ]),
                 ]),
             ]),
@@ -244,12 +252,15 @@ class TestComplexNestedTraversal:
     def test_self_reference_buried_inside_complex_expression_tree(self):
         # a = !(1 + a) and true
         initializer = LogicalExpr(
-            UnaryExpr("!", GroupingExpr(BinaryExpr(LiteralExpr(1), "+", VariableExpr("a")))),
-            "and",
+            UnaryExpr(
+                token("!"),
+                GroupingExpr(BinaryExpr(LiteralExpr(1), token("+"), VariableExpr(token("a")))),
+            ),
+            token("and"),
             LiteralExpr(True),
         )
         statements = [
-            VarStmt("a", initializer),
+            VarStmt(token("a"), initializer),
         ]
 
         errors = check(statements)
@@ -259,16 +270,19 @@ class TestComplexNestedTraversal:
 
     def test_uninitialized_access_deep_inside_nested_for_and_if(self):
         statements = [
-            VarStmt("count"),
+            VarStmt(token("count")),
             ForStmt(
-                initializer=VarStmt("i", LiteralExpr(0)),
-                condition=BinaryExpr(VariableExpr("i"), "<", LiteralExpr(10)),
-                increment=AssignExpr("i", BinaryExpr(VariableExpr("i"), "+", LiteralExpr(1))),
+                initializer=VarStmt(token("i"), LiteralExpr(0)),
+                condition=BinaryExpr(VariableExpr(token("i")), token("<"), LiteralExpr(10)),
+                increment=AssignExpr(
+                    token("i"),
+                    BinaryExpr(VariableExpr(token("i")), token("+"), LiteralExpr(1)),
+                ),
                 body=BlockStmt([
                     IfStmt(
-                        condition=BinaryExpr(VariableExpr("i"), "==", LiteralExpr(5)),
+                        condition=BinaryExpr(VariableExpr(token("i")), token("=="), LiteralExpr(5)),
                         then_branch=BlockStmt([
-                            ExpressionStmt(VariableExpr("count")),
+                            ExpressionStmt(VariableExpr(token("count"))),
                         ]),
                     ),
                 ]),
@@ -285,24 +299,24 @@ class TestComplexNestedTraversal:
         # 세 가지 종류의 오류가 모두 검출되어야 하고, 정상적인 코드는 오류로
         # 잘못 검출되면 안 된다.
         statements = [
-            VarStmt("shared", LiteralExpr(1)),
+            VarStmt(token("shared"), LiteralExpr(1)),
             IfStmt(
-                condition=VariableExpr("shared"),
+                condition=VariableExpr(token("shared")),
                 then_branch=BlockStmt([
-                    VarStmt("dup", LiteralExpr(1)),
-                    VarStmt("dup", LiteralExpr(2)),
+                    VarStmt(token("dup"), LiteralExpr(1)),
+                    VarStmt(token("dup"), LiteralExpr(2)),
                 ]),
                 else_branch=BlockStmt([
-                    VarStmt("u"),
-                    ExpressionStmt(VariableExpr("u")),
+                    VarStmt(token("u")),
+                    ExpressionStmt(VariableExpr(token("u"))),
                 ]),
             ),
             ForStmt(
-                initializer=VarStmt("k", VariableExpr("k")),
+                initializer=VarStmt(token("k"), VariableExpr(token("k"))),
                 condition=None,
                 increment=None,
                 body=BlockStmt([
-                    ExpressionStmt(VariableExpr("shared")),
+                    ExpressionStmt(VariableExpr(token("shared"))),
                 ]),
             ),
         ]
@@ -321,12 +335,12 @@ class TestComplexNestedTraversal:
             IfStmt(
                 condition=LiteralExpr(True),
                 then_branch=BlockStmt([
-                    VarStmt("dup", LiteralExpr(1)),
-                    VarStmt("dup", LiteralExpr(2)),
+                    VarStmt(token("dup"), LiteralExpr(1)),
+                    VarStmt(token("dup"), LiteralExpr(2)),
                 ]),
                 else_branch=BlockStmt([
-                    VarStmt("ok", LiteralExpr(1)),
-                    ExpressionStmt(VariableExpr("ok")),
+                    VarStmt(token("ok"), LiteralExpr(1)),
+                    ExpressionStmt(VariableExpr(token("ok"))),
                 ]),
             ),
         ]
