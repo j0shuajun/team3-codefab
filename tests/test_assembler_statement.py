@@ -1,5 +1,12 @@
 from assembler.expr import LiteralExpr
-from assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt
+from assembler.statement import (
+    BlockStmt,
+    ExpressionStmt,
+    ForStmt,
+    IfStmt,
+    PrintStmt,
+    VarStmt,
+)
 from assembler.tokenizer import Token, TokenType
 
 
