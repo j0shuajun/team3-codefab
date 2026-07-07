@@ -225,6 +225,32 @@ def test_for_statement():
     assert executor.outputs == ["0", "1", "2"]
 
 
+def test_for_block_statement():
+    executor = run([
+        ForStmt(
+            VarStmt(token(TokenType.IDENTIFIER, "i"), LiteralExpr(0)),
+            BinaryExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "i")),
+                token(TokenType.LESS, "<"),
+                LiteralExpr(3),
+            ),
+            AssignExpr(
+                token(TokenType.IDENTIFIER, "i"),
+                BinaryExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "i")),
+                    token(TokenType.PLUS, "+"),
+                    LiteralExpr(1),
+                ),
+            ),
+            BlockStmt([
+                PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "i"))),
+            ]),
+        )
+    ])
+
+    assert executor.outputs == ["0", "1", "2"]
+
+
 def test_runtime_error_undefined_variable():
     with pytest.raises(CodeFabRuntimeError):
         run([
