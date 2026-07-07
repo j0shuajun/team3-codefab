@@ -2,6 +2,7 @@ from enum import auto, Enum
 
 
 class TokenType(Enum):
+    # 단일문자
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
     LEFT_BRACE = auto()
@@ -14,17 +15,15 @@ class TokenType(Enum):
     STAR = auto()
     SLASH = auto()
     BANG = auto()
-    BANG_EQUAL = auto()
     EQUAL = auto()
-    EQUAL_EQUAL = auto()
     GREATER = auto()
-    GREATER_EQUAL = auto()
     LESS = auto()
-    LESS_EQUAL = auto()
 
-    IDENTIFIER = auto()
-    STRING = auto()
-    NUMBER = auto()
+    # 여러문자
+    BANG_EQUAL = auto()
+    EQUAL_EQUAL = auto()
+    GREATER_EQUAL = auto()
+    LESS_EQUAL = auto()
 
     AND = auto()
     ELSE = auto()
@@ -36,6 +35,12 @@ class TokenType(Enum):
     TRUE = auto()
     VAR = auto()
 
+    # 리터럴
+    IDENTIFIER = auto()
+    STRING = auto()
+    NUMBER = auto()
+
+    # 기타
     EOF = auto()
 
 
