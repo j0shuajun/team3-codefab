@@ -1,7 +1,9 @@
 from collections import Counter
+
 from assembler.tokenizer import Tokenizer
 from checker import Checker
 from executor.executor import Executor
+
 
 class PromptShell:
     def __init__(self, parser_class, history_size=10):
