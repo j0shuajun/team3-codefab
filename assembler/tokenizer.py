@@ -77,12 +77,10 @@ class Tokenizer:
         t.value for t in TokenType if isinstance(t.value, str) and len(t.value) == 1
     )
 
-    _CHARACTER_WITH_EQUAL_TOKENS = {
-        "!": TokenType.BANG_EQUAL,
-        "=": TokenType.EQUAL_EQUAL,
-        ">": TokenType.GREATER_EQUAL,
-        "<": TokenType.LESS_EQUAL,
-    }
+    _CHARACTERS_WITH_EQUAL = frozenset(
+        t.value for t in TokenType
+        if isinstance(t.value, str) and len(t.value) == 2 and t.value.endswith("=")
+    )
 
     _RESERVED_TOKENS = {
         "if": TokenType.IF,
@@ -139,13 +137,11 @@ class Tokenizer:
         ch = self._peek()
         self._idx += 1
 
-        if (
-            ch in self._CHARACTER_WITH_EQUAL_TOKENS
-            and self._idx_in_range()
-            and self._peek() == "="
-        ):
-            self._idx += 1
-            return Token(self._CHARACTER_WITH_EQUAL_TOKENS[ch], ch + "=")
+        if self._idx_in_range():
+            combined = ch + self._peek()
+            if combined in self._CHARACTERS_WITH_EQUAL:
+                self._idx += 1
+                return Token(TokenType(combined), combined)
 
         return Token(TokenType(ch), ch)
 
