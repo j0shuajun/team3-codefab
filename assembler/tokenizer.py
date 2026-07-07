@@ -76,6 +76,7 @@ class Tokenizer:
         "*": TokenType.STAR,
         "/": TokenType.SLASH,
         # 구분자
+        ";": TokenType.SEMICOLON
     }
 
     def __init__(self):
