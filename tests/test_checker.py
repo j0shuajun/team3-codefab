@@ -1,7 +1,6 @@
-from checker.checker import Checker
-from assembler.expr import LiteralExpr, VariableExpr, BinaryExpr
+from assembler.expr import BinaryExpr, LiteralExpr, VariableExpr
 from assembler.statement import BlockStmt, VarStmt
-from checker import Checker
+from checker.checker import Checker
 
 
 def check(statements):
@@ -95,9 +94,11 @@ class TestSelfReferenceInInitializer:
 
     def test_self_reference_inside_nested_block_is_error(self):
         statements = [
-            BlockStmt([
-                VarStmt("y", VariableExpr("y")),
-            ]),
+            BlockStmt(
+                [
+                    VarStmt("y", VariableExpr("y")),
+                ]
+            ),
         ]
 
         errors = check(statements)

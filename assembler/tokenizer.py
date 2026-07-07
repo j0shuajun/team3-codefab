@@ -139,7 +139,11 @@ class Tokenizer:
         ch = self._peek()
         self._idx += 1
 
-        if ch in self._CHARACTER_WITH_EQUAL_TOKENS and self._idx_in_range() and self._peek() == "=":
+        if (
+            ch in self._CHARACTER_WITH_EQUAL_TOKENS
+            and self._idx_in_range()
+            and self._peek() == "="
+        ):
             self._idx += 1
             return Token(self._CHARACTER_WITH_EQUAL_TOKENS[ch], ch + "=")
 
@@ -153,7 +157,7 @@ class Tokenizer:
         if not self._idx_in_range():
             raise ValueError("Unterminated string")
         self._idx += 1
-        origin = self._origin[start:self._idx]
+        origin = self._origin[start : self._idx]
         return Token(TokenType.STRING, origin, value=origin[1:-1])
 
     def _read_number(self) -> Token:
