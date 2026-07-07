@@ -82,17 +82,9 @@ class Tokenizer:
         if isinstance(t.value, str) and len(t.value) == 2 and t.value.endswith("=")
     )
 
-    _RESERVED_TOKENS = {
-        "if": TokenType.IF,
-        "else": TokenType.ELSE,
-        "var": TokenType.VAR,
-        "true": TokenType.TRUE,
-        "false": TokenType.FALSE,
-        "print": TokenType.PRINT,
-        "and": TokenType.AND,
-        "or": TokenType.OR,
-        "for": TokenType.FOR,
-    }
+    _RESERVED_WORDS = frozenset(
+        t.value for t in TokenType if isinstance(t.value, str) and t.value.isalpha()
+    )
 
     def __init__(self):
         self._origin = ""
@@ -162,4 +154,6 @@ class Tokenizer:
 
     def _read_identifier(self) -> Token:
         origin = self._read_multiple_characters(str.isalnum)
-        return Token(self._RESERVED_TOKENS.get(origin, TokenType.IDENTIFIER), origin)
+        if origin in self._RESERVED_WORDS:
+            return Token(TokenType(origin), origin)
+        return Token(TokenType.IDENTIFIER, origin)
