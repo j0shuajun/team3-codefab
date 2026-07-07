@@ -3,7 +3,7 @@ import pytest
 from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr, AssignExpr, VariableExpr, LogicalExpr
 from assembler.statement import PrintStmt, VarStmt, ExpressionStmt, BlockStmt, IfStmt, ForStmt
 from assembler.tokenizer import Token, TokenType
-from executor.executor import Executor, RuntimeError
+from executor.executor import Executor, CodeFabRuntimeError
 
 
 def token(token_type, origin):
@@ -132,7 +132,7 @@ def test_block_scope_local_variable_removed_after_block():
         PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "a"))),
     ]
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(CodeFabRuntimeError):
         run(statements)
 
 
@@ -226,14 +226,14 @@ def test_for_statement():
 
 
 def test_runtime_error_undefined_variable():
-    with pytest.raises(RuntimeError):
+    with pytest.raises(CodeFabRuntimeError):
         run([
             PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "x")))
         ])
 
 
 def test_runtime_error_divide_by_zero():
-    with pytest.raises(RuntimeError):
+    with pytest.raises(CodeFabRuntimeError):
         run([
             PrintStmt(
                 BinaryExpr(
@@ -246,7 +246,7 @@ def test_runtime_error_divide_by_zero():
 
 
 def test_runtime_error_type_mismatch():
-    with pytest.raises(RuntimeError):
+    with pytest.raises(CodeFabRuntimeError):
         run([
             PrintStmt(
                 BinaryExpr(

@@ -3,7 +3,7 @@ from assembler.statement import PrintStmt, ExpressionStmt, VarStmt, BlockStmt, I
 from assembler.tokenizer import TokenType
 
 
-class RuntimeError(Exception):
+class CodeFabRuntimeError(Exception):
     pass
 
 
@@ -24,7 +24,7 @@ class Environment:
         if self.enclosing is not None:
             return self.enclosing.get(name_token)
 
-        raise RuntimeError(f"Undefined variable '{name}'.")
+        raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
 
     def assign(self, name_token, value):
         name = name_token.origin
@@ -37,7 +37,7 @@ class Environment:
             self.enclosing.assign(name_token, value)
             return
 
-        raise RuntimeError(f"Undefined variable '{name}'.")
+        raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
 
 
 class Executor:
@@ -83,7 +83,7 @@ class Executor:
             self.execute_for(stmt)
             return
 
-        raise RuntimeError(f"Unknown statement type: {type(stmt).__name__}")
+        raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def evaluate(self, expr):
         if isinstance(expr, LiteralExpr):
@@ -105,7 +105,7 @@ class Executor:
             if expr.operator.type == TokenType.BANG:
                 return not self.is_truthy(right)
 
-            raise RuntimeError(f"Unknown unary operator: {expr.operator.origin}")
+            raise CodeFabRuntimeError(f"Unknown unary operator: {expr.operator.origin}")
 
         if isinstance(expr, VariableExpr):
             return self.environment.get(expr.name)
@@ -118,7 +118,7 @@ class Executor:
         if isinstance(expr, LogicalExpr):
             return self.evaluate_logical(expr)
 
-        raise RuntimeError(f"Unknown expression type: {type(expr).__name__}")
+        raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
     def evaluate_binary(self, expr):
         left = self.evaluate(expr.left)
@@ -130,7 +130,7 @@ class Executor:
             if isinstance(left, str) and isinstance(right, str):
                 return left + right
 
-            raise RuntimeError("Operands must be two numbers or two strings.")
+            raise CodeFabRuntimeError("Operands must be two numbers or two strings.")
 
         if expr.operator.type == TokenType.MINUS:
             self.check_number_operands(left, right)
@@ -143,7 +143,7 @@ class Executor:
         if expr.operator.type == TokenType.SLASH:
             self.check_number_operands(left, right)
             if right == 0:
-                raise RuntimeError("Division by zero.")
+                raise CodeFabRuntimeError("Division by zero.")
             return left / right
 
         if expr.operator.type == TokenType.GREATER:
@@ -164,7 +164,7 @@ class Executor:
         if expr.operator.type == TokenType.BANG_EQUAL:
             return left != right
 
-        raise RuntimeError(f"Unknown binary operator: {expr.operator.origin}")
+        raise CodeFabRuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 
     def stringify(self, value):
         if value is None:
@@ -212,7 +212,7 @@ class Executor:
                 return left
             return self.evaluate(expr.right)
 
-        raise RuntimeError(f"Unknown logical operator: {expr.operator.origin}")
+        raise CodeFabRuntimeError(f"Unknown logical operator: {expr.operator.origin}")
 
     def execute_for(self, stmt):
         loop_environment = Environment(self.environment)
@@ -245,10 +245,10 @@ class Executor:
         if self.is_number(operand):
             return
 
-        raise RuntimeError("Operand must be a number.")
+        raise CodeFabRuntimeError("Operand must be a number.")
 
     def check_number_operands(self, left, right):
         if self.is_number(left) and self.is_number(right):
             return
 
-        raise RuntimeError("Operands must be numbers.")
+        raise CodeFabRuntimeError("Operands must be numbers.")
