@@ -205,3 +205,21 @@ def test_parse_assignment_expression():
     assert expr.name.origin == "a"
     assert expr.value.value == 20
 
+
+def test_parse_comparison_and_equality_expression():
+    statements = parse([
+        token(TokenType.IDENTIFIER, "a"),
+        token(TokenType.GREATER, ">"),
+        token(TokenType.NUMBER, "3", 3),
+        token(TokenType.EQUAL_EQUAL, "=="),
+        token(TokenType.TRUE, "true"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, BinaryExpr)
+    assert expr.operator.type == TokenType.EQUAL_EQUAL
+    assert isinstance(expr.left, BinaryExpr)
+    assert expr.left.operator.type == TokenType.GREATER
+

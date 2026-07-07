@@ -40,7 +40,7 @@ class Assembler:
         return self.assignment()
 
     def assignment(self):
-        expr = self.term()
+        expr = self.equality()
 
         if self.match(TokenType.EQUAL):
             value = self.assignment()
@@ -49,6 +49,31 @@ class Assembler:
                 return AssignExpr(expr.name, value)
 
             raise AssemblerError("Invalid assignment target.")
+
+        return expr
+
+    def equality(self):
+        expr = self.comparison()
+
+        while self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
+            operator = self.previous()
+            right = self.comparison()
+            expr = BinaryExpr(expr, operator, right)
+
+        return expr
+
+    def comparison(self):
+        expr = self.term()
+
+        while self.match(
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
+        ):
+            operator = self.previous()
+            right = self.term()
+            expr = BinaryExpr(expr, operator, right)
 
         return expr
 
