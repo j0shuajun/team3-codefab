@@ -6,11 +6,24 @@ from .tokenizer import TokenType
 class AssemblerError(Exception):
     pass
 
+# expression grammar
+# assignment -> IDENTIFIER "=" assignment | logic_or
+# logic_or   -> logic_and ("or" logic_and)*
+# logic_and  -> equality ("and" equality)*
+# equality   -> comparison (("!=" | "==") comparison)*
+# comparison -> term ((">" | ">=" | "<" | "<=") term)*
+# term       -> factor (("+" | "-") factor)*
+# factor     -> unary (("*" | "/") unary)*
+# unary      -> ("!" | "-") unary | primary
+# primary    -> NUMBER | STRING | true | false | IDENTIFIER | "(" expression ")"
 
 class Assembler:
     def __init__(self, tokens):
         self.tokens = tokens
         self.current = 0
+
+    def expression(self):
+        return self.assignment()
 
     def parse(self):
         statements = []
@@ -93,54 +106,51 @@ class Assembler:
         self.consume(TokenType.SEMICOLON, "Expected ';' after expression.")
         return ExpressionStmt(expression)
 
-    def expression(self):
-        return self.assignment()
-
     def assignment(self):
-        expr = self.logic_or()
+        expression = self.logic_or()
 
         if self.match(TokenType.EQUAL):
             value = self.assignment()
 
-            if isinstance(expr, VariableExpr):
-                return AssignExpr(expr.name, value)
+            if isinstance(expression, VariableExpr):
+                return AssignExpr(expression.name, value)
 
             raise AssemblerError("Invalid assignment target.")
 
-        return expr
+        return expression
 
     def logic_or(self):
-        expr = self.logic_and()
+        expression = self.logic_and()
 
         while self.match(TokenType.OR):
             operator = self.previous()
             right = self.logic_and()
-            expr = LogicalExpr(expr, operator, right)
+            expression = LogicalExpr(expression, operator, right)
 
-        return expr
+        return expression
 
     def logic_and(self):
-        expr = self.equality()
+        expression = self.equality()
 
         while self.match(TokenType.AND):
             operator = self.previous()
             right = self.equality()
-            expr = LogicalExpr(expr, operator, right)
+            expression = LogicalExpr(expression, operator, right)
 
-        return expr
+        return expression
 
     def equality(self):
-        expr = self.comparison()
+        expression = self.comparison()
 
         while self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
             operator = self.previous()
             right = self.comparison()
-            expr = BinaryExpr(expr, operator, right)
+            expression = BinaryExpr(expression, operator, right)
 
-        return expr
+        return expression
 
     def comparison(self):
-        expr = self.term()
+        expression = self.term()
 
         while self.match(
                 TokenType.GREATER,
@@ -150,9 +160,9 @@ class Assembler:
         ):
             operator = self.previous()
             right = self.term()
-            expr = BinaryExpr(expr, operator, right)
+            expression = BinaryExpr(expression, operator, right)
 
-        return expr
+        return expression
 
     def primary(self):
         if self.match(TokenType.FALSE):
