@@ -20,11 +20,6 @@ class TokenType(Enum):
     LESS = auto()
 
     # 여러문자
-    BANG_EQUAL = auto()
-    EQUAL_EQUAL = auto()
-    GREATER_EQUAL = auto()
-    LESS_EQUAL = auto()
-
     VAR = auto()
     TRUE = auto()
     FALSE = auto()
@@ -34,6 +29,11 @@ class TokenType(Enum):
     IF = auto()
     ELSE = auto()
     FOR = auto()
+
+    BANG_EQUAL = auto()
+    EQUAL_EQUAL = auto()
+    GREATER_EQUAL = auto()
+    LESS_EQUAL = auto()
 
     # 리터럴
     IDENTIFIER = auto()
@@ -158,4 +158,8 @@ class Tokenizer:
             return Token(TokenType.FALSE, origin)
         if origin == "print":
             return Token(TokenType.PRINT, origin)
+        if origin == "and":
+            return Token(TokenType.AND, origin)
+        if origin == "or":
+            return Token(TokenType.OR, origin)
         return Token(TokenType.IDENTIFIER, origin)
