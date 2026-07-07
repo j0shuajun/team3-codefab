@@ -171,3 +171,23 @@ def test_var_statement(tokenizer):
                       Token(T.EQUAL, "="),
                       Token(T.NUMBER, "37", value=37.0),
                       Token(T.EOF, "")]
+
+
+def test_true(tokenizer):
+    tokens = tokenizer.tokenize("var a = true")
+
+    assert tokens == [Token(T.VAR, "var"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.TRUE, "true"),
+                      Token(T.EOF, "")]
+
+
+def test_false(tokenizer):
+    tokens = tokenizer.tokenize("var a = false")
+
+    assert tokens == [Token(T.VAR, "var"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.FALSE, "false"),
+                      Token(T.EOF, "")]
