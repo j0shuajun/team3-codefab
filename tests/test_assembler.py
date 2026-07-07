@@ -111,22 +111,38 @@ def test_parse_unary_minus_expression():
     assert expr.right.value == 3
 
 
-def test_parse_string_boolean_and_variable():
+def test_parse_string():
     statements = parse(
         [
             token(TokenType.STRING, "hello", "hello"),
-            token(TokenType.SEMICOLON, ";"),
-            token(TokenType.TRUE, "true"),
-            token(TokenType.SEMICOLON, ";"),
-            token(TokenType.IDENTIFIER, "a"),
             token(TokenType.SEMICOLON, ";"),
         ]
     )
 
     assert statements[0].expression.value == "hello"
-    assert statements[1].expression.value is True
-    assert isinstance(statements[2].expression, VariableExpr)
-    assert statements[2].expression.name.origin == "a"
+
+
+def test_parse_boolean():
+    statements = parse(
+        [
+            token(TokenType.TRUE, "true"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    assert statements[0].expression.value is True
+
+
+def test_parse_variable():
+    statements = parse(
+        [
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    assert isinstance(statements[0].expression, VariableExpr)
+    assert statements[0].expression.name.origin == "a"
 
 
 def test_parse_print_statement():
