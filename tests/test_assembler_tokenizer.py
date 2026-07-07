@@ -8,24 +8,14 @@ def tokenizer():
     return Tokenizer()
 
 
+# ===== 단일문자 토큰 =====
+
 def test_assign_number(tokenizer):
     tokens = tokenizer.tokenize("age = 37")
 
     assert tokens == [Token(T.IDENTIFIER, "age"),
                       Token(T.EQUAL, "="),
                       Token(T.NUMBER, "37", value=37.0),
-                      Token(T.EOF, "")]
-
-
-def test_if_statement(tokenizer):
-    tokens = tokenizer.tokenize("if (x > 10)")
-
-    assert tokens == [Token(T.IF, "if"),
-                      Token(T.LEFT_PAREN, "("),
-                      Token(T.IDENTIFIER, "x"),
-                      Token(T.GREATER, ">"),
-                      Token(T.NUMBER, "10", value=10.0),
-                      Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
 
 
@@ -156,4 +146,28 @@ def test_bang(tokenizer):
 
     assert tokens == [Token(T.BANG, "!"),
                       Token(T.IDENTIFIER, "a"),
+                      Token(T.EOF, "")]
+
+
+# ===== 여러문자 토큰 =====
+
+def test_if_condition(tokenizer):
+    tokens = tokenizer.tokenize("if (x > 10)")
+
+    assert tokens == [Token(T.IF, "if"),
+                      Token(T.LEFT_PAREN, "("),
+                      Token(T.IDENTIFIER, "x"),
+                      Token(T.GREATER, ">"),
+                      Token(T.NUMBER, "10", value=10.0),
+                      Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
+
+
+def test_var_statement(tokenizer):
+    tokens = tokenizer.tokenize("var a = 37")
+
+    assert tokens == [Token(T.VAR, "var"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.NUMBER, "37", value=37.0),
                       Token(T.EOF, "")]
