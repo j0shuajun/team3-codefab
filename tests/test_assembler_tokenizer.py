@@ -132,10 +132,10 @@ def test_assign_with_comma(tokenizer):
     assert tokens == [Token(T.IDENTIFIER, "a"),
                       Token(T.COMMA, ","),
                       Token(T.IDENTIFIER, "b"),
+                      Token(T.EQUAL, "="),
                       Token(T.NUMBER, "3", value=3.0),
                       Token(T.COMMA, ","),
                       Token(T.NUMBER, "4", value=4.0),
-                      Token(T.EQUAL, "="),
                       Token(T.EOF, "")]
 
 def test_bang(tokenizer):
