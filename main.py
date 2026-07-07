@@ -1,4 +1,4 @@
-from shell import PromptShell
+from shell.shell import PromptShell
 
 
 def main():
