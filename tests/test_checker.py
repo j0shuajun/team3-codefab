@@ -1,5 +1,5 @@
-from checker import Checker
-from assembler.expr import LiteralExpr
+from checker.checker import Checker
+from assembler.expr import LiteralExpr, VariableExpr, BinaryExpr
 from assembler.statement import BlockStmt, VarStmt
 
 
@@ -57,3 +57,45 @@ class TestDuplicateDeclaration:
         ]
 
         assert check(statements) == []
+
+
+class TestSelfReferenceInInitializer:
+    def test_direct_self_reference_is_error(self):
+        statements = [
+            VarStmt("a", VariableExpr("a")),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "a" in errors[0]
+
+    def test_self_reference_inside_expression_is_error(self):
+        statements = [
+            VarStmt("a", BinaryExpr(VariableExpr("a"), "+", LiteralExpr(1))),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "a" in errors[0]
+
+    def test_initializer_referencing_other_declared_variable_is_allowed(self):
+        statements = [
+            VarStmt("a", LiteralExpr(1)),
+            VarStmt("b", VariableExpr("a")),
+        ]
+
+        assert check(statements) == []
+
+    def test_self_reference_inside_nested_block_is_error(self):
+        statements = [
+            BlockStmt([
+                VarStmt("y", VariableExpr("y")),
+            ]),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "y" in errors[0]
