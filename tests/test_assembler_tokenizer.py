@@ -23,6 +23,17 @@ def test_assign_number(tokenizer):
     ]
 
 
+def test_assign__decimal_number(tokenizer):
+    tokens = tokenizer.tokenize("point = 10.1")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "point"),
+        Token(T.EQUAL, "="),
+        Token(T.NUMBER, "10.1", value=10.1),
+        Token(T.EOF, ""),
+    ]
+
+
 def test_plus_operator(tokenizer):
     tokens = tokenizer.tokenize("a + b")
 
