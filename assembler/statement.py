@@ -6,6 +6,7 @@ from assembler.tokenizer import Token
 
 class Stmt:
     """Base class for every statement node."""
+
     pass
 
 

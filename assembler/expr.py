@@ -5,6 +5,7 @@ from assembler.tokenizer import Token
 
 class Expr:
     """Base class for every expression node."""
+
     pass
 
 
