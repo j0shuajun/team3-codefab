@@ -23,6 +23,11 @@ def test_assign_number(tokenizer):
     ]
 
 
+def test_error_assign_number_start_with_zero(tokenizer):
+    with pytest.raises(ValueError):
+        tokenizer.tokenize("age = 01")
+
+
 def test_assign_number_dot_number(tokenizer):
     tokens = tokenizer.tokenize("point = 10.1")
 
