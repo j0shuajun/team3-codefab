@@ -3,13 +3,21 @@ from abc import ABC, abstractmethod
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
+    Expr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
     VariableExpr,
 )
-from assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, VarStmt
+from assembler.statement import (
+    BlockStmt,
+    ExpressionStmt,
+    ForStmt,
+    IfStmt,
+    Stmt,
+    VarStmt,
+)
 
 
 class CodeFabTypeError(Exception):
@@ -38,9 +46,12 @@ class ExpressionResolver(Resolver):
 
     def resolve(self, expr):
         resolver = self._resolvers.get(type(expr))
-        if resolver is None:
+        if resolver is not None:
+            resolver(expr)
+            return
+
+        if not isinstance(expr, Expr):
             raise CodeFabTypeError(f"Unknown expression type: {type(expr).__name__}")
-        resolver(expr)
 
     def _resolve_variable_expr(self, expr):
         name = expr.name.origin
@@ -86,11 +97,14 @@ class StatementResolver(Resolver):
 
     def resolve(self, statement):
         resolver = self._resolvers.get(type(statement))
-        if resolver is None:
+        if resolver is not None:
+            resolver(statement)
+            return
+
+        if not isinstance(statement, Stmt):
             raise CodeFabTypeError(
                 f"Unknown statement type: {type(statement).__name__}"
             )
-        resolver(statement)
 
     def _resolve_var_stmt(self, statement):
         name = statement.name.origin
