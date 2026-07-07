@@ -327,3 +327,20 @@ def test_for_condition(tokenizer):
                       Token(T.NUMBER, "1", value=1.0),
                       Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
+
+def test_similar_to_for(tokenizer):
+    tokens = tokenizer.tokenize("format before for1")
+
+    assert tokens == [Token(T.IDENTIFIER, "format"),
+                      Token(T.IDENTIFIER, "before"),
+                      Token(T.IDENTIFIER, "for1"),
+                      Token(T.EOF, "")]
+
+
+def test_similar_to_for_assign(tokenizer):
+    tokens = tokenizer.tokenize("form = 1")
+
+    assert tokens == [Token(T.IDENTIFIER, "form"),
+                      Token(T.EQUAL, "="),
+                      Token(T.NUMBER, "1", value=1.0),
+                      Token(T.EOF, "")]
