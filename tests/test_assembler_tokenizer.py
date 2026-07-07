@@ -248,6 +248,15 @@ def test_string_not_closed(tokenizer):
         tokenizer.tokenize('"hi')
 
 
+def test_assign_string(tokenizer):
+    tokens = tokenizer.tokenize('var a = "hi"')
+
+    assert tokens == [Token(T.VAR, "var"),
+                      Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL, "="),
+                      Token(T.STRING, '"hi"', value="hi"),
+                      Token(T.EOF, "")]
+
 def test_print_statement(tokenizer):
     tokens = tokenizer.tokenize('print("hi")')
 
