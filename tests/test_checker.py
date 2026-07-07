@@ -405,12 +405,16 @@ class TestStmtFlowSensitivity:
             VarStmt(token("a")),
             IfStmt(
                 condition=LiteralExpr(False),
-                then_branch=BlockStmt([
-                    ExpressionStmt(AssignExpr(token("a"), LiteralExpr(1))),
-                ]),
-                else_branch=BlockStmt([
-                    ExpressionStmt(VariableExpr(token("a"))),
-                ]),
+                then_branch=BlockStmt(
+                    [
+                        ExpressionStmt(AssignExpr(token("a"), LiteralExpr(1))),
+                    ]
+                ),
+                else_branch=BlockStmt(
+                    [
+                        ExpressionStmt(VariableExpr(token("a"))),
+                    ]
+                ),
             ),
         ]
 
@@ -433,9 +437,11 @@ class TestStmtFlowSensitivity:
                 initializer=None,
                 condition=LiteralExpr(False),
                 increment=None,
-                body=BlockStmt([
-                    ExpressionStmt(AssignExpr(token("a"), LiteralExpr(1))),
-                ]),
+                body=BlockStmt(
+                    [
+                        ExpressionStmt(AssignExpr(token("a"), LiteralExpr(1))),
+                    ]
+                ),
             ),
             ExpressionStmt(VariableExpr(token("a"))),
         ]
@@ -455,11 +461,15 @@ class TestStmtFlowSensitivity:
             VarStmt(token("x")),
             ForStmt(
                 initializer=VarStmt(token("i"), LiteralExpr(0)),
-                condition=BinaryExpr(VariableExpr(token("i")), token("<"), LiteralExpr(3)),
+                condition=BinaryExpr(
+                    VariableExpr(token("i")), token("<"), LiteralExpr(3)
+                ),
                 increment=AssignExpr(token("x"), LiteralExpr(1)),
-                body=BlockStmt([
-                    ExpressionStmt(VariableExpr(token("x"))),
-                ]),
+                body=BlockStmt(
+                    [
+                        ExpressionStmt(VariableExpr(token("x"))),
+                    ]
+                ),
             ),
         ]
 
