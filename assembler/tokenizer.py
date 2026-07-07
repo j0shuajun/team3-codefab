@@ -87,6 +87,13 @@ class Tokenizer:
         ",": TokenType.COMMA,
     }
 
+    _CHARACTER_WITH_EQUAL_TOKENS = {
+        "!": TokenType.BANG_EQUAL,
+        "=": TokenType.EQUAL_EQUAL,
+        ">": TokenType.GREATER_EQUAL,
+        "<": TokenType.LESS_EQUAL,
+    }
+
     def __init__(self):
         self._origin = ""
         self._idx = 0
@@ -129,6 +136,11 @@ class Tokenizer:
     def _read_single_character(self) -> Token:
         ch = self._peek()
         self._idx += 1
+
+        if ch in self._CHARACTER_WITH_EQUAL_TOKENS and self._idx_in_range() and self._peek() == "=":
+            self._idx += 1
+            return Token(self._CHARACTER_WITH_EQUAL_TOKENS[ch], ch + "=")
+
         return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
 
     def _read_string(self) -> Token:
@@ -164,4 +176,6 @@ class Tokenizer:
             return Token(TokenType.AND, origin)
         if origin == "or":
             return Token(TokenType.OR, origin)
+        if origin == "for":
+            return Token(TokenType.FOR, origin)
         return Token(TokenType.IDENTIFIER, origin)
