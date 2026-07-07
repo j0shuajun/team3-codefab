@@ -16,16 +16,15 @@
 
 ### CI / Lint
 - GitHub Actions는 PR과 `main` push 시 Python 3.13 환경에서 lint를 실행한다.
-- 로컬에서도 PR 전 아래 명령으로 같은 검사를 실행할 수 있다.
+- 로컬에서는 PR 전 아래 명령으로 자동 수정 후 검사를 실행한다.
 
 ```bash
 python -m pip install -r requirements-dev.txt
-black --check .
-isort --check-only .
-ruff check .
+black .
+isort .
+ruff check --fix .
+black --check . && isort --check-only . && ruff check .
 ```
-
-- merge 전 lint 통과를 강제하려면 GitHub 저장소의 branch protection에서 `lint` status check를 required로 설정한다.
 
 ### 팀 협업 규칙
 - 45분 활동, 15분 휴식 / 17:00 마감 후 저녁 테이크아웃 꼭 받기
