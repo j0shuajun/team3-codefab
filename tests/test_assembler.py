@@ -4,7 +4,7 @@ from assembler.expr import (
     GroupingExpr,
     LiteralExpr,
     UnaryExpr,
-    VariableExpr,
+    VariableExpr, AssignExpr,
 )
 from assembler.statement import ExpressionStmt, PrintStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
@@ -189,3 +189,19 @@ def test_parse_var_declaration():
     assert isinstance(stmt, VarStmt)
     assert stmt.name.origin == "a"
     assert stmt.initializer.value == 10
+
+
+def test_parse_assignment_expression():
+    statements = parse([
+        token(TokenType.IDENTIFIER, "a"),
+        token(TokenType.EQUAL, "="),
+        token(TokenType.NUMBER, "20", 20),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, AssignExpr)
+    assert expr.name.origin == "a"
+    assert expr.value.value == 20
+

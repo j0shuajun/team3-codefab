@@ -1,4 +1,4 @@
-from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr
+from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr, AssignExpr
 from .statement import ExpressionStmt, PrintStmt, VarStmt
 from .tokenizer import TokenType
 
@@ -37,7 +37,20 @@ class Assembler:
         return ExpressionStmt(expression)
 
     def expression(self):
-        return self.term()
+        return self.assignment()
+
+    def assignment(self):
+        expr = self.term()
+
+        if self.match(TokenType.EQUAL):
+            value = self.assignment()
+
+            if isinstance(expr, VariableExpr):
+                return AssignExpr(expr.name, value)
+
+            raise AssemblerError("Invalid assignment target.")
+
+        return expr
 
     def primary(self):
         if self.match(TokenType.FALSE):
