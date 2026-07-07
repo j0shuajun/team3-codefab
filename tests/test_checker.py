@@ -1,6 +1,6 @@
 from checker.checker import Checker
-from assembler.expr import LiteralExpr, VariableExpr, BinaryExpr
-from assembler.statement import BlockStmt, VarStmt
+from assembler.expr import LiteralExpr, VariableExpr, BinaryExpr, AssignExpr
+from assembler.statement import BlockStmt, VarStmt, ExpressionStmt
 
 
 def check(statements):
@@ -99,3 +99,33 @@ class TestSelfReferenceInInitializer:
 
         assert len(errors) == 1
         assert "y" in errors[0]
+
+
+class TestUninitializedVariableAccess:
+    def test_reading_uninitialized_variable_is_error(self):
+        statements = [
+            VarStmt("a"),
+            ExpressionStmt(VariableExpr("a")),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "a" in errors[0]
+
+    def test_reading_initialized_variable_is_allowed(self):
+        statements = [
+            VarStmt("a", LiteralExpr(1)),
+            ExpressionStmt(VariableExpr("a")),
+        ]
+
+        assert check(statements) == []
+
+    def test_variable_becomes_initialized_after_assignment(self):
+        statements = [
+            VarStmt("a"),
+            ExpressionStmt(AssignExpr("a", LiteralExpr(1))),
+            ExpressionStmt(VariableExpr("a")),
+        ]
+
+        assert check(statements) == []

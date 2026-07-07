@@ -1,5 +1,5 @@
-from assembler.expr import BinaryExpr, LiteralExpr, VariableExpr
-from assembler.statement import BlockStmt, VarStmt
+from assembler.expr import AssignExpr, BinaryExpr, LiteralExpr, VariableExpr
+from assembler.statement import BlockStmt, ExpressionStmt, VarStmt
 
 
 class Checker:
@@ -22,6 +22,8 @@ class Checker:
             self._resolve_var_stmt(statement)
         elif isinstance(statement, BlockStmt):
             self._resolve_block_stmt(statement)
+        elif isinstance(statement, ExpressionStmt):
+            self._resolve_expr(statement.expression)
 
     def _resolve_var_stmt(self, statement):
         scope = self.scopes[-1]
@@ -34,8 +36,7 @@ class Checker:
 
         if statement.initializer is not None:
             self._resolve_expr(statement.initializer)
-
-        scope[statement.name] = True
+            scope[statement.name] = True
 
     def _resolve_block_stmt(self, statement):
         self.scopes.append({})
@@ -45,6 +46,8 @@ class Checker:
     def _resolve_expr(self, expr):
         if isinstance(expr, VariableExpr):
             self._resolve_variable_expr(expr)
+        elif isinstance(expr, AssignExpr):
+            self._resolve_assign_expr(expr)
         elif isinstance(expr, BinaryExpr):
             self._resolve_expr(expr.left)
             self._resolve_expr(expr.right)
@@ -52,8 +55,17 @@ class Checker:
             pass
 
     def _resolve_variable_expr(self, expr):
-        scope = self.scopes[-1]
-        if scope.get(expr.name) is False:
-            self.errors.append(
-                f"Cannot reference variable '{expr.name}' in its own initializer."
-            )
+        for scope in reversed(self.scopes):
+            if expr.name in scope:
+                if scope[expr.name] is False:
+                    self.errors.append(
+                        f"Variable '{expr.name}' is used before initialization."
+                    )
+                return
+
+    def _resolve_assign_expr(self, expr):
+        self._resolve_expr(expr.value)
+        for scope in reversed(self.scopes):
+            if expr.name in scope:
+                scope[expr.name] = True
+                return
