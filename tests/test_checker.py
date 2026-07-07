@@ -393,8 +393,11 @@ class TestComplexNestedTraversal:
         assert "dup" in errors[0]
 
 
-class TestFlowSensitiveInitialization:
+class TestStmtFlowSensitivity:
     def test_else_branch_still_uninitialized_when_only_then_branch_assigns(self):
+        # var a;
+        # if ( False ) { a = 1; } else { print a; }
+        #
         # then_branch 에서 a 를 초기화하더라도, 실제 실행 시 else_branch 를 타면
         # a 는 여전히 미초기화 상태다. 두 분기는 서로 배타적인 실행 경로이므로
         # 한쪽 분기의 초기화가 다른 쪽 분기에 영향을 주면 안 된다.
@@ -415,3 +418,52 @@ class TestFlowSensitiveInitialization:
 
         assert len(errors) == 1
         assert "a" in errors[0]
+
+    def test_uninitialized_access_after_loop_body_never_runs(self):
+        # var a;
+        # for (; false; ) { a = 1; }
+        # print a;
+        #
+        # condition 이 항상 false 이므로 body 는 한 번도 실행되지 않는다.
+        # body 안에서만 초기화되는 변수를 반복문 이후에 읽으면 여전히
+        # 미초기화 오류여야 한다.
+        statements = [
+            VarStmt(token("a")),
+            ForStmt(
+                initializer=None,
+                condition=LiteralExpr(False),
+                increment=None,
+                body=BlockStmt([
+                    ExpressionStmt(AssignExpr(token("a"), LiteralExpr(1))),
+                ]),
+            ),
+            ExpressionStmt(VariableExpr(token("a"))),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "a" in errors[0]
+
+    def test_increment_does_not_hide_uninitialized_read_in_first_iteration(self):
+        # var x;
+        # for (var i = 0; i < 3; x = 1) { print x; }
+        #
+        # 실제 실행 순서는 condition -> body -> increment 이므로, 첫 반복에서
+        # body 가 실행될 때 x 는 아직 increment 로 초기화되기 전이다.
+        statements = [
+            VarStmt(token("x")),
+            ForStmt(
+                initializer=VarStmt(token("i"), LiteralExpr(0)),
+                condition=BinaryExpr(VariableExpr(token("i")), token("<"), LiteralExpr(3)),
+                increment=AssignExpr(token("x"), LiteralExpr(1)),
+                body=BlockStmt([
+                    ExpressionStmt(VariableExpr(token("x"))),
+                ]),
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "x" in errors[0]

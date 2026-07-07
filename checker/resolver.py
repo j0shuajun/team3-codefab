@@ -156,6 +156,15 @@ class StatementResolver(Resolver):
             self.resolve(statement.initializer)
         if statement.condition is not None:
             self._expression_resolver.resolve(statement.condition)
+
+        # condition 이 처음부터 false 일 수 있어 body/increment 는 한 번도
+        # 실행되지 않을 수 있다. 진입 전 상태를 남겨뒀다가, 반복문을 한 번이라도
+        # 실행한 경우의 결과와 merge 해서 "루프 이후" 상태를 보수적으로 계산한다.
+        before = self._scopes.snapshot()
+
+        self.resolve(statement.body)
         if statement.increment is not None:
             self._expression_resolver.resolve(statement.increment)
-        self.resolve(statement.body)
+        after_iteration = self._scopes.snapshot()
+
+        self._scopes.restore(self._merge_snapshots(after_iteration, before))
