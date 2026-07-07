@@ -1,5 +1,5 @@
 from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr, AssignExpr, LogicalExpr
-from .statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt, IfStmt
+from .statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt, IfStmt, ForStmt
 from .tokenizer import TokenType
 
 
@@ -27,10 +27,39 @@ class Assembler:
         if self.match(TokenType.IF):
             return self.if_statement()
 
+        if self.match(TokenType.FOR):
+            return self.for_statement()
+
         if self.match(TokenType.LEFT_BRACE):
             return BlockStmt(self.block())
 
         return self.expression_statement()
+
+    def for_statement(self):
+        self.consume(TokenType.LEFT_PAREN, "Expected '(' after for.")
+
+        if self.match(TokenType.SEMICOLON):
+            initializer = None
+        elif self.match(TokenType.VAR):
+            initializer = self.var_declaration()
+        else:
+            initializer = self.expression_statement()
+
+        condition = None
+        if not self.check(TokenType.SEMICOLON):
+            condition = self.expression()
+
+        self.consume(TokenType.SEMICOLON, "Expected ';' after loop condition.")
+
+        increment = None
+        if not self.check(TokenType.RIGHT_PAREN):
+            increment = self.expression()
+
+        self.consume(TokenType.RIGHT_PAREN, "Expected ')' after for clauses.")
+
+        body = self.statement()
+
+        return ForStmt(initializer, condition, increment, body)
 
     def if_statement(self):
         self.consume(TokenType.LEFT_PAREN, "Expected '(' after if.")

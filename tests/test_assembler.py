@@ -6,7 +6,7 @@ from assembler.expr import (
     UnaryExpr,
     VariableExpr, AssignExpr, LogicalExpr,
 )
-from assembler.statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt, IfStmt
+from assembler.statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt, IfStmt, ForStmt
 from assembler.tokenizer import Token, TokenType
 
 
@@ -287,3 +287,40 @@ def test_parse_if_else_statement():
     assert isinstance(stmt.condition, BinaryExpr)
     assert isinstance(stmt.then_branch, PrintStmt)
     assert isinstance(stmt.else_branch, PrintStmt)
+
+
+def test_parse_for_statement():
+    statements = parse([
+        token(TokenType.FOR, "for"),
+        token(TokenType.LEFT_PAREN, "("),
+
+        token(TokenType.VAR, "var"),
+        token(TokenType.IDENTIFIER, "i"),
+        token(TokenType.EQUAL, "="),
+        token(TokenType.NUMBER, "0", 0),
+        token(TokenType.SEMICOLON, ";"),
+
+        token(TokenType.IDENTIFIER, "i"),
+        token(TokenType.LESS, "<"),
+        token(TokenType.NUMBER, "3", 3),
+        token(TokenType.SEMICOLON, ";"),
+
+        token(TokenType.IDENTIFIER, "i"),
+        token(TokenType.EQUAL, "="),
+        token(TokenType.IDENTIFIER, "i"),
+        token(TokenType.PLUS, "+"),
+        token(TokenType.NUMBER, "1", 1),
+
+        token(TokenType.RIGHT_PAREN, ")"),
+        token(TokenType.PRINT, "print"),
+        token(TokenType.IDENTIFIER, "i"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, ForStmt)
+    assert isinstance(stmt.initializer, VarStmt)
+    assert isinstance(stmt.condition, BinaryExpr)
+    assert isinstance(stmt.increment, AssignExpr)
+    assert isinstance(stmt.body, PrintStmt)
