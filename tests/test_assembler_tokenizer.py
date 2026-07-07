@@ -193,6 +193,24 @@ def test_false(tokenizer):
                       Token(T.EOF, "")]
 
 
+def test_and(tokenizer):
+    tokens = tokenizer.tokenize("a and b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.AND, "and"),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
+def test_or(tokenizer):
+    tokens = tokenizer.tokenize("a or b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.OR, "or"),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
 def test_string(tokenizer):
     tokens = tokenizer.tokenize('"hi"')
 
