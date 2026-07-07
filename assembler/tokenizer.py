@@ -25,15 +25,15 @@ class TokenType(Enum):
     GREATER_EQUAL = auto()
     LESS_EQUAL = auto()
 
-    AND = auto()
-    ELSE = auto()
-    FALSE = auto()
-    FOR = auto()
-    IF = auto()
-    OR = auto()
-    PRINT = auto()
-    TRUE = auto()
     VAR = auto()
+    TRUE = auto()
+    FALSE = auto()
+    PRINT = auto()
+    AND = auto()
+    OR = auto()
+    IF = auto()
+    ELSE = auto()
+    FOR = auto()
 
     # 리터럴
     IDENTIFIER = auto()
@@ -139,4 +139,8 @@ class Tokenizer:
             return Token(TokenType.IF, origin)
         if origin == "var":
             return Token(TokenType.VAR, origin)
+        if origin == "true":
+            return Token(TokenType.TRUE, origin)
+        if origin == "false":
+            return Token(TokenType.FALSE, origin)
         return Token(TokenType.IDENTIFIER, origin)
