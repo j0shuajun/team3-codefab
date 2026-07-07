@@ -1,6 +1,5 @@
 from assembler.expr import BinaryExpr, LiteralExpr, VariableExpr
 from assembler.statement import BlockStmt, VarStmt
-from checker import Checker
 from checker.checker import Checker
 
 
