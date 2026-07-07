@@ -127,7 +127,7 @@ ACCEPTANCE_ERROR_CASES = [
         "Invalid assignment target.",
     ),
     ("missing_expression", "print * 5;", "Expected expression."),
-    ("self_reference_initializer", "{ var a = a; }", "initializer"),
+    ("self_reference_initializer", "{ var a = a; }", "initialization"),
     (
         "duplicate_local_declaration",
         '{ var a = "hi"; var a = 3; }',
