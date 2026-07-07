@@ -147,18 +147,23 @@ class Executor:
             return left / right
 
         if expr.operator.type == TokenType.GREATER:
+            self.check_type_different(left, right)
             return left > right
 
         if expr.operator.type == TokenType.GREATER_EQUAL:
+            self.check_type_different(left, right)
             return left >= right
 
         if expr.operator.type == TokenType.LESS:
+            self.check_type_different(left, right)
             return left < right
 
         if expr.operator.type == TokenType.LESS_EQUAL:
+            self.check_type_different(left, right)
             return left <= right
 
         if expr.operator.type == TokenType.EQUAL_EQUAL:
+            self.check_type_different(left, right)
             return left == right
 
         if expr.operator.type == TokenType.BANG_EQUAL:
@@ -252,3 +257,15 @@ class Executor:
             return
 
         raise CodeFabRuntimeError("Operands must be numbers.")
+
+    def check_type_different(self, left, right):
+        if self.is_number(left) or self.is_number(right):
+            if self.is_number(left) and self.is_number(right):
+                return
+            raise CodeFabRuntimeError("Left/Rightt type mismatch.")
+
+        if left.type == right.type:
+            return
+
+        raise CodeFabRuntimeError("Left/Rightt type mismatch.")
+

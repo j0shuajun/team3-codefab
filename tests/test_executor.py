@@ -38,6 +38,141 @@ def test_binary_expression_plus():
     assert executor.outputs == ["5"]
 
 
+def test_binary_expression_greater():
+    executor = run([
+        PrintStmt(
+            BinaryExpr(
+                LiteralExpr(3),
+                token(TokenType.GREATER, ">"),
+                LiteralExpr(2),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["true"]
+
+
+def test_binary_expression_greater_equal():
+    executor = run([
+        PrintStmt(
+            BinaryExpr(
+                LiteralExpr(3),
+                token(TokenType.GREATER_EQUAL, ">="),
+                LiteralExpr(2),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["true"]
+
+
+def test_binary_expression_greater_equal2():
+    executor = run([
+        PrintStmt(
+            BinaryExpr(
+                LiteralExpr(3),
+                token(TokenType.GREATER_EQUAL, ">="),
+                LiteralExpr(3),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["true"]
+
+
+def test_binary_expression_greater_type_diff():
+    with pytest.raises(CodeFabRuntimeError):
+        run([
+            PrintStmt(
+                BinaryExpr(
+                    LiteralExpr(3),
+                    token(TokenType.GREATER, ">"),
+                    LiteralExpr("a"),
+                )
+            )
+        ])
+
+
+def test_binary_expression_greater_equal_type_diff():
+    with pytest.raises(CodeFabRuntimeError):
+        run([
+            PrintStmt(
+                BinaryExpr(
+                    LiteralExpr(3),
+                    token(TokenType.GREATER_EQUAL, ">="),
+                    LiteralExpr("a"),
+                )
+            )
+        ])
+
+
+def test_binary_expression_less():
+    executor = run([
+        PrintStmt(
+            BinaryExpr(
+                LiteralExpr(1),
+                token(TokenType.LESS, "<"),
+                LiteralExpr(2),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["true"]
+
+
+def test_binary_expression_less_equal():
+    executor = run([
+        PrintStmt(
+            BinaryExpr(
+                LiteralExpr(1),
+                token(TokenType.LESS_EQUAL, "<="),
+                LiteralExpr(2),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["true"]
+
+def test_binary_expression_less_equal2():
+    executor = run([
+        PrintStmt(
+            BinaryExpr(
+                LiteralExpr(2),
+                token(TokenType.LESS_EQUAL, "<="),
+                LiteralExpr(2),
+            )
+        )
+    ])
+
+    assert executor.outputs == ["true"]
+
+
+def test_binary_expression_less_type_diff():
+    with pytest.raises(CodeFabRuntimeError):
+        run([
+            PrintStmt(
+                BinaryExpr(
+                    LiteralExpr(3),
+                    token(TokenType.LESS, "<"),
+                    LiteralExpr("a"),
+                )
+            )
+        ])
+
+
+def test_binary_expression_less_equal_type_diff():
+    with pytest.raises(CodeFabRuntimeError):
+        run([
+            PrintStmt(
+                BinaryExpr(
+                    LiteralExpr(3),
+                    token(TokenType.LESS_EQUAL, "<="),
+                    LiteralExpr("a"),
+                )
+            )
+        ])
+
+
 def test_operator_precedence_tree_is_respected():
     expr = BinaryExpr(
         LiteralExpr(3),
