@@ -81,11 +81,11 @@ def test_grouping(tokenizer):
                       Token(T.EOF, "")]
 
 def test_block_scope(tokenizer):
-    tokens = tokenizer.tokenize("{ a }")
+    tokens = tokenizer.tokenize("{ a + b }")
 
-    assert tokens == [Token(T.LEFT_BRACE, "("),
+    assert tokens == [Token(T.LEFT_BRACE, "{"),
                       Token(T.IDENTIFIER, "a"),
                       Token(T.PLUS, "+"),
                       Token(T.IDENTIFIER, "b"),
-                      Token(T.RIGHT_BRACE, ")"),
+                      Token(T.RIGHT_BRACE, "}"),
                       Token(T.EOF, "")]
