@@ -90,12 +90,12 @@ def test_assign_zero_dot_number(tokenizer):
 
 def test_error_assign_dot_number(tokenizer):
     with pytest.raises(ValueError):
-        tokens = tokenizer.tokenize("point = .11")
+        tokenizer.tokenize("point = .11")
 
 
 def test_error_assign_number_dot_number_dot_number(tokenizer):
     with pytest.raises(ValueError):
-        tokens = tokenizer.tokenize("point = 10.10.10")
+        tokenizer.tokenize("point = 10.10.10")
 
 
 def test_plus_operator(tokenizer):
