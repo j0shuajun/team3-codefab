@@ -1,39 +1,46 @@
 from enum import Enum, auto
+from typing import override
 
 
 class TokenType(Enum):
-    # 단일문자
-    LEFT_PAREN = auto()
-    RIGHT_PAREN = auto()
-    LEFT_BRACE = auto()
-    RIGHT_BRACE = auto()
-    COMMA = auto()
-    SEMICOLON = auto()
+    @override
+    def _generate_next_value_(self, start, count, last_values):
+        """ auto() 시 호출됨 """
+        print(self, start, count, last_values)
+        return self
 
-    PLUS = auto()
-    MINUS = auto()
-    STAR = auto()
-    SLASH = auto()
-    BANG = auto()
-    EQUAL = auto()
-    GREATER = auto()
-    LESS = auto()
+    # 단일문자
+    LEFT_PAREN = "("
+    RIGHT_PAREN = ")"
+    LEFT_BRACE = "{"
+    RIGHT_BRACE = "}"
+    COMMA = ","
+    SEMICOLON = ";"
+
+    PLUS = "+"
+    MINUS = "-"
+    STAR = "*"
+    SLASH = "/"
+    BANG = "!"
+    EQUAL = "="
+    GREATER = ">"
+    LESS = "<"
 
     # 여러문자
-    VAR = auto()
-    TRUE = auto()
-    FALSE = auto()
-    PRINT = auto()
-    AND = auto()
-    OR = auto()
-    IF = auto()
-    ELSE = auto()
-    FOR = auto()
+    VAR = "var"
+    TRUE = "true"
+    FALSE = "false"
+    PRINT = "print"
+    AND = "and"
+    OR = "or"
+    IF = "if"
+    ELSE = "else"
+    FOR = "for"
 
-    BANG_EQUAL = auto()
-    EQUAL_EQUAL = auto()
-    GREATER_EQUAL = auto()
-    LESS_EQUAL = auto()
+    BANG_EQUAL = "!="
+    EQUAL_EQUAL = "=="
+    GREATER_EQUAL = ">="
+    LESS_EQUAL = "<="
 
     # 리터럴
     IDENTIFIER = auto()
@@ -42,6 +49,7 @@ class TokenType(Enum):
 
     # 기타
     EOF = auto()
+
 
 
 class Token:
@@ -65,29 +73,9 @@ class Token:
 
 
 class Tokenizer:
-    _SINGLE_CHARACTER_TOKENS = {
-        # 할당
-        "=": TokenType.EQUAL,
-        # 그룹핑
-        "(": TokenType.LEFT_PAREN,
-        ")": TokenType.RIGHT_PAREN,
-        # 블록스코프
-        "{": TokenType.LEFT_BRACE,
-        "}": TokenType.RIGHT_BRACE,
-        # 비교
-        "<": TokenType.LESS,
-        ">": TokenType.GREATER,
-        # 산술연산
-        "+": TokenType.PLUS,
-        "-": TokenType.MINUS,
-        "*": TokenType.STAR,
-        "/": TokenType.SLASH,
-        # 논리연산
-        "!": TokenType.BANG,
-        # 구분자
-        ";": TokenType.SEMICOLON,
-        ",": TokenType.COMMA,
-    }
+    _SINGLE_CHARACTERS = frozenset(
+        t.value for t in TokenType if isinstance(t.value, str) and len(t.value) == 1
+    )
 
     _CHARACTER_WITH_EQUAL_TOKENS = {
         "!": TokenType.BANG_EQUAL,
@@ -121,7 +109,7 @@ class Tokenizer:
             ch = self._peek()
             if ch.isspace():
                 self._idx += 1
-            elif ch in self._SINGLE_CHARACTER_TOKENS:
+            elif ch in self._SINGLE_CHARACTERS:
                 tokens.append(self._read_single_character())
             elif ch == '"':
                 tokens.append(self._read_string())
@@ -159,7 +147,7 @@ class Tokenizer:
             self._idx += 1
             return Token(self._CHARACTER_WITH_EQUAL_TOKENS[ch], ch + "=")
 
-        return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
+        return Token(TokenType(ch), ch)
 
     def _read_string(self) -> Token:
         start = self._idx
