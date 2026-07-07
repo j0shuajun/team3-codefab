@@ -1,4 +1,4 @@
-from .expr import LiteralExpr, BinaryExpr, UnaryExpr, GroupingExpr
+from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr
 from .statement import ExpressionStmt
 from .tokenizer import TokenType
 

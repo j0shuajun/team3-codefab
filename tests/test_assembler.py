@@ -1,7 +1,7 @@
 from assembler.assembler import Assembler
-from assembler.tokenizer import Token, TokenType
-from assembler.expr import LiteralExpr, BinaryExpr, GroupingExpr, UnaryExpr
+from assembler.expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr
 from assembler.statement import ExpressionStmt
+from assembler.tokenizer import Token, TokenType
 
 
 def token(token_type, origin, value=None):
@@ -13,10 +13,12 @@ def parse(tokens):
 
 
 def test_parse_number_expression_statement():
-    statements = parse([
-        token(TokenType.NUMBER, "3", 3),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     assert len(statements) == 1
     assert isinstance(statements[0], ExpressionStmt)
@@ -25,12 +27,14 @@ def test_parse_number_expression_statement():
 
 
 def test_parse_binary_plus_expression_tree():
-    statements = parse([
-        token(TokenType.NUMBER, "3", 3),
-        token(TokenType.PLUS, "+"),
-        token(TokenType.NUMBER, "2", 2),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.PLUS, "+"),
+            token(TokenType.NUMBER, "2", 2),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expression = statements[0].expression
 
@@ -41,14 +45,16 @@ def test_parse_binary_plus_expression_tree():
 
 
 def test_parse_operator_precedence_tree():
-    statements = parse([
-        token(TokenType.NUMBER, "3", 3),
-        token(TokenType.PLUS, "+"),
-        token(TokenType.NUMBER, "7", 7),
-        token(TokenType.STAR, "*"),
-        token(TokenType.NUMBER, "5", 5),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.PLUS, "+"),
+            token(TokenType.NUMBER, "7", 7),
+            token(TokenType.STAR, "*"),
+            token(TokenType.NUMBER, "5", 5),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 
@@ -63,16 +69,18 @@ def test_parse_operator_precedence_tree():
 
 
 def test_parse_grouping_expression():
-    statements = parse([
-        token(TokenType.LEFT_PAREN, "("),
-        token(TokenType.NUMBER, "3", 3),
-        token(TokenType.PLUS, "+"),
-        token(TokenType.NUMBER, "7", 7),
-        token(TokenType.RIGHT_PAREN, ")"),
-        token(TokenType.STAR, "*"),
-        token(TokenType.NUMBER, "5", 5),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.LEFT_PAREN, "("),
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.PLUS, "+"),
+            token(TokenType.NUMBER, "7", 7),
+            token(TokenType.RIGHT_PAREN, ")"),
+            token(TokenType.STAR, "*"),
+            token(TokenType.NUMBER, "5", 5),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 
@@ -82,15 +90,16 @@ def test_parse_grouping_expression():
 
 
 def test_parse_unary_minus_expression():
-    statements = parse([
-        token(TokenType.MINUS, "-"),
-        token(TokenType.NUMBER, "3", 3),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.MINUS, "-"),
+            token(TokenType.NUMBER, "3", 3),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 
     assert isinstance(expr, UnaryExpr)
     assert expr.operator.type == TokenType.MINUS
     assert expr.right.value == 3
-
