@@ -193,6 +193,13 @@ def test_false(tokenizer):
                       Token(T.EOF, "")]
 
 
+def test_string(tokenizer):
+    tokens = tokenizer.tokenize('"hi"')
+
+    assert tokens == [Token(T.STRING, '"hi"', value="hi"),
+                      Token(T.EOF, "")]
+
+
 def test_print_statement(tokenizer):
     tokens = tokenizer.tokenize('print("hi")')
 
