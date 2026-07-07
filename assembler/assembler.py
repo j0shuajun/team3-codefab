@@ -27,9 +27,9 @@ class Assembler:
         return self.expression_statement()
 
     def print_statement(self):
-        expr = self.expression()
+        expression = self.expression()
         self.consume(TokenType.SEMICOLON, "Expected ';' after value.")
-        return PrintStmt(expr)
+        return PrintStmt(expression)
 
     def expression_statement(self):
         expression = self.expression()
@@ -53,9 +53,9 @@ class Assembler:
             return VariableExpr(self.previous())
 
         if self.match(TokenType.LEFT_PAREN):
-            expr = self.expression()
+            expression = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
-            return GroupingExpr(expr)
+            return GroupingExpr(expression)
 
         raise AssemblerError("Expected expression.")
 
