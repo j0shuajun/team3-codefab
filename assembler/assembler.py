@@ -1,5 +1,5 @@
 from .expr import BinaryExpr, GroupingExpr, LiteralExpr, UnaryExpr, VariableExpr, AssignExpr, LogicalExpr
-from .statement import ExpressionStmt, PrintStmt, VarStmt
+from .statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt
 from .tokenizer import TokenType
 
 
@@ -24,7 +24,19 @@ class Assembler:
         if self.match(TokenType.PRINT):
             return self.print_statement()
 
+        if self.match(TokenType.LEFT_BRACE):
+            return BlockStmt(self.block())
+
         return self.expression_statement()
+
+    def block(self):
+        statements = []
+
+        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            statements.append(self.declaration())
+
+        self.consume(TokenType.RIGHT_BRACE, "Expected '}' after block.")
+        return statements
 
     def print_statement(self):
         expression = self.expression()
@@ -86,10 +98,10 @@ class Assembler:
         expr = self.term()
 
         while self.match(
-            TokenType.GREATER,
-            TokenType.GREATER_EQUAL,
-            TokenType.LESS,
-            TokenType.LESS_EQUAL,
+                TokenType.GREATER,
+                TokenType.GREATER_EQUAL,
+                TokenType.LESS,
+                TokenType.LESS_EQUAL,
         ):
             operator = self.previous()
             right = self.term()

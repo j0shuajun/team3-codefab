@@ -6,7 +6,7 @@ from assembler.expr import (
     UnaryExpr,
     VariableExpr, AssignExpr, LogicalExpr,
 )
-from assembler.statement import ExpressionStmt, PrintStmt, VarStmt
+from assembler.statement import ExpressionStmt, PrintStmt, VarStmt, BlockStmt
 from assembler.tokenizer import Token, TokenType
 
 
@@ -223,6 +223,7 @@ def test_parse_comparison_and_equality_expression():
     assert isinstance(expr.left, BinaryExpr)
     assert expr.left.operator.type == TokenType.GREATER
 
+
 def test_parse_logical_expression():
     statements = parse([
         token(TokenType.TRUE, "true"),
@@ -239,4 +240,26 @@ def test_parse_logical_expression():
     assert expr.operator.type == TokenType.OR
     assert isinstance(expr.left, LogicalExpr)
     assert expr.left.operator.type == TokenType.AND
+
+
+def test_parse_block_statement():
+    statements = parse([
+        token(TokenType.LEFT_BRACE, "{"),
+        token(TokenType.VAR, "var"),
+        token(TokenType.IDENTIFIER, "a"),
+        token(TokenType.EQUAL, "="),
+        token(TokenType.NUMBER, "1", 1),
+        token(TokenType.SEMICOLON, ";"),
+        token(TokenType.PRINT, "print"),
+        token(TokenType.IDENTIFIER, "a"),
+        token(TokenType.SEMICOLON, ";"),
+        token(TokenType.RIGHT_BRACE, "}"),
+    ])
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, BlockStmt)
+    assert len(stmt.statements) == 2
+    assert isinstance(stmt.statements[0], VarStmt)
+    assert isinstance(stmt.statements[1], PrintStmt)
 
