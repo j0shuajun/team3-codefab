@@ -1,4 +1,4 @@
-from enum import auto, Enum
+from enum import Enum, auto
 
 
 class TokenType(Enum):
@@ -54,9 +54,11 @@ class Token:
     def __eq__(self, other):
         if not isinstance(other, Token):
             return NotImplemented
-        return (self.type == other.type
-                and self.origin == other.origin
-                and getattr(self, "value", None) == getattr(other, "value", None))
+        return (
+            self.type == other.type
+            and self.origin == other.origin
+            and getattr(self, "value", None) == getattr(other, "value", None)
+        )
 
     def __repr__(self):
         return f"Token({self.type}, {self.origin!r}, {getattr(self, "value", None) !r})"
@@ -131,7 +133,7 @@ class Tokenizer:
         start = self._idx
         while self._idx_in_range() and type_checker(self._peek()):
             self._idx += 1
-        return self._origin[start:self._idx]
+        return self._origin[start : self._idx]
 
     def _read_single_character(self) -> Token:
         ch = self._peek()
