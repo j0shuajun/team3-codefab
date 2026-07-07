@@ -1,119 +1,75 @@
-from assembler.expr import (
-    AssignExpr,
-    BinaryExpr,
-    Expr,
-    GroupingExpr,
-    LiteralExpr,
-    LogicalExpr,
-    UnaryExpr,
-    VariableExpr,
+from assembler.expr import LiteralExpr
+from assembler.statement import (
+    BlockStmt,
+    ExpressionStmt,
+    ForStmt,
+    IfStmt,
+    PrintStmt,
+    VarStmt,
 )
 from assembler.tokenizer import Token, TokenType
 
 
-def test_literal_expr_has_value():
-    expr = LiteralExpr(3)
-
-    assert isinstance(expr, Expr)
-    assert expr.value == 3
+def identifier(name):
+    return Token(TokenType.IDENTIFIER, name)
 
 
-def test_string_literal_expr_has_value():
-    expr = LiteralExpr("hello")
+def test_var_stmt_has_token_name_and_initializer():
+    name = identifier("a")
+    initializer = LiteralExpr(1)
 
-    assert expr.value == "hello"
+    stmt = VarStmt(name, initializer)
 
-
-def test_boolean_literal_expr_has_value():
-    expr = LiteralExpr(True)
-
-    assert expr.value is True
-
-
-def test_variable_expr_has_name_token():
-    name = Token(TokenType.IDENTIFIER, "a")
-
-    expr = VariableExpr(name)
-
-    assert isinstance(expr, Expr)
-    assert expr.name == name
-    assert expr.name.type == TokenType.IDENTIFIER
-    assert expr.name.origin == "a"
+    assert stmt.name == name
+    assert stmt.initializer == initializer
+    assert stmt.name.origin == "a"
 
 
-def test_assign_expr_has_name_and_value():
-    name = Token(TokenType.IDENTIFIER, "a")
-    value = LiteralExpr(10)
+def test_print_stmt_has_expression():
+    expression = LiteralExpr(3)
 
-    expr = AssignExpr(name, value)
+    stmt = PrintStmt(expression)
 
-    assert isinstance(expr, Expr)
-    assert expr.name == name
-    assert expr.value == value
+    assert stmt.expression == expression
 
 
-def test_binary_expr_has_left_operator_right():
-    left = LiteralExpr(1)
-    operator = Token(TokenType.PLUS, "+")
-    right = LiteralExpr(2)
+def test_expression_stmt_has_expression():
+    expression = LiteralExpr(10)
 
-    expr = BinaryExpr(left, operator, right)
+    stmt = ExpressionStmt(expression)
 
-    assert isinstance(expr, Expr)
-    assert expr.left == left
-    assert expr.operator == operator
-    assert expr.right == right
+    assert stmt.expression == expression
 
 
-def test_unary_expr_has_operator_and_right():
-    operator = Token(TokenType.MINUS, "-")
-    right = LiteralExpr(3)
+def test_block_stmt_has_statements():
+    inner_stmt = PrintStmt(LiteralExpr(1))
 
-    expr = UnaryExpr(operator, right)
+    stmt = BlockStmt([inner_stmt])
 
-    assert isinstance(expr, Expr)
-    assert expr.operator == operator
-    assert expr.right == right
+    assert stmt.statements == [inner_stmt]
 
 
-def test_grouping_expr_has_expression():
-    inner = BinaryExpr(
-        LiteralExpr(1),
-        Token(TokenType.PLUS, "+"),
-        LiteralExpr(2),
-    )
+def test_if_stmt_has_condition_then_branch_and_else_branch():
+    condition = LiteralExpr(True)
+    then_branch = PrintStmt(LiteralExpr(1))
+    else_branch = PrintStmt(LiteralExpr(2))
 
-    expr = GroupingExpr(inner)
+    stmt = IfStmt(condition, then_branch, else_branch)
 
-    assert isinstance(expr, Expr)
-    assert expr.expression == inner
-
-
-def test_logical_expr_has_left_operator_right():
-    left = LiteralExpr(True)
-    operator = Token(TokenType.AND, "and")
-    right = LiteralExpr(False)
-
-    expr = LogicalExpr(left, operator, right)
-
-    assert isinstance(expr, Expr)
-    assert expr.left == left
-    assert expr.operator == operator
-    assert expr.right == right
+    assert stmt.condition == condition
+    assert stmt.then_branch == then_branch
+    assert stmt.else_branch == else_branch
 
 
-def test_binary_expr_can_represent_operator_precedence_tree():
-    # 1 + 2 * 3
-    expr = BinaryExpr(
-        LiteralExpr(1),
-        Token(TokenType.PLUS, "+"),
-        BinaryExpr(
-            LiteralExpr(2),
-            Token(TokenType.STAR, "*"),
-            LiteralExpr(3),
-        ),
-    )
+def test_for_stmt_has_initializer_condition_increment_and_body():
+    initializer = VarStmt(identifier("i"), LiteralExpr(0))
+    condition = LiteralExpr(True)
+    increment = LiteralExpr(1)
+    body = PrintStmt(LiteralExpr(100))
 
-    assert expr.operator.type == TokenType.PLUS
-    assert isinstance(expr.right, BinaryExpr)
-    assert expr.right.operator.type == TokenType.STAR
+    stmt = ForStmt(initializer, condition, increment, body)
+
+    assert stmt.initializer == initializer
+    assert stmt.condition == condition
+    assert stmt.increment == increment
+    assert stmt.body == body
