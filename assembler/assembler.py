@@ -1,4 +1,4 @@
-from .expr import LiteralExpr, BinaryExpr
+from .expr import LiteralExpr, BinaryExpr, UnaryExpr, GroupingExpr
 from .statement import ExpressionStmt
 from .tokenizer import TokenType
 
@@ -34,6 +34,11 @@ class Assembler:
     def primary(self):
         if self.match(TokenType.NUMBER):
             return LiteralExpr(self.previous().value)
+
+        if self.match(TokenType.LEFT_PAREN):
+            expr = self.expression()
+            self.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
+            return GroupingExpr(expr)
 
         raise AssemblerError("Expected expression.")
 
@@ -79,11 +84,19 @@ class Assembler:
         return expr
 
     def factor(self):
-        expr = self.primary()
+        expr = self.unary()
 
         while self.match(TokenType.STAR, TokenType.SLASH):
             operator = self.previous()
-            right = self.primary()
+            right = self.unary()
             expr = BinaryExpr(expr, operator, right)
 
         return expr
+
+    def unary(self):
+        if self.match(TokenType.BANG, TokenType.MINUS):
+            operator = self.previous()
+            right = self.unary()
+            return UnaryExpr(operator, right)
+
+        return self.primary()
