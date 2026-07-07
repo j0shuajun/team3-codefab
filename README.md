@@ -14,6 +14,19 @@
 - Branch 이름은 `feature/<기능>` 형식을 따른다.
 - 테스트파일은 `tests/` 디렉토리 하위에 테스트 대상 파일이름을 경로에 담아 작성한다. ex) `tests/test_assembler_tokenizer.py`
 
+### CI / Lint
+- GitHub Actions는 PR과 `main` push 시 Python 3.13 환경에서 lint를 실행한다.
+- 로컬에서도 PR 전 아래 명령으로 같은 검사를 실행할 수 있다.
+
+```bash
+python -m pip install -r requirements-dev.txt
+black --check .
+isort --check-only .
+ruff check .
+```
+
+- merge 전 lint 통과를 강제하려면 GitHub 저장소의 branch protection에서 `lint` status check를 required로 설정한다.
+
 ### 팀 협업 규칙
 - 45분 활동, 15분 휴식 / 17:00 마감 후 저녁 테이크아웃 꼭 받기
 - 디스코드에 github noti 오면 확인 즉시 들어가보기
