@@ -175,7 +175,7 @@ class Tokenizer:
     def _read_number(self) -> Token:
         characters = self._read_multiple_characters(str.isdigit)
         if len(characters) > 1 and characters[0] == "0":
-            raise ValueError(f"Number cannot start with zero: {characters!r}")
+            raise ValueError("Number cannot start with zero")
         if self._idx_in_range() and self._peek() == ".":
             characters += self._peek()
             self._idx += 1
