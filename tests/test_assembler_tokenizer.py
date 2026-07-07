@@ -162,6 +162,7 @@ def test_if_condition(tokenizer):
                       Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
 
+
 def test_else_if_condition(tokenizer):
     tokens = tokenizer.tokenize("else if (x > 10)")
 
@@ -174,6 +175,7 @@ def test_else_if_condition(tokenizer):
                       Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
 
+
 def test_else_block(tokenizer):
     tokens = tokenizer.tokenize("else {a=1}")
 
@@ -184,6 +186,7 @@ def test_else_block(tokenizer):
                       Token(T.NUMBER, "1", value=1.0),
                       Token(T.RIGHT_BRACE, "}"),
                       Token(T.EOF, "")]
+
 
 def test_var_statement(tokenizer):
     tokens = tokenizer.tokenize("var a = 37")
@@ -264,4 +267,40 @@ def test_print_expression(tokenizer):
                       Token(T.PLUS, "+"),
                       Token(T.IDENTIFIER, "b"),
                       Token(T.RIGHT_PAREN, ")"),
+                      Token(T.EOF, "")]
+
+
+def test_bang_equal(tokenizer):
+    tokens = tokenizer.tokenize("a != b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.BANG_EQUAL, "!="),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
+def test_equal_equal(tokenizer):
+    tokens = tokenizer.tokenize("a == b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.EQUAL_EQUAL, "=="),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
+def test_greater_equal(tokenizer):
+    tokens = tokenizer.tokenize("a >= b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.GREATER_EQUAL, ">="),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
+def test_less_equal(tokenizer):
+    tokens = tokenizer.tokenize("a <= b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.LESS_EQUAL, "<="),
+                      Token(T.IDENTIFIER, "b"),
                       Token(T.EOF, "")]
