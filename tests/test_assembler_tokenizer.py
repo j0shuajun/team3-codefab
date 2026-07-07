@@ -289,6 +289,15 @@ def test_bang_equal(tokenizer):
                       Token(T.EOF, "")]
 
 
+def test_bang_equal_without_blank(tokenizer):
+    tokens = tokenizer.tokenize("a!=b")
+
+    assert tokens == [Token(T.IDENTIFIER, "a"),
+                      Token(T.BANG_EQUAL, "!="),
+                      Token(T.IDENTIFIER, "b"),
+                      Token(T.EOF, "")]
+
+
 def test_equal_equal(tokenizer):
     tokens = tokenizer.tokenize("a == b")
 
