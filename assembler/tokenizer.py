@@ -94,6 +94,18 @@ class Tokenizer:
         "<": TokenType.LESS_EQUAL,
     }
 
+    _RESERVED_TOKENS = {
+        "if": TokenType.IF,
+        "else": TokenType.ELSE,
+        "var": TokenType.VAR,
+        "true": TokenType.TRUE,
+        "false": TokenType.FALSE,
+        "print": TokenType.PRINT,
+        "and": TokenType.AND,
+        "or": TokenType.OR,
+        "for": TokenType.FOR,
+    }
+
     def __init__(self):
         self._origin = ""
         self._idx = 0
@@ -160,22 +172,4 @@ class Tokenizer:
 
     def _read_identifier(self) -> Token:
         origin = self._read_multiple_characters(str.isalnum)
-        if origin == "if":
-            return Token(TokenType.IF, origin)
-        if origin == "else":
-            return Token(TokenType.ELSE, origin)
-        if origin == "var":
-            return Token(TokenType.VAR, origin)
-        if origin == "true":
-            return Token(TokenType.TRUE, origin)
-        if origin == "false":
-            return Token(TokenType.FALSE, origin)
-        if origin == "print":
-            return Token(TokenType.PRINT, origin)
-        if origin == "and":
-            return Token(TokenType.AND, origin)
-        if origin == "or":
-            return Token(TokenType.OR, origin)
-        if origin == "for":
-            return Token(TokenType.FOR, origin)
-        return Token(TokenType.IDENTIFIER, origin)
+        return Token(self._RESERVED_TOKENS.get(origin, TokenType.IDENTIFIER), origin)
