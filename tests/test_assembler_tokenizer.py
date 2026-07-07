@@ -257,6 +257,7 @@ def test_assign_string(tokenizer):
                       Token(T.STRING, '"hi"', value="hi"),
                       Token(T.EOF, "")]
 
+
 def test_print_statement(tokenizer):
     tokens = tokenizer.tokenize('print("hi")')
 
@@ -336,6 +337,7 @@ def test_for_condition(tokenizer):
                       Token(T.NUMBER, "1", value=1.0),
                       Token(T.RIGHT_PAREN, ")"),
                       Token(T.EOF, "")]
+
 
 def test_similar_to_for(tokenizer):
     tokens = tokenizer.tokenize("format before for1")
