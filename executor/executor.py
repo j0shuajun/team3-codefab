@@ -71,6 +71,10 @@ class Executor:
     def _make_array(self, size):
         if not self.is_number(size):
             raise CodeFabRuntimeError("Array size must be a number.")
+        if not float(size).is_integer():
+            raise CodeFabRuntimeError("Array size must be an integer.")
+        if size < 0:
+            raise CodeFabRuntimeError("Array size must not be negative.")
         return [None] * int(size)
 
     def execute(self, statements):
@@ -338,6 +342,9 @@ class Executor:
 
         if not self.is_number(index):
             raise CodeFabRuntimeError("Array index must be a number.")
+
+        if not float(index).is_integer():
+            raise CodeFabRuntimeError("Array index must be an integer.")
 
         index = int(index)
         if index < 0 or index >= len(array):
