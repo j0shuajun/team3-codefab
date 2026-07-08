@@ -47,10 +47,10 @@ class BlockStmt(Stmt):
 
 class IfStmt(Stmt):
     def __init__(
-        self,
-        condition: Expr,
-        then_branch: Stmt,
-        else_branch: Optional[Stmt] = None,
+            self,
+            condition: Expr,
+            then_branch: Stmt,
+            else_branch: Optional[Stmt] = None,
     ):
         self.condition = condition
         self.then_branch = then_branch
@@ -67,11 +67,11 @@ class IfStmt(Stmt):
 
 class ForStmt(Stmt):
     def __init__(
-        self,
-        initializer: Optional[Stmt],
-        condition: Optional[Expr],
-        increment: Optional[Expr],
-        body: Stmt,
+            self,
+            initializer: Optional[Stmt],
+            condition: Optional[Expr],
+            increment: Optional[Expr],
+            body: Stmt,
     ):
         self.initializer = initializer
         self.condition = condition
@@ -86,3 +86,27 @@ class ForStmt(Stmt):
             f"increment={self.increment}, "
             f"body={self.body})"
         )
+
+
+class FunctionStmt(Stmt):
+    """Func name(params) { body } 함수 선언문"""
+
+    def __init__(self, name, params, body):
+        self.name = name  # Token
+        self.params = params  # list[Token]
+        self.body = body  # list[Stmt]
+
+    def __repr__(self):
+        param_names = [param.origin for param in self.params]
+        return f"FunctionStmt({self.name.origin}, params={param_names}, body={self.body})"
+
+
+class ReturnStmt(Stmt):
+    """return expression; 문장"""
+
+    def __init__(self, keyword, value=None):
+        self.keyword = keyword  # Token
+        self.value = value  # Expr or None
+
+    def __repr__(self):
+        return f"ReturnStmt({self.value})"
