@@ -1,3 +1,4 @@
+from assembler.environment import CodeFabRuntimeError, Environment
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
@@ -8,17 +9,18 @@ from assembler.expr import (
     UnaryExpr,
     VariableExpr,
 )
-from assembler.runtime import Callable, NativeFunction, UserFunction, ReturnSignal
+from assembler.runtime import Callable, NativeFunction, ReturnSignal, UserFunction
 from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
+    FunctionStmt,
     IfStmt,
     PrintStmt,
-    VarStmt, FunctionStmt, ReturnStmt,
+    ReturnStmt,
+    VarStmt,
 )
 from assembler.tokenizer import TokenType
-from assembler.environment import Environment, CodeFabRuntimeError
 
 
 class Executor:

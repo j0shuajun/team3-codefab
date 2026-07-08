@@ -13,9 +13,11 @@ from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
+    FunctionStmt,
     IfStmt,
     PrintStmt,
-    VarStmt, FunctionStmt, ReturnStmt,
+    ReturnStmt,
+    VarStmt,
 )
 from assembler.tokenizer import Token, TokenType
 
@@ -368,17 +370,19 @@ def test_parse_call_expression():
 
 
 def test_parse_function_declaration():
-    statements = parse([
-        token(TokenType.FUNC, "Func"),
-        token(TokenType.IDENTIFIER, "add"),
-        token(TokenType.LEFT_PAREN, "("),
-        token(TokenType.IDENTIFIER, "a"),
-        token(TokenType.COMMA, ","),
-        token(TokenType.IDENTIFIER, "b"),
-        token(TokenType.RIGHT_PAREN, ")"),
-        token(TokenType.LEFT_BRACE, "{"),
-        token(TokenType.RIGHT_BRACE, "}"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.FUNC, "Func"),
+            token(TokenType.IDENTIFIER, "add"),
+            token(TokenType.LEFT_PAREN, "("),
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.COMMA, ","),
+            token(TokenType.IDENTIFIER, "b"),
+            token(TokenType.RIGHT_PAREN, ")"),
+            token(TokenType.LEFT_BRACE, "{"),
+            token(TokenType.RIGHT_BRACE, "}"),
+        ]
+    )
 
     stmt = statements[0]
 
@@ -389,11 +393,13 @@ def test_parse_function_declaration():
 
 
 def test_parse_return_statement():
-    statements = parse([
-        token(TokenType.RETURN, "return"),
-        token(TokenType.NUMBER, "10", 10),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.RETURN, "return"),
+            token(TokenType.NUMBER, "10", 10),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     stmt = statements[0]
 

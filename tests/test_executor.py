@@ -3,19 +3,22 @@ import pytest
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
+    CallExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr, CallExpr,
+    VariableExpr,
 )
 from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
+    FunctionStmt,
     IfStmt,
     PrintStmt,
-    VarStmt, FunctionStmt, ReturnStmt,
+    ReturnStmt,
+    VarStmt,
 )
 from assembler.tokenizer import Token, TokenType
 from executor.executor import CodeFabRuntimeError, Executor
@@ -449,63 +452,29 @@ def test_for_block_statement():
 
 
 def test_execute_function_without_return():
-    executor = run([
-        FunctionStmt(
-            token(TokenType.IDENTIFIER, "hello"),
-            [],
-            [
-                PrintStmt(LiteralExpr("hi"))
-            ],
-        ),
-        ExpressionStmt(
-            CallExpr(
-                VariableExpr(token(TokenType.IDENTIFIER, "hello")),
-                token(TokenType.RIGHT_PAREN, ")"),
+    executor = run(
+        [
+            FunctionStmt(
+                token(TokenType.IDENTIFIER, "hello"),
                 [],
-            )
-        ),
-    ])
+                [PrintStmt(LiteralExpr("hi"))],
+            ),
+            ExpressionStmt(
+                CallExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "hello")),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [],
+                )
+            ),
+        ]
+    )
 
     assert executor.outputs == ["hi"]
 
 
 def test_execute_function_with_return_value():
-    executor = run([
-        FunctionStmt(
-            token(TokenType.IDENTIFIER, "add"),
-            [
-                token(TokenType.IDENTIFIER, "a"),
-                token(TokenType.IDENTIFIER, "b"),
-            ],
-            [
-                ReturnStmt(
-                    token(TokenType.RETURN, "return"),
-                    BinaryExpr(
-                        VariableExpr(token(TokenType.IDENTIFIER, "a")),
-                        token(TokenType.PLUS, "+"),
-                        VariableExpr(token(TokenType.IDENTIFIER, "b")),
-                    ),
-                )
-            ],
-        ),
-        PrintStmt(
-            CallExpr(
-                VariableExpr(token(TokenType.IDENTIFIER, "add")),
-                token(TokenType.RIGHT_PAREN, ")"),
-                [
-                    LiteralExpr(3),
-                    LiteralExpr(7),
-                ],
-            )
-        ),
-    ])
-
-    assert executor.outputs == ["10"]
-
-
-def test_function_argument_count_mismatch():
-    with pytest.raises(CodeFabRuntimeError):
-        run([
+    executor = run(
+        [
             FunctionStmt(
                 token(TokenType.IDENTIFIER, "add"),
                 [
@@ -515,7 +484,11 @@ def test_function_argument_count_mismatch():
                 [
                     ReturnStmt(
                         token(TokenType.RETURN, "return"),
-                        LiteralExpr(0),
+                        BinaryExpr(
+                            VariableExpr(token(TokenType.IDENTIFIER, "a")),
+                            token(TokenType.PLUS, "+"),
+                            VariableExpr(token(TokenType.IDENTIFIER, "b")),
+                        ),
                     )
                 ],
             ),
@@ -523,55 +496,92 @@ def test_function_argument_count_mismatch():
                 CallExpr(
                     VariableExpr(token(TokenType.IDENTIFIER, "add")),
                     token(TokenType.RIGHT_PAREN, ")"),
-                    [LiteralExpr(1)],
+                    [
+                        LiteralExpr(3),
+                        LiteralExpr(7),
+                    ],
                 )
             ),
-        ])
+        ]
+    )
+
+    assert executor.outputs == ["10"]
+
+
+def test_function_argument_count_mismatch():
+    with pytest.raises(CodeFabRuntimeError):
+        run(
+            [
+                FunctionStmt(
+                    token(TokenType.IDENTIFIER, "add"),
+                    [
+                        token(TokenType.IDENTIFIER, "a"),
+                        token(TokenType.IDENTIFIER, "b"),
+                    ],
+                    [
+                        ReturnStmt(
+                            token(TokenType.RETURN, "return"),
+                            LiteralExpr(0),
+                        )
+                    ],
+                ),
+                PrintStmt(
+                    CallExpr(
+                        VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                        token(TokenType.RIGHT_PAREN, ")"),
+                        [LiteralExpr(1)],
+                    )
+                ),
+            ]
+        )
+
 
 def test_recursive_function_factorial():
-    executor = run([
-        FunctionStmt(
-            token(TokenType.IDENTIFIER, "fact"),
-            [token(TokenType.IDENTIFIER, "n")],
-            [
-                IfStmt(
-                    BinaryExpr(
-                        VariableExpr(token(TokenType.IDENTIFIER, "n")),
-                        token(TokenType.LESS_EQUAL, "<="),
-                        LiteralExpr(1),
+    executor = run(
+        [
+            FunctionStmt(
+                token(TokenType.IDENTIFIER, "fact"),
+                [token(TokenType.IDENTIFIER, "n")],
+                [
+                    IfStmt(
+                        BinaryExpr(
+                            VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                            token(TokenType.LESS_EQUAL, "<="),
+                            LiteralExpr(1),
+                        ),
+                        ReturnStmt(
+                            token(TokenType.RETURN, "return"),
+                            LiteralExpr(1),
+                        ),
                     ),
                     ReturnStmt(
                         token(TokenType.RETURN, "return"),
-                        LiteralExpr(1),
-                    ),
-                ),
-                ReturnStmt(
-                    token(TokenType.RETURN, "return"),
-                    BinaryExpr(
-                        VariableExpr(token(TokenType.IDENTIFIER, "n")),
-                        token(TokenType.STAR, "*"),
-                        CallExpr(
-                            VariableExpr(token(TokenType.IDENTIFIER, "fact")),
-                            token(TokenType.RIGHT_PAREN, ")"),
-                            [
-                                BinaryExpr(
-                                    VariableExpr(token(TokenType.IDENTIFIER, "n")),
-                                    token(TokenType.MINUS, "-"),
-                                    LiteralExpr(1),
-                                )
-                            ],
+                        BinaryExpr(
+                            VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                            token(TokenType.STAR, "*"),
+                            CallExpr(
+                                VariableExpr(token(TokenType.IDENTIFIER, "fact")),
+                                token(TokenType.RIGHT_PAREN, ")"),
+                                [
+                                    BinaryExpr(
+                                        VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                                        token(TokenType.MINUS, "-"),
+                                        LiteralExpr(1),
+                                    )
+                                ],
+                            ),
                         ),
                     ),
-                ),
-            ],
-        ),
-        PrintStmt(
-            CallExpr(
-                VariableExpr(token(TokenType.IDENTIFIER, "fact")),
-                token(TokenType.RIGHT_PAREN, ")"),
-                [LiteralExpr(5)],
-            )
-        ),
-    ])
+                ],
+            ),
+            PrintStmt(
+                CallExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "fact")),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [LiteralExpr(5)],
+                )
+            ),
+        ]
+    )
 
     assert executor.outputs == ["120"]

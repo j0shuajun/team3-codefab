@@ -8,7 +8,16 @@ from .expr import (
     UnaryExpr,
     VariableExpr,
 )
-from .statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt, FunctionStmt, ReturnStmt
+from .statement import (
+    BlockStmt,
+    ExpressionStmt,
+    ForStmt,
+    FunctionStmt,
+    IfStmt,
+    PrintStmt,
+    ReturnStmt,
+    VarStmt,
+)
 from .tokenizer import TokenType
 
 
@@ -167,10 +176,10 @@ class Assembler:
         expression = self.term()
 
         while self.match(
-                TokenType.GREATER,
-                TokenType.GREATER_EQUAL,
-                TokenType.LESS,
-                TokenType.LESS_EQUAL,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
         ):
             operator = self.previous()
             right = self.term()

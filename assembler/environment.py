@@ -1,4 +1,3 @@
-
 class CodeFabRuntimeError(Exception):
     pass
 

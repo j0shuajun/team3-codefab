@@ -47,10 +47,10 @@ class BlockStmt(Stmt):
 
 class IfStmt(Stmt):
     def __init__(
-            self,
-            condition: Expr,
-            then_branch: Stmt,
-            else_branch: Optional[Stmt] = None,
+        self,
+        condition: Expr,
+        then_branch: Stmt,
+        else_branch: Optional[Stmt] = None,
     ):
         self.condition = condition
         self.then_branch = then_branch
@@ -67,11 +67,11 @@ class IfStmt(Stmt):
 
 class ForStmt(Stmt):
     def __init__(
-            self,
-            initializer: Optional[Stmt],
-            condition: Optional[Expr],
-            increment: Optional[Expr],
-            body: Stmt,
+        self,
+        initializer: Optional[Stmt],
+        condition: Optional[Expr],
+        increment: Optional[Expr],
+        body: Stmt,
     ):
         self.initializer = initializer
         self.condition = condition
@@ -98,7 +98,9 @@ class FunctionStmt(Stmt):
 
     def __repr__(self):
         param_names = [param.origin for param in self.params]
-        return f"FunctionStmt({self.name.origin}, params={param_names}, body={self.body})"
+        return (
+            f"FunctionStmt({self.name.origin}, params={param_names}, body={self.body})"
+        )
 
 
 class ReturnStmt(Stmt):
