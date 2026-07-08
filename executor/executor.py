@@ -1,12 +1,14 @@
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
+    CallExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
     VariableExpr,
 )
+from assembler.runtime import Callable, NativeFunction
 from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
@@ -60,6 +62,8 @@ class Executor:
         self.globals = Environment()
         self.environment = self.globals
         self.outputs = []
+
+        self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
 
     def execute(self, statements):
         for statement in statements:
@@ -132,6 +136,8 @@ class Executor:
 
         if isinstance(expr, LogicalExpr):
             return self.evaluate_logical(expr)
+        if isinstance(expr, CallExpr):
+            return self.evaluate_call(expr)
 
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
@@ -282,3 +288,20 @@ class Executor:
         if left.type == right.type:
             return
         raise CodeFabRuntimeError("Left/Right type mismatch.")
+
+    def evaluate_call(self, expr):
+        callee = self.evaluate(expr.callee)
+
+        arguments = []
+        for argument in expr.arguments:
+            arguments.append(self.evaluate(argument))
+
+        if not isinstance(callee, Callable):
+            raise CodeFabRuntimeError("Can only call functions and classes.")
+
+        if len(arguments) != callee.arity():
+            raise CodeFabRuntimeError(
+                f"Expected {callee.arity()} arguments but got {len(arguments)}."
+            )
+
+        return callee.call(self, arguments)

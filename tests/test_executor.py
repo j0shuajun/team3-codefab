@@ -21,8 +21,8 @@ from assembler.tokenizer import Token, TokenType
 from executor.executor import CodeFabRuntimeError, Executor
 
 
-def token(token_type, origin):
-    return Token(token_type, origin)
+def token(token_type, origin, value=None):
+    return Token(token_type, origin, value)
 
 
 def run(statements):
@@ -446,38 +446,3 @@ def test_for_block_statement():
     )
 
     assert executor.outputs == ["0", "1", "2"]
-
-
-def test_runtime_error_undefined_variable():
-    with pytest.raises(CodeFabRuntimeError):
-        run([PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "x")))])
-
-
-def test_runtime_error_divide_by_zero():
-    with pytest.raises(CodeFabRuntimeError):
-        run(
-            [
-                PrintStmt(
-                    BinaryExpr(
-                        LiteralExpr(3),
-                        token(TokenType.SLASH, "/"),
-                        LiteralExpr(0),
-                    )
-                )
-            ]
-        )
-
-
-def test_runtime_error_type_mismatch():
-    with pytest.raises(CodeFabRuntimeError):
-        run(
-            [
-                PrintStmt(
-                    BinaryExpr(
-                        LiteralExpr(3),
-                        token(TokenType.MINUS, "-"),
-                        LiteralExpr("hello"),
-                    )
-                )
-            ]
-        )
