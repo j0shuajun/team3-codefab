@@ -16,7 +16,7 @@ from .statement import (
     IfStmt,
     PrintStmt,
     ReturnStmt,
-    VarStmt,
+    VarStmt, ClassStmt,
 )
 from .tokenizer import TokenType
 
@@ -273,6 +273,9 @@ class Assembler:
         return self.call()
 
     def declaration(self):
+        if self.match(TokenType.CLASS):
+            return self.class_declaration()
+
         if self.match(TokenType.FUNC):
             return self.function_declaration()
 
@@ -354,3 +357,39 @@ class Assembler:
         self.consume(TokenType.SEMICOLON, "Expected ';' after return value.")
 
         return ReturnStmt(keyword, value)
+
+    def class_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected class name.")
+
+        self.consume(TokenType.LEFT_BRACE, "Expected '{' before class body.")
+
+        methods = []
+        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            methods.append(self.method_declaration())
+
+        self.consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.")
+
+        return ClassStmt(name, methods)
+
+
+    def method_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected method name.")
+
+        self.consume(TokenType.LEFT_PAREN, "Expected '(' after method name.")
+
+        params = []
+        if not self.check(TokenType.RIGHT_PAREN):
+            while True:
+                params.append(
+                    self.consume(TokenType.IDENTIFIER, "Expected parameter name.")
+                )
+
+                if not self.match(TokenType.COMMA):
+                    break
+
+        self.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.")
+        self.consume(TokenType.LEFT_BRACE, "Expected '{' before method body.")
+
+        body = self.block()
+
+        return FunctionStmt(name, params, body)

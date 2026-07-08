@@ -1,5 +1,6 @@
 from assembler.assembler import Assembler
 from assembler.expr import (GetExpr, SetExpr, ThisExpr)
+from assembler.statement import ClassStmt, FunctionStmt
 
 from assembler.tokenizer import Token, TokenType
 
@@ -55,3 +56,27 @@ def test_parse_this_expression():
 
     assert isinstance(expr, GetExpr)
     assert isinstance(expr.object, ThisExpr)
+
+
+def test_parse_class_declaration_with_method():
+    statements = parse([
+        token(TokenType.CLASS, "Class"),
+        token(TokenType.IDENTIFIER, "Robot"),
+        token(TokenType.LEFT_BRACE, "{"),
+
+        token(TokenType.IDENTIFIER, "report"),
+        token(TokenType.LEFT_PAREN, "("),
+        token(TokenType.RIGHT_PAREN, ")"),
+        token(TokenType.LEFT_BRACE, "{"),
+        token(TokenType.RIGHT_BRACE, "}"),
+
+        token(TokenType.RIGHT_BRACE, "}"),
+    ])
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, ClassStmt)
+    assert stmt.name.origin == "Robot"
+    assert len(stmt.methods) == 1
+    assert isinstance(stmt.methods[0], FunctionStmt)
+    assert stmt.methods[0].name.origin == "report"
