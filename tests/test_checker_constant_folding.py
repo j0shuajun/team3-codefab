@@ -394,7 +394,9 @@ class TestFoldingSurvivesUnexpectedEvaluationErrors:
     안전하게 원본을 접지 않은 채로 넘겨야 한다."""
 
     def test_string_equality_of_two_literals_is_folded(self):
-        expr = BinaryExpr(LiteralExpr("a"), op("==", TokenType.EQUAL_EQUAL), LiteralExpr("a"))
+        expr = BinaryExpr(
+            LiteralExpr("a"), op("==", TokenType.EQUAL_EQUAL), LiteralExpr("a")
+        )
 
         folded = fold_expr(expr)
 
@@ -402,7 +404,9 @@ class TestFoldingSurvivesUnexpectedEvaluationErrors:
         assert folded.value is True
 
     def test_boolean_equality_of_two_literals_is_folded(self):
-        expr = BinaryExpr(LiteralExpr(True), op("==", TokenType.EQUAL_EQUAL), LiteralExpr(True))
+        expr = BinaryExpr(
+            LiteralExpr(True), op("==", TokenType.EQUAL_EQUAL), LiteralExpr(True)
+        )
 
         folded = fold_expr(expr)
 
@@ -410,7 +414,9 @@ class TestFoldingSurvivesUnexpectedEvaluationErrors:
         assert folded.value is True
 
     def test_mismatched_literal_types_are_not_folded_and_do_not_crash(self):
-        expr = BinaryExpr(LiteralExpr("a"), op("==", TokenType.EQUAL_EQUAL), LiteralExpr(1))
+        expr = BinaryExpr(
+            LiteralExpr("a"), op("==", TokenType.EQUAL_EQUAL), LiteralExpr(1)
+        )
 
         folded = fold_expr(expr)
 
