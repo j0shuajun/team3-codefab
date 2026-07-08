@@ -1,4 +1,4 @@
-from .environment import Environment
+from .environment import CodeFabRuntimeError, Environment
 
 
 class Callable:
@@ -102,7 +102,7 @@ class UserInstance:
         if method is not None:
             return method.bind(self)
 
-        raise RuntimeError(f"Undefined property '{name}'.")
+        raise CodeFabRuntimeError(f"Undefined property '{name}'.")
 
     def set(self, name_token, value):
         self.fields[name_token.origin] = value
