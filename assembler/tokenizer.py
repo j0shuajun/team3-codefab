@@ -61,7 +61,7 @@ class Token:
         )
 
     def __repr__(self):
-        return f"Token({self.type}, {self.origin!r}, {getattr(self, "value", None) !r})"
+        return f"Token({self.type}, {self.origin!r}, {getattr(self, 'value', None)!r})"
 
 
 class Tokenizer:
