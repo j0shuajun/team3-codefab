@@ -270,7 +270,7 @@ class Executor:
                 return
             raise CodeFabRuntimeError("Left/Right type mismatch.")
 
-        if left.type == right.type:
+        if type(left) is type(right):
             return
         raise CodeFabRuntimeError("Left/Right type mismatch.")
 

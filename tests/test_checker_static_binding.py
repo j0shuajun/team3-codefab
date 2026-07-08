@@ -7,11 +7,14 @@
    (Environment.get_at/assign_at) 를 타는지 (Test Double 로 호출 경로 검증)
 """
 
+import pytest
+
 import executor.executor as executor_module
 from assembler.expr import AssignExpr, LiteralExpr, VariableExpr
 from assembler.statement import BlockStmt, ExpressionStmt, PrintStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
 from checker.checker import Checker
+from exceptions import CodeFabRuntimeError
 from executor.executor import Environment, Executor
 
 
@@ -279,3 +282,54 @@ class TestExecutorUsesStaticBindingWhenAvailable:
         assert executor.outputs == ["1"]
         assert ("dynamic_get", "a") in SpyEnvironment.calls
         assert not any(call[0] == "static_get" for call in SpyEnvironment.calls)
+
+
+class TestStaticBindingPreservesErrorSemantics:
+    def test_get_at_raises_when_name_is_missing_in_target_environment(self):
+        environment = Environment()
+
+        with pytest.raises(CodeFabRuntimeError):
+            environment.get_at(0, "a")
+
+    def test_assign_at_raises_when_name_is_missing_in_target_environment(self):
+        environment = Environment()
+
+        with pytest.raises(CodeFabRuntimeError):
+            environment.assign_at(0, "a", 1)
+
+        assert "a" not in environment.values
+
+    def test_get_at_succeeds_once_name_is_defined(self):
+        environment = Environment()
+        environment.define("a", 1)
+
+        assert environment.get_at(0, "a") == 1
+
+    def test_assign_at_succeeds_once_name_is_defined(self):
+        environment = Environment()
+        environment.define("a", 1)
+
+        environment.assign_at(0, "a", 2)
+
+        assert environment.values["a"] == 2
+
+    def test_self_reference_via_assignment_in_initializer_still_raises_at_runtime(self):
+        # { var a = a = 1; }
+        # 초기화식(a = 1)이 평가되는 시점엔 아직 environment.define("a", ...) 가
+        # 호출되기 전이라, distance 가 있어도(정적 바인딩) 동적 경로와 동일하게
+        # "정의되지 않은 변수" 런타임 오류가 나야 한다.
+        statements = resolve(
+            [
+                BlockStmt(
+                    [
+                        VarStmt(
+                            token("a"),
+                            AssignExpr(token("a"), LiteralExpr(1)),
+                        ),
+                    ]
+                ),
+            ]
+        )
+
+        with pytest.raises(CodeFabRuntimeError):
+            Executor().execute(statements)

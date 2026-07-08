@@ -145,8 +145,10 @@ class ConstantFolder:
 
         try:
             value = self._executor.evaluate(expr)
-        except CodeFabRuntimeError:
+        except (CodeFabRuntimeError, TypeError, AttributeError):
             # 런타임에도 똑같이 실패해야 하므로 최적화를 포기하고 원본을 남긴다.
+            # Executor 내부 구현이 리터럴 조합에 따라 CodeFabRuntimeError 가 아닌
+            # 다른 예외를 던지더라도, 접기를 포기하는 것으로 안전하게 처리한다.
             return expr
 
         return LiteralExpr(value)

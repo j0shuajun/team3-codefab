@@ -40,7 +40,13 @@ class Environment:
         return environment
 
     def get_at(self, distance, name):
-        return self.ancestor(distance).values[name]
+        environment = self.ancestor(distance)
+        if name not in environment.values:
+            raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
+        return environment.values[name]
 
     def assign_at(self, distance, name, value):
-        self.ancestor(distance).values[name] = value
+        environment = self.ancestor(distance)
+        if name not in environment.values:
+            raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
+        environment.values[name] = value

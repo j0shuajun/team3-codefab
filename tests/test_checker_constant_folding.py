@@ -386,3 +386,33 @@ class TestOptimizationReducesRuntimeOperationCount:
 
         assert executor.outputs == ["20"]
         assert executor.binary_eval_count == 0
+
+
+class TestFoldingSurvivesUnexpectedEvaluationErrors:
+    """Executor.evaluate() 가 CodeFabRuntimeError 가 아닌 다른 예외를
+    던지는 리터럴 조합(예: 문자열/불리언 비교)에서도 ConstantFolder 가 죽지 않고
+    안전하게 원본을 접지 않은 채로 넘겨야 한다."""
+
+    def test_string_equality_of_two_literals_is_folded(self):
+        expr = BinaryExpr(LiteralExpr("a"), op("==", TokenType.EQUAL_EQUAL), LiteralExpr("a"))
+
+        folded = fold_expr(expr)
+
+        assert isinstance(folded, LiteralExpr)
+        assert folded.value is True
+
+    def test_boolean_equality_of_two_literals_is_folded(self):
+        expr = BinaryExpr(LiteralExpr(True), op("==", TokenType.EQUAL_EQUAL), LiteralExpr(True))
+
+        folded = fold_expr(expr)
+
+        assert isinstance(folded, LiteralExpr)
+        assert folded.value is True
+
+    def test_mismatched_literal_types_are_not_folded_and_do_not_crash(self):
+        expr = BinaryExpr(LiteralExpr("a"), op("==", TokenType.EQUAL_EQUAL), LiteralExpr(1))
+
+        folded = fold_expr(expr)
+
+        assert folded is expr
+        assert isinstance(folded, BinaryExpr)
