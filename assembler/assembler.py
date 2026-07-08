@@ -4,6 +4,8 @@ from .expr import (
     CallExpr,
     GetExpr,
     GroupingExpr,
+    IndexGetExpr,
+    IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
     SetExpr,
@@ -144,6 +146,11 @@ class Assembler:
 
             if isinstance(expression, GetExpr):
                 return SetExpr(expression.object, expression.name, value)
+
+            if isinstance(expression, IndexGetExpr):
+                return IndexSetExpr(
+                    expression.array, expression.bracket, expression.index, value
+                )
 
             raise AssemblerError("Invalid assignment target.")
 
@@ -304,6 +311,8 @@ class Assembler:
         while True:
             if self.match(TokenType.LEFT_PAREN):
                 expression = self.finish_call(expression)
+            elif self.match(TokenType.LEFT_BRACKET):
+                expression = self.finish_index(expression)
             elif self.match(TokenType.DOT):
                 name = self.consume(
                     TokenType.IDENTIFIER, "Expected property name after '.'."
@@ -395,3 +404,8 @@ class Assembler:
         body = self.block()
 
         return FunctionStmt(name, params, body)
+
+    def finish_index(self, array):
+        index = self.expression()
+        bracket = self.consume(TokenType.RIGHT_BRACKET, "Expected ']' after index.")
+        return IndexGetExpr(array, bracket, index)
