@@ -15,7 +15,7 @@ from assembler.statement import (
     ForStmt,
     IfStmt,
     PrintStmt,
-    VarStmt,
+    VarStmt, FunctionStmt,
 )
 from assembler.tokenizer import Token, TokenType
 
@@ -365,3 +365,24 @@ def test_parse_call_expression():
     assert len(expr.arguments) == 2
     assert expr.arguments[0].value == 1
     assert expr.arguments[1].value == 2
+
+
+def test_parse_function_declaration():
+    statements = parse([
+        token(TokenType.FUNC, "Func"),
+        token(TokenType.IDENTIFIER, "add"),
+        token(TokenType.LEFT_PAREN, "("),
+        token(TokenType.IDENTIFIER, "a"),
+        token(TokenType.COMMA, ","),
+        token(TokenType.IDENTIFIER, "b"),
+        token(TokenType.RIGHT_PAREN, ")"),
+        token(TokenType.LEFT_BRACE, "{"),
+        token(TokenType.RIGHT_BRACE, "}"),
+    ])
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, FunctionStmt)
+    assert stmt.name.origin == "add"
+    assert [param.origin for param in stmt.params] == ["a", "b"]
+    assert stmt.body == []

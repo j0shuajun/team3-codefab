@@ -8,7 +8,7 @@ from .expr import (
     UnaryExpr,
     VariableExpr,
 )
-from .statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt
+from .statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt, FunctionStmt
 from .tokenizer import TokenType
 
 
@@ -255,6 +255,9 @@ class Assembler:
         return self.call()
 
     def declaration(self):
+        if self.match(TokenType.FUNC):
+            return self.function_declaration()
+
         if self.match(TokenType.VAR):
             return self.var_declaration()
 
@@ -294,3 +297,25 @@ class Assembler:
         paren = self.consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.")
 
         return CallExpr(callee, paren, arguments)
+
+    def function_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected function name.")
+
+        self.consume(TokenType.LEFT_PAREN, "Expected '(' after function name.")
+
+        params = []
+        if not self.check(TokenType.RIGHT_PAREN):
+            while True:
+                params.append(
+                    self.consume(TokenType.IDENTIFIER, "Expected parameter name.")
+                )
+
+                if not self.match(TokenType.COMMA):
+                    break
+
+        self.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.")
+        self.consume(TokenType.LEFT_BRACE, "Expected '{' before function body.")
+
+        body = self.block()
+
+        return FunctionStmt(name, params, body)
