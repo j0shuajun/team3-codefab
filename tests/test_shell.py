@@ -134,3 +134,19 @@ def test_ctrlc_recommends_with_limited_history():
         "Ctrl+C 추천 명령어: print 2;",
         "ctrlv 를 입력하면 추천 명령어를 다시 실행합니다.",
     ]
+
+def test_quit_stops_shell():
+    shell = make_shell()
+
+    outputs = shell.run_line("quit")
+
+    assert outputs == ["Bye!"]
+    assert shell.is_running is False
+
+
+def test_run_line_strips_input():
+    shell = make_shell()
+
+    outputs = shell.run_line("  print 37;  ")
+
+    assert outputs == ["37"]
