@@ -1,17 +1,28 @@
-from assembler.environment import CodeFabRuntimeError, Environment
+from assembler.environment import Environment
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
     CallExpr,
+    GetExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
+    SetExpr,
+    ThisExpr,
     UnaryExpr,
     VariableExpr,
 )
-from assembler.runtime import Callable, NativeFunction, ReturnSignal, UserFunction
+from assembler.runtime import (
+    Callable,
+    NativeFunction,
+    ReturnSignal,
+    UserClass,
+    UserFunction,
+    UserInstance,
+)
 from assembler.statement import (
     BlockStmt,
+    ClassStmt,
     ExpressionStmt,
     ForStmt,
     FunctionStmt,
@@ -21,6 +32,7 @@ from assembler.statement import (
     VarStmt,
 )
 from assembler.tokenizer import TokenType
+from exceptions import CodeFabRuntimeError
 
 
 class Executor:
@@ -79,6 +91,18 @@ class Executor:
                 value = self.evaluate(stmt.value)
             raise ReturnSignal(value)
 
+        if isinstance(stmt, ClassStmt):
+            self.environment.define(stmt.name.origin, None)
+
+            methods = {}
+            for method in stmt.methods:
+                function = UserFunction(method, self.environment)
+                methods[method.name.origin] = function
+
+            klass = UserClass(stmt.name.origin, methods)
+            self.environment.assign(stmt.name, klass)
+            return
+
         raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def evaluate(self, expr):
@@ -104,17 +128,46 @@ class Executor:
             raise CodeFabRuntimeError(f"Unknown unary operator: {expr.operator.origin}")
 
         if isinstance(expr, VariableExpr):
+            distance = getattr(expr, "distance", None)
+            if distance is not None:
+                return self.environment.get_at(distance, expr.name.origin)
             return self.environment.get(expr.name)
 
         if isinstance(expr, AssignExpr):
             value = self.evaluate(expr.value)
-            self.environment.assign(expr.name, value)
+            distance = getattr(expr, "distance", None)
+            if distance is not None:
+                self.environment.assign_at(distance, expr.name.origin, value)
+            else:
+                self.environment.assign(expr.name, value)
             return value
 
         if isinstance(expr, LogicalExpr):
             return self.evaluate_logical(expr)
+
         if isinstance(expr, CallExpr):
             return self.evaluate_call(expr)
+
+        if isinstance(expr, GetExpr):
+            obj = self.evaluate(expr.object)
+
+            if isinstance(obj, UserInstance):
+                return obj.get(expr.name)
+
+            raise CodeFabRuntimeError("Only instances have properties.")
+
+        if isinstance(expr, SetExpr):
+            obj = self.evaluate(expr.object)
+
+            if not isinstance(obj, UserInstance):
+                raise CodeFabRuntimeError("Only instances have fields.")
+
+            value = self.evaluate(expr.value)
+            obj.set(expr.name, value)
+            return value
+
+        if isinstance(expr, ThisExpr):
+            return self.environment.get(expr.keyword)
 
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
@@ -262,7 +315,7 @@ class Executor:
                 return
             raise CodeFabRuntimeError("Left/Right type mismatch.")
 
-        if left.type == right.type:
+        if type(left) is type(right):
             return
         raise CodeFabRuntimeError("Left/Right type mismatch.")
 
