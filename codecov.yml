@@ -1,0 +1,29 @@
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    # 전체 프로젝트 커버리지가 눈에 띄게 떨어지지만 않으면 통과.
+    project:
+      default:
+        target: auto
+        threshold: 1%
+
+    # 새로 추가/변경된 코드에 대한 커버리지. auto(프로젝트 평균과 동일)로
+    # 두면 거의 항상 실패로 뜨기 쉬워서 현실적인 고정 목표치로 설정.
+    # informational로 두어 리뷰 참고용으로만 쓰고 merge를 막지는 않는다.
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+        informational: true
+
+comment:
+  layout: "diff, files"
+  behavior: default
+  # 커버리지에 실제 변화가 없으면 댓글을 달지 않는다 (알림 소음 방지).
+  require_changes: true
+
+github_checks:
+  annotations: true
