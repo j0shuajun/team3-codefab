@@ -103,3 +103,42 @@ def test_method_call_uses_this():
     ])
 
     assert executor.outputs == ["AndOr"]
+
+
+def test_class_init_sets_field():
+    executor = run([
+        ClassStmt(
+            token(TokenType.IDENTIFIER, "Robot"),
+            [
+                FunctionStmt(
+                    token(TokenType.IDENTIFIER, "init"),
+                    [token(TokenType.IDENTIFIER, "name")],
+                    [
+                        ExpressionStmt(
+                            SetExpr(
+                                ThisExpr(token(TokenType.THIS, "This")),
+                                token(TokenType.IDENTIFIER, "name"),
+                                VariableExpr(token(TokenType.IDENTIFIER, "name")),
+                            )
+                        )
+                    ],
+                )
+            ],
+        ),
+        VarStmt(
+            token(TokenType.IDENTIFIER, "r"),
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [LiteralExpr("AndOr")],
+            ),
+        ),
+        PrintStmt(
+            GetExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "r")),
+                token(TokenType.IDENTIFIER, "name"),
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["AndOr"]
