@@ -114,5 +114,15 @@ class UserInstance:
     def set(self, name_token, value):
         self.fields[name_token.origin] = value
 
+    def is_instance_of(self, klass):
+        current = self.klass
+
+        while current is not None:
+            if current is klass:
+                return True
+            current = current.superclass
+
+        return False
+
     def __repr__(self):
         return f"<{self.klass.name} instance>"
