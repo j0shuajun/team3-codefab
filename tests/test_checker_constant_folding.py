@@ -19,7 +19,8 @@ from assembler.expr import (
 from assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
 from checker.constant_folder import ConstantFolder
-from executor.executor import CodeFabRuntimeError, Executor
+from exceptions import CodeFabRuntimeError
+from executor.executor import Executor
 
 
 def token(origin, token_type=TokenType.IDENTIFIER):

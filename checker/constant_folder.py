@@ -18,8 +18,8 @@ from assembler.statement import (
     VarStmt,
 )
 
-from checker.resolver import CodeFabTypeError
-from executor.executor import CodeFabRuntimeError, Executor
+from exceptions import CodeFabRuntimeError, CodeFabTypeError
+from executor.executor import Executor
 
 
 class ConstantFolder:

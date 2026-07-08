@@ -18,7 +18,8 @@ from assembler.statement import (
     VarStmt,
 )
 from assembler.tokenizer import Token, TokenType
-from executor.executor import CodeFabRuntimeError, Executor
+from exceptions import CodeFabRuntimeError
+from executor.executor import Executor
 
 
 def token(token_type, origin):

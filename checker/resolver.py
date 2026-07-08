@@ -19,10 +19,7 @@ from assembler.statement import (
     Stmt,
     VarStmt,
 )
-
-
-class CodeFabTypeError(Exception):
-    pass
+from exceptions import CodeFabTypeError
 
 
 class Resolver(ABC):
