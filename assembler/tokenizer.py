@@ -16,6 +16,13 @@ class TokenType(Enum):
     # Block scope
     LEFT_BRACE = auto()
     RIGHT_BRACE = auto()
+    # Array
+    LEFT_BRACKET = auto()
+    RIGHT_BRACKET = auto()
+    # Member access
+    DOT = auto()
+    # Inheritance
+    COLON = auto()
     # Comparison
     LESS = auto()
     GREATER = auto()
@@ -47,6 +54,17 @@ class TokenType(Enum):
     ELSE = auto()
     # Loop
     FOR = auto()
+    # Function
+    FUNC = auto()
+    RETURN = auto()
+    # Class
+    CLASS = auto()
+    THIS = auto()
+    SUPER = auto()
+    INSTANCEOF = auto()
+    # Import
+    IMPORT = auto()
+    ALIAS = auto()
 
 
 class Token:
