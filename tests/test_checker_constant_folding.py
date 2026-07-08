@@ -16,7 +16,14 @@ from assembler.expr import (
     UnaryExpr,
     VariableExpr,
 )
-from assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt
+from assembler.statement import (
+    BlockStmt,
+    ExpressionStmt,
+    ForStmt,
+    IfStmt,
+    PrintStmt,
+    VarStmt,
+)
 from assembler.tokenizer import Token, TokenType
 from checker.constant_folder import ConstantFolder
 from exceptions import CodeFabRuntimeError
@@ -50,7 +57,9 @@ class TestFoldsPureLiteralSubexpressions:
     def test_nested_binary_expr_is_folded_into_single_literal(self):
         # (2 + 3) * 4
         expr = BinaryExpr(
-            GroupingExpr(BinaryExpr(LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3))),
+            GroupingExpr(
+                BinaryExpr(LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3))
+            ),
             op("*", TokenType.STAR),
             LiteralExpr(4),
         )
@@ -110,7 +119,9 @@ class TestFoldsPureLiteralSubexpressions:
         assert folded.value == 42
 
     def test_logical_and_of_two_literals_is_folded(self):
-        expr = LogicalExpr(LiteralExpr(False), op("and", TokenType.AND), LiteralExpr(True))
+        expr = LogicalExpr(
+            LiteralExpr(False), op("and", TokenType.AND), LiteralExpr(True)
+        )
 
         folded = fold_expr(expr)
 
@@ -118,7 +129,9 @@ class TestFoldsPureLiteralSubexpressions:
         assert folded.value is False
 
     def test_logical_or_of_two_literals_is_folded(self):
-        expr = LogicalExpr(LiteralExpr(False), op("or", TokenType.OR), LiteralExpr(True))
+        expr = LogicalExpr(
+            LiteralExpr(False), op("or", TokenType.OR), LiteralExpr(True)
+        )
 
         folded = fold_expr(expr)
 
@@ -128,7 +141,9 @@ class TestFoldsPureLiteralSubexpressions:
 
 class TestDoesNotFoldNonConstantOrUnsafeExpressions:
     def test_binary_expr_with_variable_operand_is_left_untouched(self):
-        expr = BinaryExpr(VariableExpr(token("a")), op("+", TokenType.PLUS), LiteralExpr(1))
+        expr = BinaryExpr(
+            VariableExpr(token("a")), op("+", TokenType.PLUS), LiteralExpr(1)
+        )
 
         folded = fold_expr(expr)
 
@@ -194,7 +209,10 @@ class TestDoesNotFoldNonConstantOrUnsafeExpressions:
 class TestFoldsThroughStatementTree:
     def test_var_stmt_initializer_is_folded(self):
         statements = [
-            VarStmt(token("a"), BinaryExpr(LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3))),
+            VarStmt(
+                token("a"),
+                BinaryExpr(LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3)),
+            ),
         ]
 
         ConstantFolder().fold(statements)
@@ -205,9 +223,11 @@ class TestFoldsThroughStatementTree:
     def test_folds_inside_nested_block(self):
         inner_expr = BinaryExpr(LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3))
         statements = [
-            BlockStmt([
-                PrintStmt(inner_expr),
-            ]),
+            BlockStmt(
+                [
+                    PrintStmt(inner_expr),
+                ]
+            ),
         ]
 
         ConstantFolder().fold(statements)
@@ -219,7 +239,9 @@ class TestFoldsThroughStatementTree:
     def test_folds_if_condition_and_branches(self):
         statements = [
             IfStmt(
-                condition=BinaryExpr(LiteralExpr(1), op("<", TokenType.LESS), LiteralExpr(2)),
+                condition=BinaryExpr(
+                    LiteralExpr(1), op("<", TokenType.LESS), LiteralExpr(2)
+                ),
                 then_branch=PrintStmt(
                     BinaryExpr(LiteralExpr(2), op("*", TokenType.STAR), LiteralExpr(3))
                 ),
@@ -241,16 +263,26 @@ class TestFoldsThroughStatementTree:
         statements = [
             ForStmt(
                 initializer=VarStmt(token("i"), LiteralExpr(0)),
-                condition=BinaryExpr(VariableExpr(token("i")), op("<", TokenType.LESS), LiteralExpr(3)),
+                condition=BinaryExpr(
+                    VariableExpr(token("i")), op("<", TokenType.LESS), LiteralExpr(3)
+                ),
                 increment=AssignExpr(
                     token("i"),
-                    BinaryExpr(VariableExpr(token("i")), op("+", TokenType.PLUS), LiteralExpr(1)),
-                ),
-                body=BlockStmt([
-                    PrintStmt(
-                        BinaryExpr(LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3))
+                    BinaryExpr(
+                        VariableExpr(token("i")),
+                        op("+", TokenType.PLUS),
+                        LiteralExpr(1),
                     ),
-                ]),
+                ),
+                body=BlockStmt(
+                    [
+                        PrintStmt(
+                            BinaryExpr(
+                                LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3)
+                            )
+                        ),
+                    ]
+                ),
             ),
         ]
 
@@ -284,22 +316,32 @@ def make_loop_printing_constant_expression():
     return [
         ForStmt(
             initializer=VarStmt(token("i"), LiteralExpr(0)),
-            condition=BinaryExpr(VariableExpr(token("i")), op("<", TokenType.LESS), LiteralExpr(3)),
+            condition=BinaryExpr(
+                VariableExpr(token("i")), op("<", TokenType.LESS), LiteralExpr(3)
+            ),
             increment=AssignExpr(
                 token("i"),
-                BinaryExpr(VariableExpr(token("i")), op("+", TokenType.PLUS), LiteralExpr(1)),
-            ),
-            body=BlockStmt([
-                PrintStmt(
-                    BinaryExpr(
-                        GroupingExpr(
-                            BinaryExpr(LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3))
-                        ),
-                        op("*", TokenType.STAR),
-                        LiteralExpr(4),
-                    )
+                BinaryExpr(
+                    VariableExpr(token("i")), op("+", TokenType.PLUS), LiteralExpr(1)
                 ),
-            ]),
+            ),
+            body=BlockStmt(
+                [
+                    PrintStmt(
+                        BinaryExpr(
+                            GroupingExpr(
+                                BinaryExpr(
+                                    LiteralExpr(2),
+                                    op("+", TokenType.PLUS),
+                                    LiteralExpr(3),
+                                )
+                            ),
+                            op("*", TokenType.STAR),
+                            LiteralExpr(4),
+                        )
+                    ),
+                ]
+            ),
         ),
     ]
 
@@ -327,7 +369,9 @@ class TestOptimizationReducesRuntimeOperationCount:
             PrintStmt(
                 BinaryExpr(
                     GroupingExpr(
-                        BinaryExpr(LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3))
+                        BinaryExpr(
+                            LiteralExpr(2), op("+", TokenType.PLUS), LiteralExpr(3)
+                        )
                     ),
                     op("*", TokenType.STAR),
                     LiteralExpr(4),

@@ -17,7 +17,6 @@ from assembler.statement import (
     Stmt,
     VarStmt,
 )
-
 from exceptions import CodeFabRuntimeError, CodeFabTypeError
 from executor.executor import Executor
 
@@ -60,7 +59,9 @@ class ConstantFolder:
             return folder(statement)
 
         if not isinstance(statement, Stmt):
-            raise CodeFabTypeError(f"Unknown statement type: {type(statement).__name__}")
+            raise CodeFabTypeError(
+                f"Unknown statement type: {type(statement).__name__}"
+            )
         return statement
 
     def _fold_expr(self, expr):
@@ -154,4 +155,6 @@ class ConstantFolder:
     def _all_operands_are_literal(expr):
         if isinstance(expr, UnaryExpr):
             return isinstance(expr.right, LiteralExpr)
-        return isinstance(expr.left, LiteralExpr) and isinstance(expr.right, LiteralExpr)
+        return isinstance(expr.left, LiteralExpr) and isinstance(
+            expr.right, LiteralExpr
+        )
