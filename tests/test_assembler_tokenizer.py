@@ -34,7 +34,7 @@ def test_assign_zero(tokenizer):
     ]
 
 
-def test_assign_zero_dot_zero(tokenizer):
+def test_assign_zero_point_zero(tokenizer):
     tokens = tokenizer.tokenize("age = 0.0")
 
     assert tokens == [
@@ -50,12 +50,12 @@ def test_error_assign_number_start_with_zero(tokenizer):
         tokenizer.tokenize("age = 01")
 
 
-def test_error_assign_number_dot_number_start_with_zero(tokenizer):
+def test_error_assign_number_point_number_start_with_zero(tokenizer):
     with pytest.raises(ValueError, match="cannot start with zero"):
         tokenizer.tokenize("age = 01.01")
 
 
-def test_assign_number_dot_number(tokenizer):
+def test_assign_number_point_number(tokenizer):
     tokens = tokenizer.tokenize("point = 10.1")
 
     assert tokens == [
@@ -66,7 +66,7 @@ def test_assign_number_dot_number(tokenizer):
     ]
 
 
-def test_assign_number_dot_number_2_digit(tokenizer):
+def test_assign_number_point_number_2_digit(tokenizer):
     tokens = tokenizer.tokenize("point = 10.11")
 
     assert tokens == [
@@ -77,7 +77,7 @@ def test_assign_number_dot_number_2_digit(tokenizer):
     ]
 
 
-def test_assign_zero_dot_number(tokenizer):
+def test_assign_zero_point_number(tokenizer):
     tokens = tokenizer.tokenize("point = 0.11")
 
     assert tokens == [
@@ -88,14 +88,14 @@ def test_assign_zero_dot_number(tokenizer):
     ]
 
 
-@pytest.mark.skip(reason="DOT 토큰 추가로, token 단계에서 에러 처리 불가")
-def test_error_assign_dot_number(tokenizer):
+@pytest.mark.skip(reason="DOT 토큰 추가로, tokenize 단계에서 에러 처리 불가")
+def test_error_assign_point_number(tokenizer):
     with pytest.raises(ValueError):
         tokenizer.tokenize("point = .11")
 
 
-@pytest.mark.skip(reason="DOT 토큰 추가로, token 단계에서 에러 처리 불가")
-def test_error_assign_number_dot_number_dot_number(tokenizer):
+@pytest.mark.skip(reason="DOT 토큰 추가로, tokenize 단계에서 에러 처리 불가")
+def test_error_assign_number_point_number_point_number(tokenizer):
     with pytest.raises(ValueError):
         tokenizer.tokenize("point = 10.10.10")
 
