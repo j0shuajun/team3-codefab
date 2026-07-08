@@ -1,4 +1,5 @@
 from collections import Counter
+
 from assembler.assembler import Assembler
 from assembler.tokenizer import Tokenizer
 from checker.checker import Checker
@@ -12,6 +13,8 @@ class CodeFabRunner:
         self.executor = Executor()
 
     def run_code(self, source):
+        before_output_count = len(self.executor.outputs)
+
         try:
             tokens = self.tokenizer.tokenize(source)
             statements = Assembler(tokens).parse()
@@ -20,13 +23,13 @@ class CodeFabRunner:
             if errors:
                 return errors
 
-            before_output_count = len(self.executor.outputs)
             self.executor.execute(statements)
 
             return self.executor.outputs[before_output_count:]
 
         except Exception as error:
-            return [f"Error: {error}"]
+            outputs = self.executor.outputs[before_output_count:]
+            return outputs + [f"Error: {error}"]
 
 
 class PromptShell:

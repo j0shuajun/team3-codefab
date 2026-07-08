@@ -2,8 +2,8 @@ from shell.shell import CodeFabRunner
 
 
 class FileMode:
-    def __init__(self):
-        self.runner = CodeFabRunner()
+    def __init__(self, runner=None):
+        self.runner = runner or CodeFabRunner()
 
     def run_file(self, file_path):
         try:
