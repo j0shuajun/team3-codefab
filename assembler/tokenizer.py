@@ -2,46 +2,69 @@ from enum import Enum, auto
 
 
 class TokenType(Enum):
-    # 단일문자
+    # End Of File
+    EOF = auto()
+    # Literal
+    IDENTIFIER = auto()
+    STRING = auto()
+    NUMBER = auto()
+    # Assignment
+    EQUAL = auto()
+    # Grouping
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
+    # Block scope
     LEFT_BRACE = auto()
     RIGHT_BRACE = auto()
-    COMMA = auto()
-    SEMICOLON = auto()
-
+    # Array
+    LEFT_BRACKET = auto()
+    RIGHT_BRACKET = auto()
+    # Member access
+    DOT = auto()
+    # Inheritance
+    COLON = auto()
+    # Comparison
+    LESS = auto()
+    GREATER = auto()
+    LESS_EQUAL = auto()
+    GREATER_EQUAL = auto()
+    EQUAL_EQUAL = auto()
+    BANG_EQUAL = auto()
+    # Operation
     PLUS = auto()
     MINUS = auto()
     STAR = auto()
     SLASH = auto()
+    # Logical
     BANG = auto()
-    EQUAL = auto()
-    GREATER = auto()
-    LESS = auto()
-
-    # 여러문자
-    VAR = auto()
-    TRUE = auto()
-    FALSE = auto()
-    PRINT = auto()
     AND = auto()
     OR = auto()
+    # Delimiter
+    SEMICOLON = auto()
+    COMMA = auto()
+    # Variable
+    VAR = auto()
+    # Boolean
+    TRUE = auto()
+    FALSE = auto()
+    # Print
+    PRINT = auto()
+    # Conditional
     IF = auto()
     ELSE = auto()
+    # Loop
     FOR = auto()
-
-    BANG_EQUAL = auto()
-    EQUAL_EQUAL = auto()
-    GREATER_EQUAL = auto()
-    LESS_EQUAL = auto()
-
-    # 리터럴
-    IDENTIFIER = auto()
-    STRING = auto()
-    NUMBER = auto()
-
-    # 기타
-    EOF = auto()
+    # Function
+    FUNC = auto()
+    RETURN = auto()
+    # Class
+    CLASS = auto()
+    THIS = auto()
+    SUPER = auto()
+    INSTANCEOF = auto()
+    # Import
+    IMPORT = auto()
+    ALIAS = auto()
 
 
 class Token:
