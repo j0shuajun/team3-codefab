@@ -54,6 +54,18 @@ class Environment:
 
         raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
 
+    def ancestor(self, distance):
+        environment = self
+        for _ in range(distance):
+            environment = environment.enclosing
+        return environment
+
+    def get_at(self, distance, name):
+        return self.ancestor(distance).values[name]
+
+    def assign_at(self, distance, name, value):
+        self.ancestor(distance).values[name] = value
+
 
 class Executor:
     def __init__(self):
@@ -123,11 +135,18 @@ class Executor:
             raise CodeFabRuntimeError(f"Unknown unary operator: {expr.operator.origin}")
 
         if isinstance(expr, VariableExpr):
+            distance = getattr(expr, "distance", None)
+            if distance is not None:
+                return self.environment.get_at(distance, expr.name.origin)
             return self.environment.get(expr.name)
 
         if isinstance(expr, AssignExpr):
             value = self.evaluate(expr.value)
-            self.environment.assign(expr.name, value)
+            distance = getattr(expr, "distance", None)
+            if distance is not None:
+                self.environment.assign_at(distance, expr.name.origin, value)
+            else:
+                self.environment.assign(expr.name, value)
             return value
 
         if isinstance(expr, LogicalExpr):
