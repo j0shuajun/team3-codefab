@@ -9,5 +9,6 @@ __pycache__/
 *.pyc
 *.pyo
 .coverage
+coverage.xml
 htmlcov/
 .understand-anything/.trash-*/

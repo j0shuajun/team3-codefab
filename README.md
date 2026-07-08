@@ -1,4 +1,7 @@
 # Code Review Agent Team3
+
+[![codecov](https://codecov.io/gh/j0shuajun/team3-codefab/branch/main/graph/badge.svg)](https://codecov.io/gh/j0shuajun/team3-codefab)
+
 - 팀명: Ctrl-C
 - 의미: 서로의 강점을 복사(Copy)해 함께 성장하는 팀
 - 팀원: 김명준님(팀장), 권소영님, 김민준님, 박진우님, 이예진님
@@ -15,7 +18,11 @@
   - ex) `tests/test_assembler_tokenizer.py`
 
 ### CI / Lint
-- GitHub Actions는 PR과 `main` push 시 Python 3.13 환경에서 lint를 실행한다.
+- GitHub Actions는 PR과 `main` push 시 Python 3.13 환경에서 다음 워크플로우를 실행한다.
+  - `Lint`: black / isort / ruff 검사
+  - `Gist Acceptance`: 인수 테스트(`tests/test_codefab_gist_acceptance.py`) 실행
+  - `Unit Tests`: `tests/` 전체 테스트 실행 + coverage 측정 후 [Codecov](https://codecov.io/gh/j0shuajun/team3-codefab)로 업로드
+    - Codecov 업로드가 정상 동작하려면 저장소 관리자가 GitHub Secrets에 `CODECOV_TOKEN`을 등록해야 한다.
 - 로컬에서는 PR 전 아래 명령으로 의존성 설치, 자동 수정, 테스트를 실행한다.
 
 ```bash
