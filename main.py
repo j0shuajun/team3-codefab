@@ -1,5 +1,4 @@
 import sys
-
 from shell.debug_mode import DebugMode
 from shell.file_mode import FileMode
 from shell.shell import PromptShell

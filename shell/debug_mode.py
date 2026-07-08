@@ -1,150 +1,209 @@
+from dataclasses import dataclass
+
 from assembler.assembler import Assembler
+from assembler.environment import Environment
+from assembler.statement import BlockStmt, IfStmt
 from shell.shell import CodeFabRunner
 
 
-class VariableStoreReader:
-    ENV_ATTR_NAMES = ("environment", "env", "globals", "global_env")
-    VALUE_ATTR_NAMES = ("values", "variables", "store")
-    PARENT_ATTR_NAMES = ("enclosing", "parent", "outer")
+@dataclass
+class DebugFrame:
+    statements: list
+    index: int = 0
+    previous_environment: object = None
+    restore_environment: bool = False
 
+
+class VariableStoreReader:
     def __init__(self, executor):
         self.executor = executor
 
-    def current_environment(self):
-        for attr_name in self.ENV_ATTR_NAMES:
-            if hasattr(self.executor, attr_name):
-                return getattr(self.executor, attr_name)
-
-        return None
-
-    def get_values(self, environment):
-        if environment is None:
-            return {}
-
-        if isinstance(environment, dict):
-            return environment
-
-        for attr_name in self.VALUE_ATTR_NAMES:
-            values = getattr(environment, attr_name, None)
-            if isinstance(values, dict):
-                return values
-
-        return {}
-
-    def get_parent(self, environment):
-        for attr_name in self.PARENT_ATTR_NAMES:
-            if hasattr(environment, attr_name):
-                return getattr(environment, attr_name)
-
-        return None
-
     def lookup(self, name):
-        environment = self.current_environment()
+        environment = self.executor.environment
 
         while environment is not None:
-            values = self.get_values(environment)
-
-            if name in values:
-                return values[name]
-
-            environment = self.get_parent(environment)
+            if name in environment.values:
+                return environment.values[name]
+            environment = environment.enclosing
 
         raise KeyError(name)
 
     def inspect_current_scope(self):
-        environment = self.current_environment()
-
-        if environment is None:
-            return None
-
-        return self.get_values(environment)
+        return self.executor.environment.values
 
 
 class DebugSession:
     def __init__(self, runner, statements):
         self.runner = runner
-        self.statements = statements
-        self.current_index = 0
+        self.frames = [DebugFrame(statements)]
         self.breakpoints = set()
         self.watch_names = []
         self.is_finished = False
         self.variable_reader = VariableStoreReader(runner.executor)
+        self.last_break_stop_key = None
+
+        self.normalize_frames()
 
     def process_command(self, command):
         command = command.strip()
 
-        if command in ("exit", "quit"):
+        if command == "":
+            return []
+
+        command_name = command.split()[0].lower()
+
+        if command_name in ("exit", "quit"):
             self.is_finished = True
             return ["Debug finished."]
 
-        if command in ("step", "next"):
-            return self.execute_current_statement() + self.format_watches()
+        if command_name == "step":
+            self.last_break_stop_key = None
+            return self.execute_current_statement(enter_block=True) + self.format_watches()
 
-        if command == "continue":
+        if command_name == "next":
+            self.last_break_stop_key = None
+            return self.execute_current_statement(enter_block=False) + self.format_watches()
+
+        if command_name == "continue":
             return self.continue_until_breakpoint()
 
-        if command.startswith("break "):
+        if command_name == "break":
             return self.add_breakpoint(command)
 
-        if command == "breakpoints":
+        if command_name == "breakpoints":
             return self.show_breakpoints()
 
-        if command.startswith("remove "):
+        if command_name == "remove":
             return self.remove_breakpoint(command)
 
-        if command.startswith("watch "):
+        if command_name == "watch":
             return self.add_watch(command)
 
-        if command.startswith("unwatch "):
+        if command_name == "unwatch":
             return self.remove_watch(command)
 
-        if command == "watches":
-            return self.format_watches()
+        if command_name == "watches":
+            return self.format_watches(show_empty=True)
 
-        if command == "inspect":
+        if command_name == "inspect":
             return self.inspect_current_scope()
 
         return [f"Unknown debug command: {command}"]
 
-    def execute_current_statement(self):
-        if self.is_finished or self.current_index >= len(self.statements):
-            self.is_finished = True
+    def execute_current_statement(self, enter_block):
+        self.normalize_frames()
+
+        if self.is_finished:
             return ["Program finished."]
 
+        statement = self.current_statement()
         before_output_count = len(self.runner.executor.outputs)
-        statement = self.statements[self.current_index]
 
         try:
-            self.runner.executor.execute([statement])
-            self.current_index += 1
+            if enter_block and isinstance(statement, BlockStmt):
+                self.enter_block(statement)
+                return []
 
-            if self.current_index >= len(self.statements):
-                self.is_finished = True
+            if enter_block and isinstance(statement, IfStmt):
+                self.enter_if_branch(statement)
+                return []
+
+            self.runner.executor.execute([statement])
+            self.current_frame().index += 1
+            self.normalize_frames()
 
             return self.runner.executor.outputs[before_output_count:]
 
         except Exception as error:
             self.is_finished = True
             outputs = self.runner.executor.outputs[before_output_count:]
-            return outputs + [f"Error: {error}"]
+            line = self.current_line()
+
+            if line is None:
+                return outputs + [f"Error: {error}"]
+
+            return outputs + [f"Error at line {line}: {error}"]
+
+    def enter_block(self, block_stmt):
+        current_frame = self.current_frame()
+        current_frame.index += 1
+
+        previous_environment = self.runner.executor.environment
+        block_environment = Environment(previous_environment)
+        self.runner.executor.environment = block_environment
+
+        self.frames.append(
+            DebugFrame(
+                block_stmt.statements,
+                previous_environment=previous_environment,
+                restore_environment=True,
+            )
+        )
+
+        self.normalize_frames()
+
+    def enter_if_branch(self, if_stmt):
+        current_frame = self.current_frame()
+        current_frame.index += 1
+
+        selected_branch = None
+        if self.runner.executor.is_truthy(self.runner.executor.evaluate(if_stmt.condition)):
+            selected_branch = if_stmt.then_branch
+        elif if_stmt.else_branch is not None:
+            selected_branch = if_stmt.else_branch
+
+        if selected_branch is None:
+            self.normalize_frames()
+            return
+
+        if isinstance(selected_branch, BlockStmt):
+            previous_environment = self.runner.executor.environment
+            block_environment = Environment(previous_environment)
+            self.runner.executor.environment = block_environment
+
+            self.frames.append(
+                DebugFrame(
+                    selected_branch.statements,
+                    previous_environment=previous_environment,
+                    restore_environment=True,
+                )
+            )
+        else:
+            self.frames.append(DebugFrame([selected_branch]))
+
+        self.normalize_frames()
 
     def continue_until_breakpoint(self):
         outputs = []
 
         while not self.is_finished:
-            line = self.current_line()
+            self.normalize_frames()
 
-            if line in self.breakpoints:
-                outputs.append(f"Stopped at breakpoint line {line}.")
-                outputs.extend(self.format_watches())
-                return outputs
+            if self.is_finished:
+                break
 
-            outputs.extend(self.execute_current_statement())
+            current_line = self.current_line()
+            current_key = self.current_stop_key()
+
+            if (
+                current_line in self.breakpoints
+                and self.last_break_stop_key != current_key
+            ):
+                self.last_break_stop_key = current_key
+                return (
+                    outputs
+                    + [f"Stopped at breakpoint line {current_line}."]
+                    + self.format_watches()
+                )
+
+            self.last_break_stop_key = None
+            outputs.extend(self.execute_current_statement(enter_block=True))
 
         return outputs
 
     def add_breakpoint(self, command):
-        line_number = self.parse_line_number(command, "break")
+        line_number = self.parse_line_number(command)
+
         if line_number is None:
             return ["Usage: break <line_number>"]
 
@@ -152,7 +211,8 @@ class DebugSession:
         return [f"Breakpoint added at line {line_number}."]
 
     def remove_breakpoint(self, command):
-        line_number = self.parse_line_number(command, "remove")
+        line_number = self.parse_line_number(command)
+
         if line_number is None:
             return ["Usage: remove <line_number>"]
 
@@ -163,14 +223,15 @@ class DebugSession:
         if not self.breakpoints:
             return ["No breakpoints."]
 
-        breakpoints = sorted(self.breakpoints)
-        return [f"Breakpoints: {breakpoints}"]
+        return [f"Breakpoints: {sorted(self.breakpoints)}"]
 
     def add_watch(self, command):
-        variable_name = command.removeprefix("watch ").strip()
+        parts = command.split(maxsplit=1)
 
-        if variable_name == "":
+        if len(parts) < 2 or parts[1].strip() == "":
             return ["Usage: watch <variable_name>"]
+
+        variable_name = parts[1].strip()
 
         if variable_name not in self.watch_names:
             self.watch_names.append(variable_name)
@@ -178,26 +239,28 @@ class DebugSession:
         return [f"Watch added: {variable_name}"]
 
     def remove_watch(self, command):
-        variable_name = command.removeprefix("unwatch ").strip()
+        parts = command.split(maxsplit=1)
 
-        if variable_name == "":
+        if len(parts) < 2 or parts[1].strip() == "":
             return ["Usage: unwatch <variable_name>"]
+
+        variable_name = parts[1].strip()
 
         if variable_name in self.watch_names:
             self.watch_names.remove(variable_name)
 
         return [f"Watch removed: {variable_name}"]
 
-    def format_watches(self):
+    def format_watches(self, show_empty=False):
         if not self.watch_names:
-            return ["No watches."]
+            return ["No watches."] if show_empty else []
 
         outputs = []
 
         for name in self.watch_names:
             try:
                 value = self.variable_reader.lookup(name)
-                outputs.append(f"{name} = {value}")
+                outputs.append(f"{name} = {self.runner.executor.stringify(value)}")
             except KeyError:
                 outputs.append(f"{name} = <undefined>")
 
@@ -206,41 +269,59 @@ class DebugSession:
     def inspect_current_scope(self):
         values = self.variable_reader.inspect_current_scope()
 
-        if values is None:
-            return ["Current variable store is not accessible."]
-
         if not values:
             return ["Current scope is empty."]
 
-        return [f"{name} = {value}" for name, value in values.items()]
+        outputs = []
+
+        for name, value in values.items():
+            outputs.append(f"{name} = {self.runner.executor.stringify(value)}")
+
+        return outputs
+
+    def normalize_frames(self):
+        while self.frames and self.frames[-1].index >= len(self.frames[-1].statements):
+            finished_frame = self.frames.pop()
+
+            if finished_frame.restore_environment:
+                self.runner.executor.environment = finished_frame.previous_environment
+
+        if not self.frames:
+            self.is_finished = True
+
+    def current_frame(self):
+        return self.frames[-1]
+
+    def current_statement(self):
+        if self.is_finished:
+            return None
+
+        frame = self.current_frame()
+        return frame.statements[frame.index]
 
     def current_line(self):
         statement = self.current_statement()
-        return self.extract_statement_line(statement)
 
-    def current_statement(self):
-        if self.current_index >= len(self.statements):
-            return None
-
-        return self.statements[self.current_index]
-
-    def extract_statement_line(self, statement):
         if statement is None:
             return None
 
-        if hasattr(statement, "line"):
-            return statement.line
+        return getattr(statement, "line", None)
 
-        for attr_name in ("name", "keyword", "token", "operator"):
-            attr = getattr(statement, attr_name, None)
+    def current_stop_key(self):
+        statement = self.current_statement()
 
-            if attr is not None and hasattr(attr, "line"):
-                return attr.line
+        if statement is None:
+            return None
 
-        return None
+        return (len(self.frames), self.current_frame().index, id(statement))
 
-    def parse_line_number(self, command, command_name):
-        raw_line_number = command.removeprefix(command_name).strip()
+    def parse_line_number(self, command):
+        parts = command.split(maxsplit=1)
+
+        if len(parts) < 2:
+            return None
+
+        raw_line_number = parts[1].strip()
 
         if not raw_line_number.isdigit():
             return None
@@ -285,8 +366,12 @@ class DebugMode:
 
         while not session.is_finished:
             line = session.current_line()
+            statement = session.current_statement()
+
             if line is not None:
-                print(f"(line {line})")
+                print(f"(line {line}) {statement}")
+            else:
+                print(f"{statement}")
 
             command = input("(debug) ")
             outputs = session.process_command(command)
