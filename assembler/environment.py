@@ -1,4 +1,4 @@
-class CodeFabRuntimeError(Exception):
+class CodeFabRuntimeError(RuntimeError):
     pass
 
 
