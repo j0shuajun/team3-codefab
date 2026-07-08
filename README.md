@@ -6,13 +6,13 @@
 ## Ground Rules
 
 ### PR/코드 리뷰 규칙
-- PR merge 하기 위해서는 최소 두 명 이상의 Approve가 필요하다. ([PR Template](#pr-template) 준수)
-- PR의 Merge는 PR을 생성(요청)한 사람이 직접 진행한다.
+- [PR Template](.github/pull_request_template.md)을 준수해야 하며, merge 하기 위해서는 최소 두 명 이상의 Approve가 필요하다.
+- Merge는 PR을 생성한 사람이 직접 진행한다.
 - 최소 승인 조건(2명 Approve)을 충족한 이후에 merge 한다.
-- Commit/PR 전 Reformat Code (Ctrl+Alt+L)를 실행하여 스타일을 통일한다.
-- Commit message는 다음 페이지 양식을 준수한다. (https://wikidocs.net/332862)
+- Commit message는 다음 [양식](https://wikidocs.net/332862)을 준수한다. 
 - Branch 이름은 `feature/<기능>` 형식을 따른다.
-- 테스트파일은 `tests/` 디렉토리 하위에 테스트 대상 파일이름을 경로에 담아 작성한다. ex) `tests/test_assembler_tokenizer.py`
+- 테스트파일은 `tests/` 디렉토리 하위에 테스트 대상 파일이름을 경로에 담아 작성한다.
+  - ex) `tests/test_assembler_tokenizer.py`
 
 ### CI / Lint
 - GitHub Actions는 PR과 `main` push 시 Python 3.13 환경에서 lint를 실행한다.
