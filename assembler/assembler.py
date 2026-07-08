@@ -134,20 +134,20 @@ class Assembler:
         return ExpressionStmt(expression)
 
     def assignment(self):
-        expr = self.logic_or()
+        expression = self.logic_or()
 
         if self.match(TokenType.EQUAL):
             value = self.assignment()
 
-            if isinstance(expr, VariableExpr):
-                return AssignExpr(expr.name, value)
+            if isinstance(expression, VariableExpr):
+                return AssignExpr(expression.name, value)
 
-            if isinstance(expr, GetExpr):
-                return SetExpr(expr.object, expr.name, value)
+            if isinstance(expression, GetExpr):
+                return SetExpr(expression.object, expression.name, value)
 
             raise AssemblerError("Invalid assignment target.")
 
-        return expr
+        return expression
 
     def logic_or(self):
         expression = self.logic_and()
