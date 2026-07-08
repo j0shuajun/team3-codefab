@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from enum import Enum, auto
 
 from assembler.expr import (
     AssignExpr,
@@ -14,12 +15,19 @@ from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
+    FunctionStmt,
     IfStmt,
     PrintStmt,
+    ReturnStmt,
     Stmt,
     VarStmt,
 )
 from exceptions import CodeFabTypeError
+
+
+class FunctionType(Enum):
+    NONE = auto()
+    FUNCTION = auto()
 
 
 class Resolver(ABC):
@@ -84,6 +92,7 @@ class StatementResolver(Resolver):
         self._scopes = scopes
         self._error_reporter = error_reporter
         self._expression_resolver = expression_resolver
+        self._current_function = FunctionType.NONE
         self._resolvers = {
             VarStmt: self._resolve_var_stmt,
             BlockStmt: self._resolve_block_stmt,
@@ -91,7 +100,12 @@ class StatementResolver(Resolver):
             PrintStmt: self._resolve_expression_stmt,
             IfStmt: self._resolve_if_stmt,
             ForStmt: self._resolve_for_stmt,
+            FunctionStmt: self._resolve_function_stmt,
+            ReturnStmt: self._resolve_return_stmt,
         }
+
+    def reset(self):
+        self._current_function = FunctionType.NONE
 
     def resolve_all(self, statements):
         for statement in statements:
@@ -175,3 +189,37 @@ class StatementResolver(Resolver):
             after_iteration = self._scopes.snapshot()
 
             self._scopes.restore(self._merge_snapshots(after_iteration, before))
+
+    def _resolve_function_stmt(self, statement):
+        name = statement.name.origin
+        if not self._scopes.declare(name):
+            self._error_reporter.report(
+                f"Variable '{name}' already declared in this scope."
+            )
+        self._scopes.initialize(name)
+
+        self._resolve_function_body(statement, FunctionType.FUNCTION)
+
+    def _resolve_function_body(self, statement, function_type):
+        enclosing_function = self._current_function
+        self._current_function = function_type
+
+        with self._scopes.new_scope():
+            for param in statement.params:
+                param_name = param.origin
+                if not self._scopes.declare(param_name):
+                    self._error_reporter.report(
+                        f"Duplicate parameter name '{param_name}' in this function."
+                    )
+                self._scopes.initialize(param_name)
+
+            self.resolve_all(statement.body)
+
+        self._current_function = enclosing_function
+
+    def _resolve_return_stmt(self, statement):
+        if self._current_function == FunctionType.NONE:
+            self._error_reporter.report("Cannot return from top-level code.")
+
+        if statement.value is not None:
+            self._expression_resolver.resolve(statement.value)
