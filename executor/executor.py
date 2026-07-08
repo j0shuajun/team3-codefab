@@ -8,9 +8,10 @@ from assembler.expr import (
     LiteralExpr,
     LogicalExpr,
     SetExpr,
+    SuperExpr,
     ThisExpr,
     UnaryExpr,
-    VariableExpr, SuperExpr,
+    VariableExpr,
 )
 from assembler.runtime import (
     Callable,
@@ -186,9 +187,7 @@ class Executor:
         if isinstance(expr, SuperExpr):
             superclass = self.environment.get(expr.keyword)
 
-            this_token = type("TokenLike", (), {
-                "origin": "This"
-            })()
+            this_token = type("TokenLike", (), {"origin": "This"})()
 
             instance = self.environment.get(this_token)
 
@@ -255,7 +254,9 @@ class Executor:
                 return False
 
             if not isinstance(right, UserClass):
-                raise CodeFabRuntimeError("Right operand of instanceof must be a class.")
+                raise CodeFabRuntimeError(
+                    "Right operand of instanceof must be a class."
+                )
 
             return left.is_instance_of(right)
 

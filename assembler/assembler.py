@@ -7,9 +7,10 @@ from .expr import (
     LiteralExpr,
     LogicalExpr,
     SetExpr,
+    SuperExpr,
     ThisExpr,
     UnaryExpr,
-    VariableExpr, SuperExpr,
+    VariableExpr,
 )
 from .statement import (
     BlockStmt,
@@ -183,11 +184,11 @@ class Assembler:
         expr = self.term()
 
         while self.match(
-                TokenType.GREATER,
-                TokenType.GREATER_EQUAL,
-                TokenType.LESS,
-                TokenType.LESS_EQUAL,
-                TokenType.INSTANCEOF,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
+            TokenType.INSTANCEOF,
         ):
             operator = self.previous()
             right = self.term()
@@ -219,7 +220,9 @@ class Assembler:
         if self.match(TokenType.SUPER):
             keyword = self.previous()
             self.consume(TokenType.DOT, "Expected '.' after Super.")
-            method = self.consume(TokenType.IDENTIFIER, "Expected superclass method name.")
+            method = self.consume(
+                TokenType.IDENTIFIER, "Expected superclass method name."
+            )
             return SuperExpr(keyword, method)
 
         raise AssemblerError("Expected expression.")
@@ -374,8 +377,7 @@ class Assembler:
         superclass = None
         if self.match(TokenType.COLON):
             superclass_name = self.consume(
-                TokenType.IDENTIFIER,
-                "Expected superclass name after ':'."
+                TokenType.IDENTIFIER, "Expected superclass name after ':'."
             )
             superclass = VariableExpr(superclass_name)
 

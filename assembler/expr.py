@@ -115,12 +115,13 @@ class ThisExpr(Expr):
     def __repr__(self):
         return "ThisExpr()"
 
+
 class SuperExpr(Expr):
     """Super.method 표현식"""
 
     def __init__(self, keyword: Token, method: Token):
         self.keyword = keyword  # Token: Super
-        self.method = method    # Token: method name
+        self.method = method  # Token: method name
 
     def __repr__(self):
         return f"SuperExpr({self.method.origin})"

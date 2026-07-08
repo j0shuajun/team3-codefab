@@ -1,5 +1,5 @@
 from assembler.assembler import Assembler
-from assembler.expr import GetExpr, SetExpr, ThisExpr, CallExpr, SuperExpr, BinaryExpr
+from assembler.expr import BinaryExpr, CallExpr, GetExpr, SetExpr, SuperExpr, ThisExpr
 from assembler.statement import ClassStmt, FunctionStmt
 from assembler.tokenizer import Token, TokenType
 
@@ -88,14 +88,16 @@ def test_parse_class_declaration_with_method():
 
 
 def test_parse_class_declaration_with_superclass():
-    statements = parse([
-        token(TokenType.CLASS, "Class"),
-        token(TokenType.IDENTIFIER, "SpeedRobot"),
-        token(TokenType.COLON, ":"),
-        token(TokenType.IDENTIFIER, "Robot"),
-        token(TokenType.LEFT_BRACE, "{"),
-        token(TokenType.RIGHT_BRACE, "}"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.CLASS, "Class"),
+            token(TokenType.IDENTIFIER, "SpeedRobot"),
+            token(TokenType.COLON, ":"),
+            token(TokenType.IDENTIFIER, "Robot"),
+            token(TokenType.LEFT_BRACE, "{"),
+            token(TokenType.RIGHT_BRACE, "}"),
+        ]
+    )
 
     stmt = statements[0]
 
@@ -106,14 +108,16 @@ def test_parse_class_declaration_with_superclass():
 
 
 def test_parse_super_method_expression():
-    statements = parse([
-        token(TokenType.SUPER, "Super"),
-        token(TokenType.DOT, "."),
-        token(TokenType.IDENTIFIER, "move"),
-        token(TokenType.LEFT_PAREN, "("),
-        token(TokenType.RIGHT_PAREN, ")"),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.SUPER, "Super"),
+            token(TokenType.DOT, "."),
+            token(TokenType.IDENTIFIER, "move"),
+            token(TokenType.LEFT_PAREN, "("),
+            token(TokenType.RIGHT_PAREN, ")"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 
@@ -123,12 +127,14 @@ def test_parse_super_method_expression():
 
 
 def test_parse_instanceof_expression():
-    statements = parse([
-        token(TokenType.IDENTIFIER, "w"),
-        token(TokenType.INSTANCEOF, "instanceof"),
-        token(TokenType.IDENTIFIER, "Robot"),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.IDENTIFIER, "w"),
+            token(TokenType.INSTANCEOF, "instanceof"),
+            token(TokenType.IDENTIFIER, "Robot"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 
