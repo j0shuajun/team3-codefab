@@ -1,4 +1,7 @@
 # Code Review Agent Team3
+
+[![codecov](https://codecov.io/gh/j0shuajun/team3-codefab/branch/main/graph/badge.svg)](https://codecov.io/gh/j0shuajun/team3-codefab)
+
 - 팀명: Ctrl-C
 - 의미: 서로의 강점을 복사(Copy)해 함께 성장하는 팀
 - 팀원: 김명준님(팀장), 권소영님, 김민준님, 박진우님, 이예진님
@@ -6,24 +9,26 @@
 ## Ground Rules
 
 ### PR/코드 리뷰 규칙
-- PR merge 하기 위해서는 최소 두 명 이상의 Approve가 필요하다. ([PR Template](#pr-template) 준수)
-- PR의 Merge는 PR을 생성(요청)한 사람이 직접 진행한다.
+- [PR Template](.github/pull_request_template.md)을 준수해야 하며, merge 하기 위해서는 최소 두 명 이상의 Approve가 필요하다.
+- Merge는 PR을 생성한 사람이 직접 진행한다.
 - 최소 승인 조건(2명 Approve)을 충족한 이후에 merge 한다.
-- Commit/PR 전 Reformat Code (Ctrl+Alt+L)를 실행하여 스타일을 통일한다.
-- Commit message는 다음 페이지 양식을 준수한다. (https://wikidocs.net/332862)
+- Commit message는 다음 [양식](https://wikidocs.net/332862)을 준수한다. 
 - Branch 이름은 `feature/<기능>` 형식을 따른다.
-- 테스트파일은 `tests/` 디렉토리 하위에 테스트 대상 파일이름을 경로에 담아 작성한다. ex) `tests/test_assembler_tokenizer.py`
+- 테스트파일은 `tests/` 디렉토리 하위에 테스트 대상 파일이름을 경로에 담아 작성한다.
+  - ex) `tests/test_assembler_tokenizer.py`
 
 ### CI / Lint
-- GitHub Actions는 PR과 `main` push 시 Python 3.13 환경에서 lint를 실행한다.
-- 로컬에서는 PR 전 아래 명령으로 자동 수정 후 검사를 실행한다.
+- GitHub Actions는 PR과 `main` push 시 Python 3.13 환경에서 다음 워크플로우를 실행한다.
+  - `Lint`: black / isort / ruff 검사
+  - `Gist Acceptance`: 인수 테스트(`tests/test_codefab_gist_acceptance.py`) 실행
+  - `Unit Tests`: `tests/` 전체 테스트 실행 + coverage 측정 후 [Codecov](https://codecov.io/gh/j0shuajun/team3-codefab)로 업로드
+    - Codecov 업로드가 정상 동작하려면 저장소 관리자가 GitHub Secrets에 `CODECOV_TOKEN`을 등록해야 한다.
+- 로컬에서는 PR 전 아래 명령으로 의존성 설치, 자동 수정, 테스트를 실행한다.
 
 ```bash
-python -m pip install -r requirements-dev.txt
-black .
-isort .
-ruff check --fix .
-black --check . && isort --check-only . && ruff check .
+make install   # requirements-dev.txt 설치
+make lint      # black / isort / ruff --fix 실행
+make test      # PYTHONPATH=. pytest -q 실행
 ```
 
 ### 팀 협업 규칙
