@@ -15,7 +15,7 @@ from assembler.statement import (
     ForStmt,
     IfStmt,
     PrintStmt,
-    VarStmt, FunctionStmt,
+    VarStmt, FunctionStmt, ReturnStmt,
 )
 from assembler.tokenizer import Token, TokenType
 from executor.executor import CodeFabRuntimeError, Executor
@@ -467,3 +467,37 @@ def test_execute_function_without_return():
     ])
 
     assert executor.outputs == ["hi"]
+
+
+def test_execute_function_with_return_value():
+    executor = run([
+        FunctionStmt(
+            token(TokenType.IDENTIFIER, "add"),
+            [
+                token(TokenType.IDENTIFIER, "a"),
+                token(TokenType.IDENTIFIER, "b"),
+            ],
+            [
+                ReturnStmt(
+                    token(TokenType.RETURN, "return"),
+                    BinaryExpr(
+                        VariableExpr(token(TokenType.IDENTIFIER, "a")),
+                        token(TokenType.PLUS, "+"),
+                        VariableExpr(token(TokenType.IDENTIFIER, "b")),
+                    ),
+                )
+            ],
+        ),
+        PrintStmt(
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [
+                    LiteralExpr(3),
+                    LiteralExpr(7),
+                ],
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["10"]

@@ -8,14 +8,14 @@ from assembler.expr import (
     UnaryExpr,
     VariableExpr,
 )
-from assembler.runtime import Callable, NativeFunction, UserFunction
+from assembler.runtime import Callable, NativeFunction, UserFunction, ReturnSignal
 from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
     IfStmt,
     PrintStmt,
-    VarStmt, FunctionStmt,
+    VarStmt, FunctionStmt, ReturnStmt,
 )
 from assembler.tokenizer import TokenType
 from assembler.environment import Environment
@@ -74,6 +74,12 @@ class Executor:
             function = UserFunction(stmt, self.environment)
             self.environment.define(stmt.name.origin, function)
             return
+
+        if isinstance(stmt, ReturnStmt):
+            value = None
+            if stmt.value is not None:
+                value = self.evaluate(stmt.value)
+            raise ReturnSignal(value)
 
         raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
