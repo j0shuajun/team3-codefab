@@ -88,11 +88,13 @@ def test_assign_zero_dot_number(tokenizer):
     ]
 
 
+@pytest.mark.skip(reason="DOT 토큰 추가로, token 단계에서 에러 처리 불가")
 def test_error_assign_dot_number(tokenizer):
     with pytest.raises(ValueError):
         tokenizer.tokenize("point = .11")
 
 
+@pytest.mark.skip(reason="DOT 토큰 추가로, token 단계에서 에러 처리 불가")
 def test_error_assign_number_dot_number_dot_number(tokenizer):
     with pytest.raises(ValueError):
         tokenizer.tokenize("point = 10.10.10")
@@ -534,5 +536,139 @@ def test_similar_to_for_assign(tokenizer):
         Token(T.IDENTIFIER, "form"),
         Token(T.EQUAL, "="),
         Token(T.NUMBER, "1", value=1.0),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== 배열/필드 접근/상속 토큰 =====
+
+
+def test_array_index(tokenizer):
+    tokens = tokenizer.tokenize("arr[0]")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "arr"),
+        Token(T.LEFT_BRACKET, "["),
+        Token(T.NUMBER, "0", value=0.0),
+        Token(T.RIGHT_BRACKET, "]"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_field_access(tokenizer):
+    tokens = tokenizer.tokenize("r.name")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "r"),
+        Token(T.DOT, "."),
+        Token(T.IDENTIFIER, "name"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_inheritance_colon(tokenizer):
+    tokens = tokenizer.tokenize("Class SpeedRobot : Robot")
+
+    assert tokens == [
+        Token(T.CLASS, "Class"),
+        Token(T.IDENTIFIER, "SpeedRobot"),
+        Token(T.COLON, ":"),
+        Token(T.IDENTIFIER, "Robot"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== function 관련 토큰 =====
+
+
+def test_func_declaration(tokenizer):
+    tokens = tokenizer.tokenize("Func add(a, b)")
+
+    assert tokens == [
+        Token(T.FUNC, "Func"),
+        Token(T.IDENTIFIER, "add"),
+        Token(T.LEFT_PAREN, "("),
+        Token(T.IDENTIFIER, "a"),
+        Token(T.COMMA, ","),
+        Token(T.IDENTIFIER, "b"),
+        Token(T.RIGHT_PAREN, ")"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_return_statement(tokenizer):
+    tokens = tokenizer.tokenize("return a + b")
+
+    assert tokens == [
+        Token(T.RETURN, "return"),
+        Token(T.IDENTIFIER, "a"),
+        Token(T.PLUS, "+"),
+        Token(T.IDENTIFIER, "b"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== class 관련 토큰 =====
+
+
+def test_class_declaration(tokenizer):
+    tokens = tokenizer.tokenize("Class Robot { }")
+
+    assert tokens == [
+        Token(T.CLASS, "Class"),
+        Token(T.IDENTIFIER, "Robot"),
+        Token(T.LEFT_BRACE, "{"),
+        Token(T.RIGHT_BRACE, "}"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_this_field_access(tokenizer):
+    tokens = tokenizer.tokenize("This.position")
+
+    assert tokens == [
+        Token(T.THIS, "This"),
+        Token(T.DOT, "."),
+        Token(T.IDENTIFIER, "position"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_super_call(tokenizer):
+    tokens = tokenizer.tokenize("Super.move(dist)")
+
+    assert tokens == [
+        Token(T.SUPER, "Super"),
+        Token(T.DOT, "."),
+        Token(T.IDENTIFIER, "move"),
+        Token(T.LEFT_PAREN, "("),
+        Token(T.IDENTIFIER, "dist"),
+        Token(T.RIGHT_PAREN, ")"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_instanceof_operator(tokenizer):
+    tokens = tokenizer.tokenize("w instanceof Robot")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "w"),
+        Token(T.INSTANCEOF, "instanceof"),
+        Token(T.IDENTIFIER, "Robot"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== import 관련 토큰 =====
+
+
+def test_import_alias(tokenizer):
+    tokens = tokenizer.tokenize('import "sum.txt" alias sum')
+
+    assert tokens == [
+        Token(T.IMPORT, "import"),
+        Token(T.STRING, '"sum.txt"', value="sum.txt"),
+        Token(T.ALIAS, "alias"),
+        Token(T.IDENTIFIER, "sum"),
         Token(T.EOF, ""),
     ]

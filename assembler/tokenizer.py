@@ -110,6 +110,13 @@ class Tokenizer:
         # 구분자
         ";": TokenType.SEMICOLON,
         ",": TokenType.COMMA,
+        # 배열
+        "[": TokenType.LEFT_BRACKET,
+        "]": TokenType.RIGHT_BRACKET,
+        # 필드 접근
+        ".": TokenType.DOT,
+        # 상속
+        ":": TokenType.COLON,
     }
 
     _CHARACTER_WITH_EQUAL_TOKENS = {
@@ -129,6 +136,14 @@ class Tokenizer:
         "and": TokenType.AND,
         "or": TokenType.OR,
         "for": TokenType.FOR,
+        "Func": TokenType.FUNC,
+        "return": TokenType.RETURN,
+        "Class": TokenType.CLASS,
+        "This": TokenType.THIS,
+        "Super": TokenType.SUPER,
+        "instanceof": TokenType.INSTANCEOF,
+        "import": TokenType.IMPORT,
+        "alias": TokenType.ALIAS,
     }
 
     def __init__(self):
