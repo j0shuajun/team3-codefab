@@ -6,7 +6,7 @@ from .expr import (
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr,
+    VariableExpr, GetExpr, SetExpr, ThisExpr,
 )
 from .statement import (
     BlockStmt,
@@ -130,17 +130,20 @@ class Assembler:
         return ExpressionStmt(expression)
 
     def assignment(self):
-        expression = self.logic_or()
+        expr = self.logic_or()
 
         if self.match(TokenType.EQUAL):
             value = self.assignment()
 
-            if isinstance(expression, VariableExpr):
-                return AssignExpr(expression.name, value)
+            if isinstance(expr, VariableExpr):
+                return AssignExpr(expr.name, value)
+
+            if isinstance(expr, GetExpr):
+                return SetExpr(expr.object, expr.name, value)
 
             raise AssemblerError("Invalid assignment target.")
 
-        return expression
+        return expr
 
     def logic_or(self):
         expression = self.logic_and()
@@ -176,10 +179,10 @@ class Assembler:
         expression = self.term()
 
         while self.match(
-            TokenType.GREATER,
-            TokenType.GREATER_EQUAL,
-            TokenType.LESS,
-            TokenType.LESS_EQUAL,
+                TokenType.GREATER,
+                TokenType.GREATER_EQUAL,
+                TokenType.LESS,
+                TokenType.LESS_EQUAL,
         ):
             operator = self.previous()
             right = self.term()
@@ -204,6 +207,9 @@ class Assembler:
             expression = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
             return GroupingExpr(expression)
+
+        if self.match(TokenType.THIS):
+            return ThisExpr(self.previous())
 
         raise AssemblerError("Expected expression.")
 
@@ -286,15 +292,21 @@ class Assembler:
         return VarStmt(name, initializer)
 
     def call(self):
-        expr = self.primary()
+        expression = self.primary()
 
         while True:
             if self.match(TokenType.LEFT_PAREN):
-                expr = self.finish_call(expr)
+                expression = self.finish_call(expression)
+            elif self.match(TokenType.DOT):
+                name = self.consume(
+                    TokenType.IDENTIFIER,
+                    "Expected property name after '.'."
+                )
+                expression = GetExpr(expression, name)
             else:
                 break
 
-        return expr
+        return expression
 
     def finish_call(self, callee):
         arguments = []

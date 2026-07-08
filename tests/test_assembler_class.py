@@ -1,0 +1,57 @@
+from assembler.assembler import Assembler
+from assembler.expr import (GetExpr, SetExpr, ThisExpr)
+
+from assembler.tokenizer import Token, TokenType
+
+
+def token(token_type, origin, value=None):
+    return Token(token_type, origin, value)
+
+
+def parse(tokens):
+    return Assembler(tokens + [token(TokenType.EOF, "")]).parse()
+
+
+def test_parse_get_expression():
+    statements = parse([
+        token(TokenType.IDENTIFIER, "r"),
+        token(TokenType.DOT, "."),
+        token(TokenType.IDENTIFIER, "name"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, GetExpr)
+    assert expr.name.origin == "name"
+
+
+def test_parse_set_expression():
+    statements = parse([
+        token(TokenType.IDENTIFIER, "r"),
+        token(TokenType.DOT, "."),
+        token(TokenType.IDENTIFIER, "name"),
+        token(TokenType.EQUAL, "="),
+        token(TokenType.STRING, "Robot", "Robot"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, SetExpr)
+    assert expr.name.origin == "name"
+    assert expr.value.value == "Robot"
+
+
+def test_parse_this_expression():
+    statements = parse([
+        token(TokenType.THIS, "This"),
+        token(TokenType.DOT, "."),
+        token(TokenType.IDENTIFIER, "name"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, GetExpr)
+    assert isinstance(expr.object, ThisExpr)
