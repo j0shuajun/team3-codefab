@@ -4,6 +4,7 @@ from assembler.expr import (
     CallExpr,
     GroupingExpr,
     IndexGetExpr,
+    IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
@@ -147,6 +148,8 @@ class Executor:
             return self.evaluate_call(expr)
         if isinstance(expr, IndexGetExpr):
             return self.evaluate_index_get(expr)
+        if isinstance(expr, IndexSetExpr):
+            return self.evaluate_index_set(expr)
 
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
@@ -316,6 +319,16 @@ class Executor:
         return callee.call(self, arguments)
 
     def evaluate_index_get(self, expr):
+        array, index = self.resolve_index(expr)
+        return array[index]
+
+    def evaluate_index_set(self, expr):
+        array, index = self.resolve_index(expr)
+        value = self.evaluate(expr.value)
+        array[index] = value
+        return value
+
+    def resolve_index(self, expr):
         array = self.evaluate(expr.array)
 
         if not isinstance(array, list):
@@ -330,4 +343,4 @@ class Executor:
         if index < 0 or index >= len(array):
             raise CodeFabRuntimeError("Array index out of range.")
 
-        return array[index]
+        return array, index

@@ -1,6 +1,6 @@
 import pytest
 
-from assembler.expr import CallExpr, IndexGetExpr, LiteralExpr, VariableExpr
+from assembler.expr import CallExpr, IndexGetExpr, IndexSetExpr, LiteralExpr, VariableExpr
 from assembler.statement import PrintStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
 from executor.executor import CodeFabRuntimeError, Executor
@@ -89,3 +89,62 @@ def test_array_index_get_target_must_be_array():
 
     with pytest.raises(CodeFabRuntimeError, match="Can only index into an array."):
         executor.execute([PrintStmt(index_get)])
+
+
+# ===== 5단계: IndexSetExpr로 배열 쓰기 (arr[i] = value) =====
+
+
+def test_array_index_set_updates_element():
+    arr_name = Token(TokenType.IDENTIFIER, "arr")
+    bracket = Token(TokenType.RIGHT_BRACKET, "]")
+
+    executor = Executor()
+    array = [10, 20, 30]
+    executor.environment.define("arr", array)
+
+    index_set = IndexSetExpr(VariableExpr(arr_name), bracket, LiteralExpr(0), LiteralExpr(99))
+    executor.execute([PrintStmt(index_set)])
+
+    assert array == [99, 20, 30]
+    assert executor.outputs == ["99"]
+
+
+def test_array_index_set_out_of_range():
+    arr_name = Token(TokenType.IDENTIFIER, "arr")
+    bracket = Token(TokenType.RIGHT_BRACKET, "]")
+
+    executor = Executor()
+    executor.environment.define("arr", [10, 20, 30])
+
+    index_set = IndexSetExpr(VariableExpr(arr_name), bracket, LiteralExpr(5), LiteralExpr(99))
+
+    with pytest.raises(CodeFabRuntimeError, match="Array index out of range."):
+        executor.execute([PrintStmt(index_set)])
+
+
+def test_array_index_set_index_must_be_number():
+    arr_name = Token(TokenType.IDENTIFIER, "arr")
+    bracket = Token(TokenType.RIGHT_BRACKET, "]")
+
+    executor = Executor()
+    executor.environment.define("arr", [10, 20, 30])
+
+    index_set = IndexSetExpr(
+        VariableExpr(arr_name), bracket, LiteralExpr("hello"), LiteralExpr(99)
+    )
+
+    with pytest.raises(CodeFabRuntimeError, match="Array index must be a number."):
+        executor.execute([PrintStmt(index_set)])
+
+
+def test_array_index_set_target_must_be_array():
+    x_name = Token(TokenType.IDENTIFIER, "x")
+    bracket = Token(TokenType.RIGHT_BRACKET, "]")
+
+    executor = Executor()
+    executor.environment.define("x", 10)
+
+    index_set = IndexSetExpr(VariableExpr(x_name), bracket, LiteralExpr(0), LiteralExpr(99))
+
+    with pytest.raises(CodeFabRuntimeError, match="Can only index into an array."):
+        executor.execute([PrintStmt(index_set)])
