@@ -1,5 +1,5 @@
 from assembler.assembler import Assembler
-from assembler.expr import GetExpr, SetExpr, ThisExpr, CallExpr, SuperExpr
+from assembler.expr import GetExpr, SetExpr, ThisExpr, CallExpr, SuperExpr, BinaryExpr
 from assembler.statement import ClassStmt, FunctionStmt
 from assembler.tokenizer import Token, TokenType
 
@@ -120,3 +120,17 @@ def test_parse_super_method_expression():
     assert isinstance(expr, CallExpr)
     assert isinstance(expr.callee, SuperExpr)
     assert expr.callee.method.origin == "move"
+
+
+def test_parse_instanceof_expression():
+    statements = parse([
+        token(TokenType.IDENTIFIER, "w"),
+        token(TokenType.INSTANCEOF, "instanceof"),
+        token(TokenType.IDENTIFIER, "Robot"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, BinaryExpr)
+    assert expr.operator.type == TokenType.INSTANCEOF

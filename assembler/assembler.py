@@ -180,19 +180,20 @@ class Assembler:
         return expression
 
     def comparison(self):
-        expression = self.term()
+        expr = self.term()
 
         while self.match(
-            TokenType.GREATER,
-            TokenType.GREATER_EQUAL,
-            TokenType.LESS,
-            TokenType.LESS_EQUAL,
+                TokenType.GREATER,
+                TokenType.GREATER_EQUAL,
+                TokenType.LESS,
+                TokenType.LESS_EQUAL,
+                TokenType.INSTANCEOF,
         ):
             operator = self.previous()
             right = self.term()
-            expression = BinaryExpr(expression, operator, right)
+            expr = BinaryExpr(expr, operator, right)
 
-        return expression
+        return expr
 
     def primary(self):
         if self.match(TokenType.FALSE):
