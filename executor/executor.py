@@ -297,10 +297,10 @@ class Executor:
             arguments.append(self.evaluate(argument))
 
         if not isinstance(callee, Callable):
-            raise RuntimeError("Can only call functions and classes.")
+            raise CodeFabRuntimeError("Can only call functions and classes.")
 
         if len(arguments) != callee.arity():
-            raise RuntimeError(
+            raise CodeFabRuntimeError(
                 f"Expected {callee.arity()} arguments but got {len(arguments)}."
             )
 
