@@ -47,10 +47,10 @@ class BlockStmt(Stmt):
 
 class IfStmt(Stmt):
     def __init__(
-        self,
-        condition: Expr,
-        then_branch: Stmt,
-        else_branch: Optional[Stmt] = None,
+            self,
+            condition: Expr,
+            then_branch: Stmt,
+            else_branch: Optional[Stmt] = None,
     ):
         self.condition = condition
         self.then_branch = then_branch
@@ -67,11 +67,11 @@ class IfStmt(Stmt):
 
 class ForStmt(Stmt):
     def __init__(
-        self,
-        initializer: Optional[Stmt],
-        condition: Optional[Expr],
-        increment: Optional[Expr],
-        body: Stmt,
+            self,
+            initializer: Optional[Stmt],
+            condition: Optional[Expr],
+            increment: Optional[Expr],
+            body: Stmt,
     ):
         self.initializer = initializer
         self.condition = condition
@@ -106,9 +106,20 @@ class FunctionStmt(Stmt):
 class ReturnStmt(Stmt):
     """return expression; 문장"""
 
-    def __init__(self, keyword, value=None):
-        self.keyword = keyword  # Token
-        self.value = value  # Expr or None
+    def __init__(self, keyword: Token, value: Expr = None):
+        self.keyword = keyword
+        self.value = value
 
     def __repr__(self):
         return f"ReturnStmt({self.value})"
+
+
+class ClassStmt(Stmt):
+    """Class Name { methods... } 클래스 선언문"""
+
+    def __init__(self, name: Token, methods: list[FunctionStmt]):
+        self.name = name
+        self.methods = methods
+
+    def __repr__(self):
+        return f"ClassStmt({self.name.origin}, methods={self.methods})"
