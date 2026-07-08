@@ -15,7 +15,7 @@ from assembler.statement import (
     ForStmt,
     IfStmt,
     PrintStmt,
-    VarStmt, FunctionStmt,
+    VarStmt, FunctionStmt, ReturnStmt,
 )
 from assembler.tokenizer import Token, TokenType
 
@@ -386,3 +386,16 @@ def test_parse_function_declaration():
     assert stmt.name.origin == "add"
     assert [param.origin for param in stmt.params] == ["a", "b"]
     assert stmt.body == []
+
+
+def test_parse_return_statement():
+    statements = parse([
+        token(TokenType.RETURN, "return"),
+        token(TokenType.NUMBER, "10", 10),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, ReturnStmt)
+    assert stmt.value.value == 10
