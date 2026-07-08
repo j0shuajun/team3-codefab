@@ -364,6 +364,14 @@ class Assembler:
     def class_declaration(self):
         name = self.consume(TokenType.IDENTIFIER, "Expected class name.")
 
+        superclass = None
+        if self.match(TokenType.COLON):
+            superclass_name = self.consume(
+                TokenType.IDENTIFIER,
+                "Expected superclass name after ':'."
+            )
+            superclass = VariableExpr(superclass_name)
+
         self.consume(TokenType.LEFT_BRACE, "Expected '{' before class body.")
 
         methods = []
@@ -372,7 +380,7 @@ class Assembler:
 
         self.consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.")
 
-        return ClassStmt(name, methods)
+        return ClassStmt(name, methods, superclass)
 
     def method_declaration(self):
         name = self.consume(TokenType.IDENTIFIER, "Expected method name.")

@@ -85,3 +85,21 @@ def test_parse_class_declaration_with_method():
     assert len(stmt.methods) == 1
     assert isinstance(stmt.methods[0], FunctionStmt)
     assert stmt.methods[0].name.origin == "report"
+
+def test_parse_class_declaration_with_superclass():
+    statements = parse([
+        token(TokenType.CLASS, "Class"),
+        token(TokenType.IDENTIFIER, "SpeedRobot"),
+        token(TokenType.COLON, ":"),
+        token(TokenType.IDENTIFIER, "Robot"),
+        token(TokenType.LEFT_BRACE, "{"),
+        token(TokenType.RIGHT_BRACE, "}"),
+    ])
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, ClassStmt)
+    assert stmt.name.origin == "SpeedRobot"
+    assert stmt.superclass.name.origin == "Robot"
+    assert stmt.methods == []
+

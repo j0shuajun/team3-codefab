@@ -47,10 +47,10 @@ class BlockStmt(Stmt):
 
 class IfStmt(Stmt):
     def __init__(
-        self,
-        condition: Expr,
-        then_branch: Stmt,
-        else_branch: Optional[Stmt] = None,
+            self,
+            condition: Expr,
+            then_branch: Stmt,
+            else_branch: Optional[Stmt] = None,
     ):
         self.condition = condition
         self.then_branch = then_branch
@@ -67,11 +67,11 @@ class IfStmt(Stmt):
 
 class ForStmt(Stmt):
     def __init__(
-        self,
-        initializer: Optional[Stmt],
-        condition: Optional[Expr],
-        increment: Optional[Expr],
-        body: Stmt,
+            self,
+            initializer: Optional[Stmt],
+            condition: Optional[Expr],
+            increment: Optional[Expr],
+            body: Stmt,
     ):
         self.initializer = initializer
         self.condition = condition
@@ -115,9 +115,9 @@ class ReturnStmt(Stmt):
 
 
 class ClassStmt(Stmt):
-    """Class Name { methods... } 클래스 선언문"""
+    """Class Name (: SuperClass)? { methods... } 클래스 선언문"""
 
-    def __init__(self, name: Token, methods: list[FunctionStmt], superclass:VariableExpr=None):
+    def __init__(self, name: Token, methods: list[FunctionStmt], superclass: VariableExpr = None):
         self.name = name
         self.methods = methods
         self.superclass = superclass
