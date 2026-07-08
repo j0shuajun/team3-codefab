@@ -250,6 +250,15 @@ class Executor:
         if expr.operator.type == TokenType.BANG_EQUAL:
             return left != right
 
+        if expr.operator.type == TokenType.INSTANCEOF:
+            if not isinstance(left, UserInstance):
+                return False
+
+            if not isinstance(right, UserClass):
+                raise CodeFabRuntimeError("Right operand of instanceof must be a class.")
+
+            return left.is_instance_of(right)
+
         raise CodeFabRuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 
     def stringify(self, value):

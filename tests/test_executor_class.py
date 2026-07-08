@@ -4,7 +4,7 @@ from assembler.expr import (
     LiteralExpr,
     SetExpr,
     ThisExpr,
-    VariableExpr, SuperExpr,
+    VariableExpr, SuperExpr, BinaryExpr,
 )
 from assembler.statement import (
     ClassStmt,
@@ -301,3 +301,54 @@ def test_super_method_call():
     ])
 
     assert executor.outputs == ["move", "speed"]
+
+
+def test_instanceof_self_class():
+    executor = run([
+        ClassStmt(token(TokenType.IDENTIFIER, "Robot"), []),
+        VarStmt(
+            token(TokenType.IDENTIFIER, "r"),
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            ),
+        ),
+        PrintStmt(
+            BinaryExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "r")),
+                token(TokenType.INSTANCEOF, "instanceof"),
+                VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["true"]
+
+
+def test_instanceof_parent_class():
+    executor = run([
+        ClassStmt(token(TokenType.IDENTIFIER, "Robot"), []),
+        ClassStmt(
+            token(TokenType.IDENTIFIER, "SpeedRobot"),
+            [],
+            VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+        ),
+        VarStmt(
+            token(TokenType.IDENTIFIER, "r"),
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "SpeedRobot")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            ),
+        ),
+        PrintStmt(
+            BinaryExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "r")),
+                token(TokenType.INSTANCEOF, "instanceof"),
+                VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["true"]
