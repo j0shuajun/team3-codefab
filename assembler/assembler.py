@@ -311,14 +311,13 @@ class Assembler:
         while True:
             if self.match(TokenType.LEFT_PAREN):
                 expression = self.finish_call(expression)
+            elif self.match(TokenType.LEFT_BRACKET):
+                expression = self.finish_index(expression)
             elif self.match(TokenType.DOT):
                 name = self.consume(
                     TokenType.IDENTIFIER, "Expected property name after '.'."
                 )
                 expression = GetExpr(expression, name)
-                expr = self.finish_call(expr)
-            elif self.match(TokenType.LEFT_BRACKET):
-                expr = self.finish_index(expr)
             else:
                 break
 
