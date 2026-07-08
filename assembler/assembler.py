@@ -5,7 +5,7 @@ from .expr import (
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr,
+    VariableExpr, CallExpr,
 )
 from .statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt
 from .tokenizer import TokenType
@@ -163,10 +163,10 @@ class Assembler:
         expression = self.term()
 
         while self.match(
-            TokenType.GREATER,
-            TokenType.GREATER_EQUAL,
-            TokenType.LESS,
-            TokenType.LESS_EQUAL,
+                TokenType.GREATER,
+                TokenType.GREATER_EQUAL,
+                TokenType.LESS,
+                TokenType.LESS_EQUAL,
         ):
             operator = self.previous()
             right = self.term()
@@ -251,7 +251,7 @@ class Assembler:
             right = self.unary()
             return UnaryExpr(operator, right)
 
-        return self.primary()
+        return self.call()
 
     def declaration(self):
         if self.match(TokenType.VAR):
@@ -268,3 +268,28 @@ class Assembler:
 
         self.consume(TokenType.SEMICOLON, "Expected ';' after variable declaration.")
         return VarStmt(name, initializer)
+
+    def call(self):
+        expr = self.primary()
+
+        while True:
+            if self.match(TokenType.LEFT_PAREN):
+                expr = self.finish_call(expr)
+            else:
+                break
+
+        return expr
+
+    def finish_call(self, callee):
+        arguments = []
+
+        if not self.check(TokenType.RIGHT_PAREN):
+            while True:
+                arguments.append(self.expression())
+
+                if not self.match(TokenType.COMMA):
+                    break
+
+        paren = self.consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.")
+
+        return CallExpr(callee, paren, arguments)

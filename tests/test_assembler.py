@@ -6,7 +6,7 @@ from assembler.expr import (
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr,
+    VariableExpr, CallExpr,
 )
 from assembler.statement import (
     BlockStmt,
@@ -341,3 +341,24 @@ def test_parse_for_statement():
     assert isinstance(stmt.condition, BinaryExpr)
     assert isinstance(stmt.increment, AssignExpr)
     assert isinstance(stmt.body, PrintStmt)
+
+
+def test_parse_call_expression():
+    statements = parse([
+        token(TokenType.IDENTIFIER, "add"),
+        token(TokenType.LEFT_PAREN, "("),
+        token(TokenType.NUMBER, "1", 1),
+        token(TokenType.COMMA, ","),
+        token(TokenType.NUMBER, "2", 2),
+        token(TokenType.RIGHT_PAREN, ")"),
+        token(TokenType.SEMICOLON, ";"),
+    ])
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, CallExpr)
+    assert isinstance(expr.callee, VariableExpr)
+    assert expr.callee.name.origin == "add"
+    assert len(expr.arguments) == 2
+    assert expr.arguments[0].value == 1
+    assert expr.arguments[1].value == 2
