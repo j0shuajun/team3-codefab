@@ -9,6 +9,18 @@ class Expr:
     pass
 
 
+class CallExpr(Expr):
+    """함수/클래스/native callable 호출 노드"""
+
+    def __init__(self, callee, paren, arguments):
+        self.callee = callee  # Expr
+        self.paren = paren  # Token: )
+        self.arguments = arguments  # list[Expr]
+
+    def __repr__(self):
+        return f"CallExpr({self.callee}, args={self.arguments})"
+
+
 class LiteralExpr(Expr):
     def __init__(self, value):
         self.value = value
