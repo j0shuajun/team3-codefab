@@ -16,14 +16,12 @@
 
 ### CI / Lint
 - GitHub Actions는 PR과 `main` push 시 Python 3.13 환경에서 lint를 실행한다.
-- 로컬에서는 PR 전 아래 명령으로 자동 수정 후 검사를 실행한다.
+- 로컬에서는 PR 전 아래 명령으로 의존성 설치, 자동 수정, 테스트를 실행한다.
 
 ```bash
-python -m pip install -r requirements-dev.txt
-black .
-isort .
-ruff check --fix .
-black --check . && isort --check-only . && ruff check .
+make install   # requirements-dev.txt 설치
+make lint      # black / isort / ruff --fix 실행
+make test      # PYTHONPATH=. pytest -q 실행
 ```
 
 ### 팀 협업 규칙
