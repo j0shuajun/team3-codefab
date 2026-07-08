@@ -2,10 +2,6 @@ from enum import Enum, auto
 
 
 class TokenType(Enum):
-    """
-    TokenType은 숫자로 시작하지 않는 문자열이어야 합니다.
-    고정된 문자열이 아닌 Token (EOF, NUMBER) 등은 auto()로 고정해야 합니다.
-    """
     # End Of File
     EOF = auto()
     # Literal
