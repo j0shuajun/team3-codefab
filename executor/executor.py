@@ -1,58 +1,26 @@
+from assembler.environment import CodeFabRuntimeError, Environment
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
+    CallExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
     VariableExpr,
 )
+from assembler.runtime import Callable, NativeFunction, ReturnSignal, UserFunction
 from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
+    FunctionStmt,
     IfStmt,
     PrintStmt,
+    ReturnStmt,
     VarStmt,
 )
 from assembler.tokenizer import TokenType
-
-
-class CodeFabRuntimeError(Exception):
-    pass
-
-
-class Environment:
-    def __init__(self, enclosing=None):
-        self.values = {}
-        self.enclosing = enclosing
-
-    def define(self, name, value):
-        self.values[name] = value
-
-    def get(self, name_token):
-        name = name_token.origin
-
-        if name in self.values:
-            return self.values[name]
-
-        if self.enclosing is not None:
-            return self.enclosing.get(name_token)
-
-        raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
-
-    def assign(self, name_token, value):
-        name = name_token.origin
-
-        if name in self.values:
-            self.values[name] = value
-            return
-
-        if self.enclosing is not None:
-            self.enclosing.assign(name_token, value)
-            return
-
-        raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
 
 
 class Executor:
@@ -60,6 +28,8 @@ class Executor:
         self.globals = Environment()
         self.environment = self.globals
         self.outputs = []
+
+        self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
 
     def execute(self, statements):
         for statement in statements:
@@ -98,6 +68,17 @@ class Executor:
             self.execute_for(stmt)
             return
 
+        if isinstance(stmt, FunctionStmt):
+            function = UserFunction(stmt, self.environment)
+            self.environment.define(stmt.name.origin, function)
+            return
+
+        if isinstance(stmt, ReturnStmt):
+            value = None
+            if stmt.value is not None:
+                value = self.evaluate(stmt.value)
+            raise ReturnSignal(value)
+
         raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def evaluate(self, expr):
@@ -132,6 +113,8 @@ class Executor:
 
         if isinstance(expr, LogicalExpr):
             return self.evaluate_logical(expr)
+        if isinstance(expr, CallExpr):
+            return self.evaluate_call(expr)
 
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
@@ -282,3 +265,20 @@ class Executor:
         if left.type == right.type:
             return
         raise CodeFabRuntimeError("Left/Right type mismatch.")
+
+    def evaluate_call(self, expr):
+        callee = self.evaluate(expr.callee)
+
+        arguments = []
+        for argument in expr.arguments:
+            arguments.append(self.evaluate(argument))
+
+        if not isinstance(callee, Callable):
+            raise CodeFabRuntimeError("Can only call functions and classes.")
+
+        if len(arguments) != callee.arity():
+            raise CodeFabRuntimeError(
+                f"Expected {callee.arity()} arguments but got {len(arguments)}."
+            )
+
+        return callee.call(self, arguments)

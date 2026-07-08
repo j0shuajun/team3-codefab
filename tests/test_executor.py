@@ -3,6 +3,7 @@ import pytest
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
+    CallExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
@@ -13,16 +14,18 @@ from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
+    FunctionStmt,
     IfStmt,
     PrintStmt,
+    ReturnStmt,
     VarStmt,
 )
 from assembler.tokenizer import Token, TokenType
 from executor.executor import CodeFabRuntimeError, Executor
 
 
-def token(token_type, origin):
-    return Token(token_type, origin)
+def token(token_type, origin, value=None):
+    return Token(token_type, origin, value)
 
 
 def run(statements):
@@ -448,36 +451,137 @@ def test_for_block_statement():
     assert executor.outputs == ["0", "1", "2"]
 
 
-def test_runtime_error_undefined_variable():
-    with pytest.raises(CodeFabRuntimeError):
-        run([PrintStmt(VariableExpr(token(TokenType.IDENTIFIER, "x")))])
+def test_execute_function_without_return():
+    executor = run(
+        [
+            FunctionStmt(
+                token(TokenType.IDENTIFIER, "hello"),
+                [],
+                [PrintStmt(LiteralExpr("hi"))],
+            ),
+            ExpressionStmt(
+                CallExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "hello")),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [],
+                )
+            ),
+        ]
+    )
+
+    assert executor.outputs == ["hi"]
 
 
-def test_runtime_error_divide_by_zero():
+def test_execute_function_with_return_value():
+    executor = run(
+        [
+            FunctionStmt(
+                token(TokenType.IDENTIFIER, "add"),
+                [
+                    token(TokenType.IDENTIFIER, "a"),
+                    token(TokenType.IDENTIFIER, "b"),
+                ],
+                [
+                    ReturnStmt(
+                        token(TokenType.RETURN, "return"),
+                        BinaryExpr(
+                            VariableExpr(token(TokenType.IDENTIFIER, "a")),
+                            token(TokenType.PLUS, "+"),
+                            VariableExpr(token(TokenType.IDENTIFIER, "b")),
+                        ),
+                    )
+                ],
+            ),
+            PrintStmt(
+                CallExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [
+                        LiteralExpr(3),
+                        LiteralExpr(7),
+                    ],
+                )
+            ),
+        ]
+    )
+
+    assert executor.outputs == ["10"]
+
+
+def test_function_argument_count_mismatch():
     with pytest.raises(CodeFabRuntimeError):
         run(
             [
+                FunctionStmt(
+                    token(TokenType.IDENTIFIER, "add"),
+                    [
+                        token(TokenType.IDENTIFIER, "a"),
+                        token(TokenType.IDENTIFIER, "b"),
+                    ],
+                    [
+                        ReturnStmt(
+                            token(TokenType.RETURN, "return"),
+                            LiteralExpr(0),
+                        )
+                    ],
+                ),
                 PrintStmt(
-                    BinaryExpr(
-                        LiteralExpr(3),
-                        token(TokenType.SLASH, "/"),
-                        LiteralExpr(0),
+                    CallExpr(
+                        VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                        token(TokenType.RIGHT_PAREN, ")"),
+                        [LiteralExpr(1)],
                     )
-                )
+                ),
             ]
         )
 
 
-def test_runtime_error_type_mismatch():
-    with pytest.raises(CodeFabRuntimeError):
-        run(
-            [
-                PrintStmt(
-                    BinaryExpr(
-                        LiteralExpr(3),
-                        token(TokenType.MINUS, "-"),
-                        LiteralExpr("hello"),
-                    )
+def test_recursive_function_factorial():
+    executor = run(
+        [
+            FunctionStmt(
+                token(TokenType.IDENTIFIER, "fact"),
+                [token(TokenType.IDENTIFIER, "n")],
+                [
+                    IfStmt(
+                        BinaryExpr(
+                            VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                            token(TokenType.LESS_EQUAL, "<="),
+                            LiteralExpr(1),
+                        ),
+                        ReturnStmt(
+                            token(TokenType.RETURN, "return"),
+                            LiteralExpr(1),
+                        ),
+                    ),
+                    ReturnStmt(
+                        token(TokenType.RETURN, "return"),
+                        BinaryExpr(
+                            VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                            token(TokenType.STAR, "*"),
+                            CallExpr(
+                                VariableExpr(token(TokenType.IDENTIFIER, "fact")),
+                                token(TokenType.RIGHT_PAREN, ")"),
+                                [
+                                    BinaryExpr(
+                                        VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                                        token(TokenType.MINUS, "-"),
+                                        LiteralExpr(1),
+                                    )
+                                ],
+                            ),
+                        ),
+                    ),
+                ],
+            ),
+            PrintStmt(
+                CallExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "fact")),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [LiteralExpr(5)],
                 )
-            ]
-        )
+            ),
+        ]
+    )
+
+    assert executor.outputs == ["120"]

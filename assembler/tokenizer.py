@@ -2,46 +2,69 @@ from enum import Enum, auto
 
 
 class TokenType(Enum):
-    # 단일문자
-    LEFT_PAREN = auto()
-    RIGHT_PAREN = auto()
-    LEFT_BRACE = auto()
-    RIGHT_BRACE = auto()
-    COMMA = auto()
-    SEMICOLON = auto()
-
-    PLUS = auto()
-    MINUS = auto()
-    STAR = auto()
-    SLASH = auto()
-    BANG = auto()
-    EQUAL = auto()
-    GREATER = auto()
-    LESS = auto()
-
-    # 여러문자
-    VAR = auto()
-    TRUE = auto()
-    FALSE = auto()
-    PRINT = auto()
-    AND = auto()
-    OR = auto()
-    IF = auto()
-    ELSE = auto()
-    FOR = auto()
-
-    BANG_EQUAL = auto()
-    EQUAL_EQUAL = auto()
-    GREATER_EQUAL = auto()
-    LESS_EQUAL = auto()
-
-    # 리터럴
+    # End Of File
+    EOF = auto()
+    # Literal
     IDENTIFIER = auto()
     STRING = auto()
     NUMBER = auto()
-
-    # 기타
-    EOF = auto()
+    # Assignment
+    EQUAL = "="
+    # Grouping
+    LEFT_PAREN = "("
+    RIGHT_PAREN = ")"
+    # Block scope
+    LEFT_BRACE = "{"
+    RIGHT_BRACE = "}"
+    # Array
+    LEFT_BRACKET = "["
+    RIGHT_BRACKET = "]"
+    # Member access
+    DOT = "."
+    # Inheritance
+    COLON = ":"
+    # Comparison
+    LESS = "<"
+    GREATER = ">"
+    LESS_EQUAL = "<="
+    GREATER_EQUAL = ">="
+    EQUAL_EQUAL = "=="
+    BANG_EQUAL = "!="
+    # Operation
+    PLUS = "+"
+    MINUS = "-"
+    STAR = "*"
+    SLASH = "/"
+    # Logical
+    BANG = "!"
+    AND = "and"
+    OR = "or"
+    # Delimiter
+    SEMICOLON = ";"
+    COMMA = ","
+    # Variable
+    VAR = "var"
+    # Boolean
+    TRUE = "true"
+    FALSE = "false"
+    # Print
+    PRINT = "print"
+    # Conditional
+    IF = "if"
+    ELSE = "else"
+    # Loop
+    FOR = "for"
+    # Function
+    FUNC = "Func"
+    RETURN = "return"
+    # Class
+    CLASS = "Class"
+    THIS = "This"
+    SUPER = "Super"
+    INSTANCEOF = "instanceof"
+    # Import
+    IMPORT = "import"
+    ALIAS = "alias"
 
 
 class Token:
@@ -61,52 +84,11 @@ class Token:
         )
 
     def __repr__(self):
-        return f"Token({self.type}, {self.origin!r}, {getattr(self, "value", None) !r})"
+        return f"Token({self.type}, {self.origin!r}, {getattr(self, 'value', None)!r})"
 
 
 class Tokenizer:
-    _SINGLE_CHARACTER_TOKENS = {
-        # 할당
-        "=": TokenType.EQUAL,
-        # 그룹핑
-        "(": TokenType.LEFT_PAREN,
-        ")": TokenType.RIGHT_PAREN,
-        # 블록스코프
-        "{": TokenType.LEFT_BRACE,
-        "}": TokenType.RIGHT_BRACE,
-        # 비교
-        "<": TokenType.LESS,
-        ">": TokenType.GREATER,
-        # 산술연산
-        "+": TokenType.PLUS,
-        "-": TokenType.MINUS,
-        "*": TokenType.STAR,
-        "/": TokenType.SLASH,
-        # 논리연산
-        "!": TokenType.BANG,
-        # 구분자
-        ";": TokenType.SEMICOLON,
-        ",": TokenType.COMMA,
-    }
-
-    _CHARACTER_WITH_EQUAL_TOKENS = {
-        "!": TokenType.BANG_EQUAL,
-        "=": TokenType.EQUAL_EQUAL,
-        ">": TokenType.GREATER_EQUAL,
-        "<": TokenType.LESS_EQUAL,
-    }
-
-    _RESERVED_TOKENS = {
-        "if": TokenType.IF,
-        "else": TokenType.ELSE,
-        "var": TokenType.VAR,
-        "true": TokenType.TRUE,
-        "false": TokenType.FALSE,
-        "print": TokenType.PRINT,
-        "and": TokenType.AND,
-        "or": TokenType.OR,
-        "for": TokenType.FOR,
-    }
+    _TOKENS = {T.value: T for T in TokenType if isinstance(T.value, str)}
 
     def __init__(self):
         self._origin = ""
@@ -121,7 +103,7 @@ class Tokenizer:
             ch = self._peek()
             if ch.isspace():
                 self._idx += 1
-            elif ch in self._SINGLE_CHARACTER_TOKENS:
+            elif ch in self._TOKENS:
                 tokens.append(self._read_single_character())
             elif ch == '"':
                 tokens.append(self._read_string())
@@ -151,15 +133,13 @@ class Tokenizer:
         ch = self._peek()
         self._idx += 1
 
-        if (
-            ch in self._CHARACTER_WITH_EQUAL_TOKENS
-            and self._idx_in_range()
-            and self._peek() == "="
-        ):
-            self._idx += 1
-            return Token(self._CHARACTER_WITH_EQUAL_TOKENS[ch], ch + "=")
+        if self._idx_in_range():
+            combined = ch + self._peek()
+            if combined in self._TOKENS:
+                self._idx += 1
+                return Token(self._TOKENS[combined], combined)
 
-        return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
+        return Token(self._TOKENS[ch], ch)
 
     def _read_string(self) -> Token:
         start = self._idx
@@ -174,8 +154,14 @@ class Tokenizer:
 
     def _read_number(self) -> Token:
         characters = self._read_multiple_characters(str.isdigit)
+        if len(characters) > 1 and characters[0] == "0":
+            raise ValueError("Number cannot start with zero")
+        if self._idx_in_range() and self._peek() == ".":
+            characters += self._peek()
+            self._idx += 1
+            characters += self._read_multiple_characters(str.isdigit)
         return Token(TokenType.NUMBER, characters, value=float(characters))
 
     def _read_identifier(self) -> Token:
         origin = self._read_multiple_characters(str.isalnum)
-        return Token(self._RESERVED_TOKENS.get(origin, TokenType.IDENTIFIER), origin)
+        return Token(self._TOKENS.get(origin, TokenType.IDENTIFIER), origin)
