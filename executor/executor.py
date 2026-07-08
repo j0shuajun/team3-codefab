@@ -195,7 +195,7 @@ class Executor:
             method = superclass.find_method(expr.method.origin)
 
             if method is None:
-                raise RuntimeError(f"Undefined property '{expr.method.origin}'.")
+                raise CodeFabRuntimeError(f"Undefined property '{expr.method.origin}'.")
 
             return method.bind(instance)
 

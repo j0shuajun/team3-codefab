@@ -4,7 +4,7 @@ from assembler.expr import (
     LiteralExpr,
     SetExpr,
     ThisExpr,
-    VariableExpr,
+    VariableExpr, SuperExpr,
 )
 from assembler.statement import (
     ClassStmt,
@@ -243,3 +243,61 @@ def test_subclass_overrides_parent_method():
     ])
 
     assert executor.outputs == ["child move"]
+
+
+def test_super_method_call():
+    executor = run([
+        ClassStmt(
+            token(TokenType.IDENTIFIER, "Robot"),
+            [
+                FunctionStmt(
+                    token(TokenType.IDENTIFIER, "move"),
+                    [],
+                    [PrintStmt(LiteralExpr("move"))],
+                )
+            ],
+        ),
+        ClassStmt(
+            token(TokenType.IDENTIFIER, "SpeedRobot"),
+            [
+                FunctionStmt(
+                    token(TokenType.IDENTIFIER, "move"),
+                    [],
+                    [
+                        ExpressionStmt(
+                            CallExpr(
+                                SuperExpr(
+                                    token(TokenType.SUPER, "Super"),
+                                    token(TokenType.IDENTIFIER, "move"),
+                                ),
+                                token(TokenType.RIGHT_PAREN, ")"),
+                                [],
+                            )
+                        ),
+                        PrintStmt(LiteralExpr("speed")),
+                    ],
+                )
+            ],
+            VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+        ),
+        VarStmt(
+            token(TokenType.IDENTIFIER, "r"),
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "SpeedRobot")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            ),
+        ),
+        ExpressionStmt(
+            CallExpr(
+                GetExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "r")),
+                    token(TokenType.IDENTIFIER, "move"),
+                ),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["move", "speed"]
