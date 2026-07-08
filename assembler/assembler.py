@@ -2,14 +2,18 @@ from .expr import (
     AssignExpr,
     BinaryExpr,
     CallExpr,
+    GetExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
+    SetExpr,
+    ThisExpr,
     UnaryExpr,
     VariableExpr,
 )
 from .statement import (
     BlockStmt,
+    ClassStmt,
     ExpressionStmt,
     ForStmt,
     FunctionStmt,
@@ -138,6 +142,9 @@ class Assembler:
             if isinstance(expression, VariableExpr):
                 return AssignExpr(expression.name, value)
 
+            if isinstance(expression, GetExpr):
+                return SetExpr(expression.object, expression.name, value)
+
             raise AssemblerError("Invalid assignment target.")
 
         return expression
@@ -205,6 +212,9 @@ class Assembler:
             self.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
             return GroupingExpr(expression)
 
+        if self.match(TokenType.THIS):
+            return ThisExpr(self.previous())
+
         raise AssemblerError("Expected expression.")
 
     def match(self, *types):
@@ -267,6 +277,9 @@ class Assembler:
         return self.call()
 
     def declaration(self):
+        if self.match(TokenType.CLASS):
+            return self.class_declaration()
+
         if self.match(TokenType.FUNC):
             return self.function_declaration()
 
@@ -286,15 +299,20 @@ class Assembler:
         return VarStmt(name, initializer)
 
     def call(self):
-        expr = self.primary()
+        expression = self.primary()
 
         while True:
             if self.match(TokenType.LEFT_PAREN):
-                expr = self.finish_call(expr)
+                expression = self.finish_call(expression)
+            elif self.match(TokenType.DOT):
+                name = self.consume(
+                    TokenType.IDENTIFIER, "Expected property name after '.'."
+                )
+                expression = GetExpr(expression, name)
             else:
                 break
 
-        return expr
+        return expression
 
     def finish_call(self, callee):
         arguments = []
@@ -342,3 +360,38 @@ class Assembler:
         self.consume(TokenType.SEMICOLON, "Expected ';' after return value.")
 
         return ReturnStmt(keyword, value)
+
+    def class_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected class name.")
+
+        self.consume(TokenType.LEFT_BRACE, "Expected '{' before class body.")
+
+        methods = []
+        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            methods.append(self.method_declaration())
+
+        self.consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.")
+
+        return ClassStmt(name, methods)
+
+    def method_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected method name.")
+
+        self.consume(TokenType.LEFT_PAREN, "Expected '(' after method name.")
+
+        params = []
+        if not self.check(TokenType.RIGHT_PAREN):
+            while True:
+                params.append(
+                    self.consume(TokenType.IDENTIFIER, "Expected parameter name.")
+                )
+
+                if not self.match(TokenType.COMMA):
+                    break
+
+        self.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.")
+        self.consume(TokenType.LEFT_BRACE, "Expected '{' before method body.")
+
+        body = self.block()
+
+        return FunctionStmt(name, params, body)

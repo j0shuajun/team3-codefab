@@ -106,9 +106,20 @@ class FunctionStmt(Stmt):
 class ReturnStmt(Stmt):
     """return expression; 문장"""
 
-    def __init__(self, keyword, value=None):
-        self.keyword = keyword  # Token
-        self.value = value  # Expr or None
+    def __init__(self, keyword: Token, value: Expr = None):
+        self.keyword = keyword
+        self.value = value
 
     def __repr__(self):
         return f"ReturnStmt({self.value})"
+
+
+class ClassStmt(Stmt):
+    """Class Name { methods... } 클래스 선언문"""
+
+    def __init__(self, name: Token, methods: list[FunctionStmt]):
+        self.name = name
+        self.methods = methods
+
+    def __repr__(self):
+        return f"ClassStmt({self.name.origin}, methods={self.methods})"

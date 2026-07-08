@@ -3,15 +3,26 @@ from assembler.expr import (
     AssignExpr,
     BinaryExpr,
     CallExpr,
+    GetExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
+    SetExpr,
+    ThisExpr,
     UnaryExpr,
     VariableExpr,
 )
-from assembler.runtime import Callable, NativeFunction, ReturnSignal, UserFunction
+from assembler.runtime import (
+    Callable,
+    NativeFunction,
+    ReturnSignal,
+    UserClass,
+    UserFunction,
+    UserInstance,
+)
 from assembler.statement import (
     BlockStmt,
+    ClassStmt,
     ExpressionStmt,
     ForStmt,
     FunctionStmt,
@@ -80,6 +91,18 @@ class Executor:
                 value = self.evaluate(stmt.value)
             raise ReturnSignal(value)
 
+        if isinstance(stmt, ClassStmt):
+            self.environment.define(stmt.name.origin, None)
+
+            methods = {}
+            for method in stmt.methods:
+                function = UserFunction(method, self.environment)
+                methods[method.name.origin] = function
+
+            klass = UserClass(stmt.name.origin, methods)
+            self.environment.assign(stmt.name, klass)
+            return
+
         raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def evaluate(self, expr):
@@ -121,8 +144,30 @@ class Executor:
 
         if isinstance(expr, LogicalExpr):
             return self.evaluate_logical(expr)
+
         if isinstance(expr, CallExpr):
             return self.evaluate_call(expr)
+
+        if isinstance(expr, GetExpr):
+            obj = self.evaluate(expr.object)
+
+            if isinstance(obj, UserInstance):
+                return obj.get(expr.name)
+
+            raise CodeFabRuntimeError("Only instances have properties.")
+
+        if isinstance(expr, SetExpr):
+            obj = self.evaluate(expr.object)
+
+            if not isinstance(obj, UserInstance):
+                raise CodeFabRuntimeError("Only instances have fields.")
+
+            value = self.evaluate(expr.value)
+            obj.set(expr.name, value)
+            return value
+
+        if isinstance(expr, ThisExpr):
+            return self.environment.get(expr.keyword)
 
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
