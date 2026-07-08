@@ -3,6 +3,7 @@ from assembler.expr import (
     BinaryExpr,
     CallExpr,
     GroupingExpr,
+    IndexGetExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
@@ -144,6 +145,8 @@ class Executor:
             return self.evaluate_logical(expr)
         if isinstance(expr, CallExpr):
             return self.evaluate_call(expr)
+        if isinstance(expr, IndexGetExpr):
+            return self.evaluate_index_get(expr)
 
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
@@ -311,3 +314,20 @@ class Executor:
             )
 
         return callee.call(self, arguments)
+
+    def evaluate_index_get(self, expr):
+        array = self.evaluate(expr.array)
+
+        if not isinstance(array, list):
+            raise CodeFabRuntimeError("Can only index into an array.")
+
+        index = self.evaluate(expr.index)
+
+        if not self.is_number(index):
+            raise CodeFabRuntimeError("Array index must be a number.")
+
+        index = int(index)
+        if index < 0 or index >= len(array):
+            raise CodeFabRuntimeError("Array index out of range.")
+
+        return array[index]
