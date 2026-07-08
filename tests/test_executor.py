@@ -7,7 +7,7 @@ from assembler.expr import (
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr,
+    VariableExpr, CallExpr,
 )
 from assembler.statement import (
     BlockStmt,
@@ -21,8 +21,8 @@ from assembler.tokenizer import Token, TokenType
 from executor.executor import CodeFabRuntimeError, Executor
 
 
-def token(token_type, origin):
-    return Token(token_type, origin)
+def token(token_type, origin, value=None):
+    return Token(token_type, origin, value)
 
 
 def run(statements):
@@ -481,3 +481,46 @@ def test_runtime_error_type_mismatch():
                 )
             ]
         )
+
+
+def test_execute_native_call_expression():
+    executor = run([
+        PrintStmt(
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [
+                    LiteralExpr(3),
+                    LiteralExpr(7),
+                ],
+            )
+        )
+    ])
+
+    assert executor.outputs == ["10"]
+
+
+def test_runtime_error_call_non_callable():
+    with pytest.raises(RuntimeError):
+        run([
+            PrintStmt(
+                CallExpr(
+                    LiteralExpr("hello"),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [],
+                )
+            )
+        ])
+
+
+def test_runtime_error_call_argument_count_mismatch():
+    with pytest.raises(RuntimeError):
+        run([
+            PrintStmt(
+                CallExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [LiteralExpr(1)],
+                )
+            )
+        ])
