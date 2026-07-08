@@ -21,5 +21,6 @@ class Checker:
 
         self._scopes.reset()
         self._error_reporter.reset()
+        self._statement_resolver.reset()
         self._statement_resolver.resolve_all(folded_statements)
         return self._error_reporter.errors
