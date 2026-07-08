@@ -2,21 +2,25 @@ from .expr import (
     AssignExpr,
     BinaryExpr,
     CallExpr,
+    GetExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
+    SetExpr,
+    ThisExpr,
     UnaryExpr,
-    VariableExpr, GetExpr, SetExpr, ThisExpr,
+    VariableExpr,
 )
 from .statement import (
     BlockStmt,
+    ClassStmt,
     ExpressionStmt,
     ForStmt,
     FunctionStmt,
     IfStmt,
     PrintStmt,
     ReturnStmt,
-    VarStmt, ClassStmt,
+    VarStmt,
 )
 from .tokenizer import TokenType
 
@@ -179,10 +183,10 @@ class Assembler:
         expression = self.term()
 
         while self.match(
-                TokenType.GREATER,
-                TokenType.GREATER_EQUAL,
-                TokenType.LESS,
-                TokenType.LESS_EQUAL,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
         ):
             operator = self.previous()
             right = self.term()
@@ -302,8 +306,7 @@ class Assembler:
                 expression = self.finish_call(expression)
             elif self.match(TokenType.DOT):
                 name = self.consume(
-                    TokenType.IDENTIFIER,
-                    "Expected property name after '.'."
+                    TokenType.IDENTIFIER, "Expected property name after '.'."
                 )
                 expression = GetExpr(expression, name)
             else:
@@ -370,7 +373,6 @@ class Assembler:
         self.consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.")
 
         return ClassStmt(name, methods)
-
 
     def method_declaration(self):
         name = self.consume(TokenType.IDENTIFIER, "Expected method name.")

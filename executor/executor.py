@@ -3,22 +3,33 @@ from assembler.expr import (
     AssignExpr,
     BinaryExpr,
     CallExpr,
+    GetExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
+    SetExpr,
+    ThisExpr,
     UnaryExpr,
-    VariableExpr, SetExpr, ThisExpr, GetExpr,
+    VariableExpr,
 )
-from assembler.runtime import Callable, NativeFunction, ReturnSignal, UserFunction, UserClass, UserInstance
+from assembler.runtime import (
+    Callable,
+    NativeFunction,
+    ReturnSignal,
+    UserClass,
+    UserFunction,
+    UserInstance,
+)
 from assembler.statement import (
     BlockStmt,
+    ClassStmt,
     ExpressionStmt,
     ForStmt,
     FunctionStmt,
     IfStmt,
     PrintStmt,
     ReturnStmt,
-    VarStmt, ClassStmt,
+    VarStmt,
 )
 from assembler.tokenizer import TokenType
 

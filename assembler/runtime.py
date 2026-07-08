@@ -59,6 +59,7 @@ class UserFunction(Callable):
     def __repr__(self):
         return f"<fn {self.declaration.name.origin}>"
 
+
 class UserClass(Callable):
     def __init__(self, name, methods: dict[str, UserFunction]):
         self.name = name
