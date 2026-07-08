@@ -555,6 +555,22 @@ def test_array_index(tokenizer):
     ]
 
 
+def test_array_declaration(tokenizer):
+    tokens = tokenizer.tokenize("var arr = Array(3);")
+
+    assert tokens == [
+        Token(T.VAR, "var"),
+        Token(T.IDENTIFIER, "arr"),
+        Token(T.EQUAL, "="),
+        Token(T.IDENTIFIER, "Array"),
+        Token(T.LEFT_PAREN, "("),
+        Token(T.NUMBER, "3", value=3.0),
+        Token(T.RIGHT_PAREN, ")"),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
 def test_field_access(tokenizer):
     tokens = tokenizer.tokenize("r.name")
 
