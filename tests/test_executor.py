@@ -527,3 +527,51 @@ def test_function_argument_count_mismatch():
                 )
             ),
         ])
+
+def test_recursive_function_factorial():
+    executor = run([
+        FunctionStmt(
+            token(TokenType.IDENTIFIER, "fact"),
+            [token(TokenType.IDENTIFIER, "n")],
+            [
+                IfStmt(
+                    BinaryExpr(
+                        VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                        token(TokenType.LESS_EQUAL, "<="),
+                        LiteralExpr(1),
+                    ),
+                    ReturnStmt(
+                        token(TokenType.RETURN, "return"),
+                        LiteralExpr(1),
+                    ),
+                ),
+                ReturnStmt(
+                    token(TokenType.RETURN, "return"),
+                    BinaryExpr(
+                        VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                        token(TokenType.STAR, "*"),
+                        CallExpr(
+                            VariableExpr(token(TokenType.IDENTIFIER, "fact")),
+                            token(TokenType.RIGHT_PAREN, ")"),
+                            [
+                                BinaryExpr(
+                                    VariableExpr(token(TokenType.IDENTIFIER, "n")),
+                                    token(TokenType.MINUS, "-"),
+                                    LiteralExpr(1),
+                                )
+                            ],
+                        ),
+                    ),
+                ),
+            ],
+        ),
+        PrintStmt(
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "fact")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [LiteralExpr(5)],
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["120"]
