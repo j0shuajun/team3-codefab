@@ -88,7 +88,7 @@ class Token:
 
 
 class Tokenizer:
-    _SINGLE_CHARACTER_TOKENS = {
+    _TOKENS = {
         # 할당
         "=": TokenType.EQUAL,
         # 그룹핑
@@ -100,6 +100,10 @@ class Tokenizer:
         # 비교
         "<": TokenType.LESS,
         ">": TokenType.GREATER,
+        "!=": TokenType.BANG_EQUAL,
+        "==": TokenType.EQUAL_EQUAL,
+        ">=": TokenType.GREATER_EQUAL,
+        "<=": TokenType.LESS_EQUAL,
         # 산술연산
         "+": TokenType.PLUS,
         "-": TokenType.MINUS,
@@ -107,6 +111,8 @@ class Tokenizer:
         "/": TokenType.SLASH,
         # 논리연산
         "!": TokenType.BANG,
+        "and": TokenType.AND,
+        "or": TokenType.OR,
         # 구분자
         ";": TokenType.SEMICOLON,
         ",": TokenType.COMMA,
@@ -117,24 +123,13 @@ class Tokenizer:
         ".": TokenType.DOT,
         # 상속
         ":": TokenType.COLON,
-    }
-
-    _CHARACTER_WITH_EQUAL_TOKENS = {
-        "!=": TokenType.BANG_EQUAL,
-        "==": TokenType.EQUAL_EQUAL,
-        ">=": TokenType.GREATER_EQUAL,
-        "<=": TokenType.LESS_EQUAL,
-    }
-
-    _RESERVED_TOKENS = {
+        # 예약어
         "if": TokenType.IF,
         "else": TokenType.ELSE,
         "var": TokenType.VAR,
         "true": TokenType.TRUE,
         "false": TokenType.FALSE,
         "print": TokenType.PRINT,
-        "and": TokenType.AND,
-        "or": TokenType.OR,
         "for": TokenType.FOR,
         "Func": TokenType.FUNC,
         "return": TokenType.RETURN,
@@ -159,7 +154,7 @@ class Tokenizer:
             ch = self._peek()
             if ch.isspace():
                 self._idx += 1
-            elif ch in self._SINGLE_CHARACTER_TOKENS:
+            elif ch in self._TOKENS:
                 tokens.append(self._read_single_character())
             elif ch == '"':
                 tokens.append(self._read_string())
@@ -191,11 +186,11 @@ class Tokenizer:
 
         if self._idx_in_range():
             combined = ch + self._peek()
-            if combined in self._CHARACTER_WITH_EQUAL_TOKENS:
+            if combined in self._TOKENS:
                 self._idx += 1
-                return Token(self._CHARACTER_WITH_EQUAL_TOKENS[combined], combined)
+                return Token(self._TOKENS[combined], combined)
 
-        return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
+        return Token(self._TOKENS[ch], ch)
 
     def _read_string(self) -> Token:
         start = self._idx
@@ -220,4 +215,4 @@ class Tokenizer:
 
     def _read_identifier(self) -> Token:
         origin = self._read_multiple_characters(str.isalnum)
-        return Token(self._RESERVED_TOKENS.get(origin, TokenType.IDENTIFIER), origin)
+        return Token(self._TOKENS.get(origin, TokenType.IDENTIFIER), origin)
