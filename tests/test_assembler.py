@@ -2,11 +2,12 @@ from assembler.assembler import Assembler
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
+    CallExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr, CallExpr,
+    VariableExpr,
 )
 from assembler.statement import (
     BlockStmt,
@@ -344,15 +345,17 @@ def test_parse_for_statement():
 
 
 def test_parse_call_expression():
-    statements = parse([
-        token(TokenType.IDENTIFIER, "add"),
-        token(TokenType.LEFT_PAREN, "("),
-        token(TokenType.NUMBER, "1", 1),
-        token(TokenType.COMMA, ","),
-        token(TokenType.NUMBER, "2", 2),
-        token(TokenType.RIGHT_PAREN, ")"),
-        token(TokenType.SEMICOLON, ";"),
-    ])
+    statements = parse(
+        [
+            token(TokenType.IDENTIFIER, "add"),
+            token(TokenType.LEFT_PAREN, "("),
+            token(TokenType.NUMBER, "1", 1),
+            token(TokenType.COMMA, ","),
+            token(TokenType.NUMBER, "2", 2),
+            token(TokenType.RIGHT_PAREN, ")"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
 
     expr = statements[0].expression
 

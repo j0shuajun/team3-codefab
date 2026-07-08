@@ -2,8 +2,9 @@ import pytest
 
 from assembler.expr import (
     BinaryExpr,
+    CallExpr,
     LiteralExpr,
-    VariableExpr, CallExpr,
+    VariableExpr,
 )
 from assembler.statement import (
     PrintStmt,
@@ -58,43 +59,49 @@ def test_runtime_error_type_mismatch():
 
 
 def test_execute_native_call_expression():
-    executor = run([
-        PrintStmt(
-            CallExpr(
-                VariableExpr(token(TokenType.IDENTIFIER, "add")),
-                token(TokenType.RIGHT_PAREN, ")"),
-                [
-                    LiteralExpr(3),
-                    LiteralExpr(7),
-                ],
+    executor = run(
+        [
+            PrintStmt(
+                CallExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [
+                        LiteralExpr(3),
+                        LiteralExpr(7),
+                    ],
+                )
             )
-        )
-    ])
+        ]
+    )
 
     assert executor.outputs == ["10"]
 
 
 def test_runtime_error_call_non_callable():
     with pytest.raises(RuntimeError):
-        run([
-            PrintStmt(
-                CallExpr(
-                    LiteralExpr("hello"),
-                    token(TokenType.RIGHT_PAREN, ")"),
-                    [],
+        run(
+            [
+                PrintStmt(
+                    CallExpr(
+                        LiteralExpr("hello"),
+                        token(TokenType.RIGHT_PAREN, ")"),
+                        [],
+                    )
                 )
-            )
-        ])
+            ]
+        )
 
 
 def test_runtime_error_call_argument_count_mismatch():
     with pytest.raises(RuntimeError):
-        run([
-            PrintStmt(
-                CallExpr(
-                    VariableExpr(token(TokenType.IDENTIFIER, "add")),
-                    token(TokenType.RIGHT_PAREN, ")"),
-                    [LiteralExpr(1)],
+        run(
+            [
+                PrintStmt(
+                    CallExpr(
+                        VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                        token(TokenType.RIGHT_PAREN, ")"),
+                        [LiteralExpr(1)],
+                    )
                 )
-            )
-        ])
+            ]
+        )

@@ -1,11 +1,12 @@
 from .expr import (
     AssignExpr,
     BinaryExpr,
+    CallExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr, CallExpr,
+    VariableExpr,
 )
 from .statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt
 from .tokenizer import TokenType
@@ -163,10 +164,10 @@ class Assembler:
         expression = self.term()
 
         while self.match(
-                TokenType.GREATER,
-                TokenType.GREATER_EQUAL,
-                TokenType.LESS,
-                TokenType.LESS_EQUAL,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
         ):
             operator = self.previous()
             right = self.term()

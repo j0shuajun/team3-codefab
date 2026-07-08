@@ -1,11 +1,12 @@
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
+    CallExpr,
     GroupingExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr, CallExpr,
+    VariableExpr,
 )
 from assembler.runtime import Callable, NativeFunction
 from assembler.statement import (
@@ -62,10 +63,7 @@ class Executor:
         self.environment = self.globals
         self.outputs = []
 
-        self.globals.define(
-            "add",
-            NativeFunction("add", 2, lambda a, b: a + b)
-        )
+        self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
 
     def execute(self, statements):
         for statement in statements:

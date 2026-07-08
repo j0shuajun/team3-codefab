@@ -7,7 +7,7 @@ from assembler.expr import (
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr, CallExpr,
+    VariableExpr,
 )
 from assembler.statement import (
     BlockStmt,
@@ -446,4 +446,3 @@ def test_for_block_statement():
     )
 
     assert executor.outputs == ["0", "1", "2"]
-
