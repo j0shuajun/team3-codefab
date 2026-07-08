@@ -193,3 +193,53 @@ def test_subclass_inherits_parent_method():
     ])
 
     assert executor.outputs == ["move"]
+
+
+def test_subclass_overrides_parent_method():
+    executor = run([
+        ClassStmt(
+            token(TokenType.IDENTIFIER, "Robot"),
+            [
+                FunctionStmt(
+                    token(TokenType.IDENTIFIER, "move"),
+                    [],
+                    [
+                        PrintStmt(LiteralExpr("parent move"))
+                    ],
+                )
+            ],
+        ),
+        ClassStmt(
+            token(TokenType.IDENTIFIER, "SpeedRobot"),
+            [
+                FunctionStmt(
+                    token(TokenType.IDENTIFIER, "move"),
+                    [],
+                    [
+                        PrintStmt(LiteralExpr("child move"))
+                    ],
+                )
+            ],
+            VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+        ),
+        VarStmt(
+            token(TokenType.IDENTIFIER, "r"),
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "SpeedRobot")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            ),
+        ),
+        ExpressionStmt(
+            CallExpr(
+                GetExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "r")),
+                    token(TokenType.IDENTIFIER, "move"),
+                ),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["child move"]
