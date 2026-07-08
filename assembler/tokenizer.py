@@ -2,6 +2,10 @@ from enum import Enum, auto
 
 
 class TokenType(Enum):
+    """
+    TokenType은 숫자로 시작하지 않는 문자열이어야 합니다.
+    고정된 문자열이 아닌 Token (EOF, NUMBER) 등은 auto()로 고정해야 합니다.
+    """
     # End Of File
     EOF = auto()
     # Literal
@@ -9,62 +13,62 @@ class TokenType(Enum):
     STRING = auto()
     NUMBER = auto()
     # Assignment
-    EQUAL = auto()
+    EQUAL = "="
     # Grouping
-    LEFT_PAREN = auto()
-    RIGHT_PAREN = auto()
+    LEFT_PAREN = "("
+    RIGHT_PAREN = ")"
     # Block scope
-    LEFT_BRACE = auto()
-    RIGHT_BRACE = auto()
+    LEFT_BRACE = "{"
+    RIGHT_BRACE = "}"
     # Array
-    LEFT_BRACKET = auto()
-    RIGHT_BRACKET = auto()
+    LEFT_BRACKET = "["
+    RIGHT_BRACKET = "]"
     # Member access
-    DOT = auto()
+    DOT = "."
     # Inheritance
-    COLON = auto()
+    COLON = ":"
     # Comparison
-    LESS = auto()
-    GREATER = auto()
-    LESS_EQUAL = auto()
-    GREATER_EQUAL = auto()
-    EQUAL_EQUAL = auto()
-    BANG_EQUAL = auto()
+    LESS = "<"
+    GREATER = ">"
+    LESS_EQUAL = "<="
+    GREATER_EQUAL = ">="
+    EQUAL_EQUAL = "=="
+    BANG_EQUAL = "!="
     # Operation
-    PLUS = auto()
-    MINUS = auto()
-    STAR = auto()
-    SLASH = auto()
+    PLUS = "+"
+    MINUS = "-"
+    STAR = "*"
+    SLASH = "/"
     # Logical
-    BANG = auto()
-    AND = auto()
-    OR = auto()
+    BANG = "!"
+    AND = "and"
+    OR = "or"
     # Delimiter
-    SEMICOLON = auto()
-    COMMA = auto()
+    SEMICOLON = ";"
+    COMMA = ","
     # Variable
-    VAR = auto()
+    VAR = "var"
     # Boolean
-    TRUE = auto()
-    FALSE = auto()
+    TRUE = "true"
+    FALSE = "false"
     # Print
-    PRINT = auto()
+    PRINT = "print"
     # Conditional
-    IF = auto()
-    ELSE = auto()
+    IF = "if"
+    ELSE = "else"
     # Loop
-    FOR = auto()
+    FOR = "for"
     # Function
-    FUNC = auto()
-    RETURN = auto()
+    FUNC = "Func"
+    RETURN = "return"
     # Class
-    CLASS = auto()
-    THIS = auto()
-    SUPER = auto()
-    INSTANCEOF = auto()
+    CLASS = "Class"
+    THIS = "This"
+    SUPER = "Super"
+    INSTANCEOF = "instanceof"
     # Import
-    IMPORT = auto()
-    ALIAS = auto()
+    IMPORT = "import"
+    ALIAS = "alias"
 
 
 class Token:
@@ -88,58 +92,7 @@ class Token:
 
 
 class Tokenizer:
-    _TOKENS = {
-        # 할당
-        "=": TokenType.EQUAL,
-        # 그룹핑
-        "(": TokenType.LEFT_PAREN,
-        ")": TokenType.RIGHT_PAREN,
-        # 블록스코프
-        "{": TokenType.LEFT_BRACE,
-        "}": TokenType.RIGHT_BRACE,
-        # 비교
-        "<": TokenType.LESS,
-        ">": TokenType.GREATER,
-        "!=": TokenType.BANG_EQUAL,
-        "==": TokenType.EQUAL_EQUAL,
-        ">=": TokenType.GREATER_EQUAL,
-        "<=": TokenType.LESS_EQUAL,
-        # 산술연산
-        "+": TokenType.PLUS,
-        "-": TokenType.MINUS,
-        "*": TokenType.STAR,
-        "/": TokenType.SLASH,
-        # 논리연산
-        "!": TokenType.BANG,
-        "and": TokenType.AND,
-        "or": TokenType.OR,
-        # 구분자
-        ";": TokenType.SEMICOLON,
-        ",": TokenType.COMMA,
-        # 배열
-        "[": TokenType.LEFT_BRACKET,
-        "]": TokenType.RIGHT_BRACKET,
-        # 필드 접근
-        ".": TokenType.DOT,
-        # 상속
-        ":": TokenType.COLON,
-        # 예약어
-        "if": TokenType.IF,
-        "else": TokenType.ELSE,
-        "var": TokenType.VAR,
-        "true": TokenType.TRUE,
-        "false": TokenType.FALSE,
-        "print": TokenType.PRINT,
-        "for": TokenType.FOR,
-        "Func": TokenType.FUNC,
-        "return": TokenType.RETURN,
-        "Class": TokenType.CLASS,
-        "This": TokenType.THIS,
-        "Super": TokenType.SUPER,
-        "instanceof": TokenType.INSTANCEOF,
-        "import": TokenType.IMPORT,
-        "alias": TokenType.ALIAS,
-    }
+    _TOKENS = {T.value: T for T in TokenType if isinstance(T.value, str)}
 
     def __init__(self):
         self._origin = ""
