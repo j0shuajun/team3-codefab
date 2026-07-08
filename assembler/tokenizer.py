@@ -120,10 +120,10 @@ class Tokenizer:
     }
 
     _CHARACTER_WITH_EQUAL_TOKENS = {
-        "!": TokenType.BANG_EQUAL,
-        "=": TokenType.EQUAL_EQUAL,
-        ">": TokenType.GREATER_EQUAL,
-        "<": TokenType.LESS_EQUAL,
+        "!=": TokenType.BANG_EQUAL,
+        "==": TokenType.EQUAL_EQUAL,
+        ">=": TokenType.GREATER_EQUAL,
+        "<=": TokenType.LESS_EQUAL,
     }
 
     _RESERVED_TOKENS = {
@@ -189,13 +189,11 @@ class Tokenizer:
         ch = self._peek()
         self._idx += 1
 
-        if (
-            ch in self._CHARACTER_WITH_EQUAL_TOKENS
-            and self._idx_in_range()
-            and self._peek() == "="
-        ):
-            self._idx += 1
-            return Token(self._CHARACTER_WITH_EQUAL_TOKENS[ch], ch + "=")
+        if self._idx_in_range():
+            combined = ch + self._peek()
+            if combined in self._CHARACTER_WITH_EQUAL_TOKENS:
+                self._idx += 1
+                return Token(self._CHARACTER_WITH_EQUAL_TOKENS[combined], combined)
 
         return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
 
