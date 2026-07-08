@@ -171,7 +171,6 @@ def test_file_mode_returns_error_when_file_not_found(tmp_path):
     assert outputs == [f"Error: file not found: {missing_file}"]
 
 
-
 def test_runner_returns_outputs_before_runtime_error(mocker):
     runner = CodeFabRunner()
     runner.executor.outputs.append("before")
@@ -193,9 +192,7 @@ def test_runner_returns_outputs_before_runtime_error(mocker):
 def test_file_mode_stops_immediately_when_runtime_error_occurs(tmp_path):
     source_file = tmp_path / "sample.txt"
     source_file.write_text(
-        "print 1;\n"
-        "print 10 / 0;\n"
-        "print 3;\n",
+        "print 1;\n" "print 10 / 0;\n" "print 3;\n",
         encoding="utf-8",
     )
 
@@ -205,13 +202,12 @@ def test_file_mode_stops_immediately_when_runtime_error_occurs(tmp_path):
         "1",
         "Error at line 2: Division by zero.",
     ]
+
 
 def test_file_mode_prints_runtime_error_with_line_number(tmp_path):
     source_file = tmp_path / "sample.txt"
     source_file.write_text(
-        "print 1;\n"
-        "print 10 / 0;\n"
-        "print 3;\n",
+        "print 1;\n" "print 10 / 0;\n" "print 3;\n",
         encoding="utf-8",
     )
 
@@ -222,12 +218,11 @@ def test_file_mode_prints_runtime_error_with_line_number(tmp_path):
         "Error at line 2: Division by zero.",
     ]
 
+
 def test_file_mode_stops_immediately_after_runtime_error(tmp_path):
     source_file = tmp_path / "sample.txt"
     source_file.write_text(
-        "print 1;\n"
-        "print 10 / 0;\n"
-        "print 999;\n",
+        "print 1;\n" "print 10 / 0;\n" "print 999;\n",
         encoding="utf-8",
     )
 

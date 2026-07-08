@@ -177,7 +177,7 @@ class Tokenizer:
             raise ValueError("Unterminated string")
 
         self._idx += 1
-        origin = self._origin[start: self._idx]
+        origin = self._origin[start : self._idx]
 
         return Token(TokenType.STRING, origin, value=origin[1:-1], line=line)
 

@@ -58,11 +58,16 @@ class DebugSession:
 
         if command_name == "step":
             self.last_break_stop_key = None
-            return self.execute_current_statement(enter_block=True) + self.format_watches()
+            return (
+                self.execute_current_statement(enter_block=True) + self.format_watches()
+            )
 
         if command_name == "next":
             self.last_break_stop_key = None
-            return self.execute_current_statement(enter_block=False) + self.format_watches()
+            return (
+                self.execute_current_statement(enter_block=False)
+                + self.format_watches()
+            )
 
         if command_name == "continue":
             return self.continue_until_breakpoint()
@@ -147,7 +152,9 @@ class DebugSession:
         current_frame.index += 1
 
         selected_branch = None
-        if self.runner.executor.is_truthy(self.runner.executor.evaluate(if_stmt.condition)):
+        if self.runner.executor.is_truthy(
+            self.runner.executor.evaluate(if_stmt.condition)
+        ):
             selected_branch = if_stmt.then_branch
         elif if_stmt.else_branch is not None:
             selected_branch = if_stmt.else_branch
@@ -361,7 +368,9 @@ class DebugMode:
 
     def run_session(self, session):
         print("CodeFab Debug Mode")
-        print("Commands: step, next, continue, break <line>, breakpoints, remove <line>")
+        print(
+            "Commands: step, next, continue, break <line>, breakpoints, remove <line>"
+        )
         print("Commands: watch <name>, unwatch <name>, watches, inspect, exit")
 
         while not session.is_finished:
