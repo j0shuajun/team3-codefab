@@ -91,10 +91,10 @@ class ForStmt(Stmt):
 class FunctionStmt(Stmt):
     """Func name(params) { body } 함수 선언문"""
 
-    def __init__(self, name, params, body):
-        self.name = name  # Token
-        self.params = params  # list[Token]
-        self.body = body  # list[Stmt]
+    def __init__(self, name: Token, params: list[Token], body: list[Stmt]):
+        self.name = name
+        self.params = params
+        self.body = body
 
     def __repr__(self):
         param_names = [param.origin for param in self.params]
