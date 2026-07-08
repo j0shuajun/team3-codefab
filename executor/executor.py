@@ -64,6 +64,12 @@ class Executor:
         self.outputs = []
 
         self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
+        self.globals.define("Array", NativeFunction("Array", 1, self._make_array))
+
+    def _make_array(self, size):
+        if not self.is_number(size):
+            raise CodeFabRuntimeError("Array size must be a number.")
+        return [None] * int(size)
 
     def execute(self, statements):
         for statement in statements:
