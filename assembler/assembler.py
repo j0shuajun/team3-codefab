@@ -4,6 +4,7 @@ from .expr import (
     CallExpr,
     GroupingExpr,
     IndexGetExpr,
+    IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
@@ -126,6 +127,11 @@ class Assembler:
 
             if isinstance(expression, VariableExpr):
                 return AssignExpr(expression.name, value)
+
+            if isinstance(expression, IndexGetExpr):
+                return IndexSetExpr(
+                    expression.array, expression.bracket, expression.index, value
+                )
 
             raise AssemblerError("Invalid assignment target.")
 

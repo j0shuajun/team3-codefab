@@ -93,3 +93,16 @@ class IndexGetExpr(Expr):
 
     def __repr__(self):
         return f"IndexGetExpr({self.array}, {self.index})"
+
+
+class IndexSetExpr(Expr):
+    """array[index] = value 형태의 배열 쓰기 노드"""
+
+    def __init__(self, array: Expr, bracket: Token, index: Expr, value: Expr):
+        self.array = array  # Expr: 평가 결과가 배열(list)이어야 함
+        self.bracket = bracket  # Token: ]
+        self.index = index
+        self.value = value
+
+    def __repr__(self):
+        return f"IndexSetExpr({self.array}, {self.index}, {self.value})"
