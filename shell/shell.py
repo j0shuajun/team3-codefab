@@ -1,18 +1,39 @@
 from collections import Counter
-
 from assembler.assembler import Assembler
 from assembler.tokenizer import Tokenizer
 from checker.checker import Checker
 from executor.executor import Executor
 
 
+class CodeFabRunner:
+    def __init__(self):
+        self.tokenizer = Tokenizer()
+        self.checker = Checker()
+        self.executor = Executor()
+
+    def run_code(self, source):
+        try:
+            tokens = self.tokenizer.tokenize(source)
+            statements = Assembler(tokens).parse()
+
+            errors = self.checker.check(statements)
+            if errors:
+                return errors
+
+            before_output_count = len(self.executor.outputs)
+            self.executor.execute(statements)
+
+            return self.executor.outputs[before_output_count:]
+
+        except Exception as error:
+            return [f"Error: {error}"]
+
+
 class PromptShell:
     EXIT_COMMANDS = ("exit", "quit")
 
     def __init__(self, history_size=10):
-        self.tokenizer = Tokenizer()
-        self.checker = Checker()
-        self.executor = Executor()
+        self.runner = CodeFabRunner()
 
         self.history_size = history_size
         self.history = []
@@ -57,21 +78,7 @@ class PromptShell:
         return None
 
     def run_code(self, source):
-        try:
-            tokens = self.tokenizer.tokenize(source)
-            statements = Assembler(tokens).parse()
-
-            errors = self.checker.check(statements)
-            if errors:
-                return errors
-
-            before_output_count = len(self.executor.outputs)
-            self.executor.execute(statements)
-
-            return self.executor.outputs[before_output_count:]
-
-        except Exception as error:
-            return [f"Error: {error}"]
+        return self.runner.run_code(source)
 
     def save_history(self, source):
         self.history.append(source)
@@ -101,3 +108,6 @@ class PromptShell:
             return ["먼저 ctrlc 로 추천 명령어를 생성해주세요."]
 
         return self.run_code(self.recommended_command)
+
+
+ReplMode = PromptShell

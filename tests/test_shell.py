@@ -1,5 +1,5 @@
 from shell.shell import PromptShell
-
+from shell.file_mode import FileMode
 
 def make_shell():
     return PromptShell()
@@ -150,3 +150,19 @@ def test_run_line_strips_input():
     outputs = shell.run_line("  print 37;  ")
 
     assert outputs == ["37"]
+
+def test_file_mode_executes_source_file(tmp_path):
+    source_file = tmp_path / "sample.txt"
+    source_file.write_text("print 1 + 2;", encoding="utf-8")
+
+    outputs = FileMode().run_file(str(source_file))
+
+    assert outputs == ["3"]
+
+
+def test_file_mode_returns_error_when_file_not_found(tmp_path):
+    missing_file = tmp_path / "missing.txt"
+
+    outputs = FileMode().run_file(str(missing_file))
+
+    assert outputs == [f"Error: file not found: {missing_file}"]
