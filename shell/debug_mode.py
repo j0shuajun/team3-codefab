@@ -102,6 +102,7 @@ class DebugSession:
             return ["Program finished."]
 
         statement = self.current_statement()
+        statement_line = getattr(statement, "line", None)
         before_output_count = len(self.runner.executor.outputs)
 
         try:
@@ -122,7 +123,10 @@ class DebugSession:
         except Exception as error:
             self.is_finished = True
             outputs = self.runner.executor.outputs[before_output_count:]
-            line = self.current_line()
+
+            line = getattr(error, "line", None)
+            if line is None:
+                line = statement_line
 
             if line is None:
                 return outputs + [f"Error: {error}"]
@@ -148,16 +152,17 @@ class DebugSession:
         self.normalize_frames()
 
     def enter_if_branch(self, if_stmt):
-        current_frame = self.current_frame()
-        current_frame.index += 1
-
         selected_branch = None
+
         if self.runner.executor.is_truthy(
             self.runner.executor.evaluate(if_stmt.condition)
         ):
             selected_branch = if_stmt.then_branch
         elif if_stmt.else_branch is not None:
             selected_branch = if_stmt.else_branch
+
+        current_frame = self.current_frame()
+        current_frame.index += 1
 
         if selected_branch is None:
             self.normalize_frames()

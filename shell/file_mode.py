@@ -41,7 +41,10 @@ class FileMode:
                 self.runner.executor.execute([statement])
             except Exception as error:
                 outputs = self.runner.executor.outputs[before_output_count:]
-                line = getattr(statement, "line", None)
+
+                line = getattr(error, "line", None)
+                if line is None:
+                    line = getattr(statement, "line", None)
 
                 if line is None:
                     return outputs + [f"Error: {error}"]

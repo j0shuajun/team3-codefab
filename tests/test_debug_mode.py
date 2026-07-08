@@ -69,3 +69,11 @@ def test_debug_continue_runs_until_breakpoint():
 
     assert session.process_command("continue") == ["Stopped at breakpoint line 3."]
     assert session.process_command("step") == ["15"]
+
+
+def test_debug_step_reports_if_condition_error_line():
+    session = make_debug_session("if (10 / 0) {\n" "  print 1;\n" "}\n" "print 2;\n")
+
+    outputs = session.process_command("step")
+
+    assert outputs == ["Error at line 1: Division by zero."]
