@@ -9,7 +9,7 @@ from .expr import (
     SetExpr,
     ThisExpr,
     UnaryExpr,
-    VariableExpr,
+    VariableExpr, SuperExpr,
 )
 from .statement import (
     BlockStmt,
@@ -214,6 +214,12 @@ class Assembler:
 
         if self.match(TokenType.THIS):
             return ThisExpr(self.previous())
+
+        if self.match(TokenType.SUPER):
+            keyword = self.previous()
+            self.consume(TokenType.DOT, "Expected '.' after Super.")
+            method = self.consume(TokenType.IDENTIFIER, "Expected superclass method name.")
+            return SuperExpr(keyword, method)
 
         raise AssemblerError("Expected expression.")
 
