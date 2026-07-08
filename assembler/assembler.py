@@ -188,7 +188,7 @@ class Assembler:
         return expression
 
     def comparison(self):
-        expr = self.term()
+        expression = self.term()
 
         while self.match(
             TokenType.GREATER,
@@ -199,9 +199,9 @@ class Assembler:
         ):
             operator = self.previous()
             right = self.term()
-            expr = BinaryExpr(expr, operator, right)
+            expression = BinaryExpr(expression, operator, right)
 
-        return expr
+        return expression
 
     def primary(self):
         if self.match(TokenType.FALSE):
