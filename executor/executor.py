@@ -10,7 +10,7 @@ from assembler.expr import (
     SetExpr,
     ThisExpr,
     UnaryExpr,
-    VariableExpr,
+    VariableExpr, SuperExpr,
 )
 from assembler.runtime import (
     Callable,
@@ -182,6 +182,22 @@ class Executor:
 
         if isinstance(expr, ThisExpr):
             return self.environment.get(expr.keyword)
+
+        if isinstance(expr, SuperExpr):
+            superclass = self.environment.get(expr.keyword)
+
+            this_token = type("TokenLike", (), {
+                "origin": "This"
+            })()
+
+            instance = self.environment.get(this_token)
+
+            method = superclass.find_method(expr.method.origin)
+
+            if method is None:
+                raise RuntimeError(f"Undefined property '{expr.method.origin}'.")
+
+            return method.bind(instance)
 
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
