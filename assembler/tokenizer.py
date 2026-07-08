@@ -68,9 +68,11 @@ class TokenType(Enum):
 
 
 class Token:
-    def __init__(self, token_type: TokenType, origin: str, value=None):
+    def __init__(self, token_type: TokenType, origin: str, value=None, line=1):
         self.type = token_type
         self.origin = origin
+        self.line = line
+
         if value is not None:
             self.value = value
 
@@ -84,7 +86,14 @@ class Token:
         )
 
     def __repr__(self):
-        return f"Token({self.type}, {self.origin!r}, {getattr(self, 'value', None)!r})"
+        return (
+            f"Token("
+            f"{self.type}, "
+            f"{self.origin!r}, "
+            f"{getattr(self, 'value', None)!r}, "
+            f"line={self.line}"
+            f")"
+        )
 
 
 class Tokenizer:
@@ -93,28 +102,38 @@ class Tokenizer:
     def __init__(self):
         self._origin = ""
         self._idx = 0
+        self._line = 1
 
     def tokenize(self, string: str) -> list[Token]:
         self._origin = string
         self._idx = 0
+        self._line = 1
         tokens: list[Token] = []
 
         while self._idx_in_range():
             ch = self._peek()
+
             if ch.isspace():
+                if ch == "\n":
+                    self._line += 1
                 self._idx += 1
+
             elif ch in self._TOKENS:
                 tokens.append(self._read_single_character())
+
             elif ch == '"':
                 tokens.append(self._read_string())
+
             elif ch.isdigit():
                 tokens.append(self._read_number())
+
             elif ch.isalpha():
                 tokens.append(self._read_identifier())
+
             else:
                 raise ValueError(f"Unexpected character: {ch!r}")
 
-        tokens.append(Token(TokenType.EOF, ""))
+        tokens.append(Token(TokenType.EOF, "", line=self._line))
         return tokens
 
     def _idx_in_range(self) -> bool:
@@ -130,6 +149,8 @@ class Tokenizer:
         return self._origin[start : self._idx]
 
     def _read_single_character(self) -> Token:
+        line = self._line
+
         ch = self._peek()
         self._idx += 1
 
@@ -137,31 +158,51 @@ class Tokenizer:
             combined = ch + self._peek()
             if combined in self._TOKENS:
                 self._idx += 1
-                return Token(self._TOKENS[combined], combined)
+                return Token(self._TOKENS[combined], combined, line=line)
 
-        return Token(self._TOKENS[ch], ch)
+        return Token(self._TOKENS[ch], ch, line=line)
 
     def _read_string(self) -> Token:
+        line = self._line
+
         start = self._idx
         self._idx += 1
+
         while self._idx_in_range() and self._peek() != '"':
+            if self._peek() == "\n":
+                self._line += 1
             self._idx += 1
+
         if not self._idx_in_range():
             raise ValueError("Unterminated string")
+
         self._idx += 1
-        origin = self._origin[start : self._idx]
-        return Token(TokenType.STRING, origin, value=origin[1:-1])
+        origin = self._origin[start: self._idx]
+
+        return Token(TokenType.STRING, origin, value=origin[1:-1], line=line)
 
     def _read_number(self) -> Token:
+        line = self._line
+
         characters = self._read_multiple_characters(str.isdigit)
+
         if len(characters) > 1 and characters[0] == "0":
             raise ValueError("Number cannot start with zero")
+
         if self._idx_in_range() and self._peek() == ".":
             characters += self._peek()
             self._idx += 1
             characters += self._read_multiple_characters(str.isdigit)
-        return Token(TokenType.NUMBER, characters, value=float(characters))
+
+        return Token(TokenType.NUMBER, characters, value=float(characters), line=line)
 
     def _read_identifier(self) -> Token:
+        line = self._line
+
         origin = self._read_multiple_characters(str.isalnum)
-        return Token(self._TOKENS.get(origin, TokenType.IDENTIFIER), origin)
+
+        return Token(
+            self._TOKENS.get(origin, TokenType.IDENTIFIER),
+            origin,
+            line=line,
+        )

@@ -171,24 +171,6 @@ def test_file_mode_returns_error_when_file_not_found(tmp_path):
     assert outputs == [f"Error: file not found: {missing_file}"]
 
 
-def test_file_mode_uses_runner_with_file_source(tmp_path):
-    class FakeRunner:
-        def __init__(self):
-            self.source = None
-
-        def run_code(self, source):
-            self.source = source
-            return ["done"]
-
-    fake_runner = FakeRunner()
-    source_file = tmp_path / "sample.txt"
-    source_file.write_text("print 1;", encoding="utf-8")
-
-    outputs = FileMode(fake_runner).run_file(str(source_file))
-
-    assert outputs == ["done"]
-    assert fake_runner.source == "print 1;"
-
 
 def test_runner_returns_outputs_before_runtime_error(mocker):
     runner = CodeFabRunner()
@@ -206,3 +188,53 @@ def test_runner_returns_outputs_before_runtime_error(mocker):
     outputs = runner.run_code("invalid code")
 
     assert outputs == ["Error: runtime error"]
+
+
+def test_file_mode_stops_immediately_when_runtime_error_occurs(tmp_path):
+    source_file = tmp_path / "sample.txt"
+    source_file.write_text(
+        "print 1;\n"
+        "print 10 / 0;\n"
+        "print 3;\n",
+        encoding="utf-8",
+    )
+
+    outputs = FileMode().run_file(str(source_file))
+
+    assert outputs == [
+        "1",
+        "Error at line 2: Division by zero.",
+    ]
+
+def test_file_mode_prints_runtime_error_with_line_number(tmp_path):
+    source_file = tmp_path / "sample.txt"
+    source_file.write_text(
+        "print 1;\n"
+        "print 10 / 0;\n"
+        "print 3;\n",
+        encoding="utf-8",
+    )
+
+    outputs = FileMode().run_file(str(source_file))
+
+    assert outputs == [
+        "1",
+        "Error at line 2: Division by zero.",
+    ]
+
+def test_file_mode_stops_immediately_after_runtime_error(tmp_path):
+    source_file = tmp_path / "sample.txt"
+    source_file.write_text(
+        "print 1;\n"
+        "print 10 / 0;\n"
+        "print 999;\n",
+        encoding="utf-8",
+    )
+
+    outputs = FileMode().run_file(str(source_file))
+
+    assert "999" not in outputs
+    assert outputs == [
+        "1",
+        "Error at line 2: Division by zero.",
+    ]
