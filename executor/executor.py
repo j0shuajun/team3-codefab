@@ -92,6 +92,14 @@ class Executor:
             raise ReturnSignal(value)
 
         if isinstance(stmt, ClassStmt):
+            superclass = None
+
+            if stmt.superclass is not None:
+                superclass = self.evaluate(stmt.superclass)
+
+                if not isinstance(superclass, UserClass):
+                    raise RuntimeError("Superclass must be a class.")
+
             self.environment.define(stmt.name.origin, None)
 
             methods = {}
@@ -99,7 +107,7 @@ class Executor:
                 function = UserFunction(method, self.environment)
                 methods[method.name.origin] = function
 
-            klass = UserClass(stmt.name.origin, methods)
+            klass = UserClass(stmt.name.origin, methods, superclass)
             self.environment.assign(stmt.name, klass)
             return
 

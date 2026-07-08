@@ -151,3 +151,45 @@ def test_class_init_sets_field():
     )
 
     assert executor.outputs == ["AndOr"]
+
+
+def test_subclass_inherits_parent_method():
+    executor = run([
+        ClassStmt(
+            token(TokenType.IDENTIFIER, "Robot"),
+            [
+                FunctionStmt(
+                    token(TokenType.IDENTIFIER, "move"),
+                    [],
+                    [
+                        PrintStmt(LiteralExpr("move"))
+                    ],
+                )
+            ],
+        ),
+        ClassStmt(
+            token(TokenType.IDENTIFIER, "SpeedRobot"),
+            [],
+            VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+        ),
+        VarStmt(
+            token(TokenType.IDENTIFIER, "r"),
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "SpeedRobot")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            ),
+        ),
+        ExpressionStmt(
+            CallExpr(
+                GetExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "r")),
+                    token(TokenType.IDENTIFIER, "move"),
+                ),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["move"]
