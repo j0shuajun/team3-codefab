@@ -98,9 +98,13 @@ class Executor:
                 superclass = self.evaluate(stmt.superclass)
 
                 if not isinstance(superclass, UserClass):
-                    raise RuntimeError("Superclass must be a class.")
+                    raise CodeFabRuntimeError("Superclass must be a class.")
 
             self.environment.define(stmt.name.origin, None)
+
+            if superclass is not None:
+                self.environment = Environment(self.environment)
+                self.environment.define("Super", superclass)
 
             methods = {}
             for method in stmt.methods:
@@ -108,10 +112,12 @@ class Executor:
                 methods[method.name.origin] = function
 
             klass = UserClass(stmt.name.origin, methods, superclass)
+
+            if superclass is not None:
+                self.environment = self.environment.enclosing
+
             self.environment.assign(stmt.name, klass)
             return
-
-        raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def evaluate(self, expr):
         if isinstance(expr, LiteralExpr):
