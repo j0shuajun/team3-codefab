@@ -86,3 +86,40 @@ class ForStmt(Stmt):
             f"increment={self.increment}, "
             f"body={self.body})"
         )
+
+
+class FunctionStmt(Stmt):
+    """Func name(params) { body } 함수 선언문"""
+
+    def __init__(self, name: Token, params: list[Token], body: list[Stmt]):
+        self.name = name
+        self.params = params
+        self.body = body
+
+    def __repr__(self):
+        param_names = [param.origin for param in self.params]
+        return (
+            f"FunctionStmt({self.name.origin}, params={param_names}, body={self.body})"
+        )
+
+
+class ReturnStmt(Stmt):
+    """return expression; 문장"""
+
+    def __init__(self, keyword: Token, value: Expr = None):
+        self.keyword = keyword
+        self.value = value
+
+    def __repr__(self):
+        return f"ReturnStmt({self.value})"
+
+
+class ClassStmt(Stmt):
+    """Class Name { methods... } 클래스 선언문"""
+
+    def __init__(self, name: Token, methods: list[FunctionStmt]):
+        self.name = name
+        self.methods = methods
+
+    def __repr__(self):
+        return f"ClassStmt({self.name.origin}, methods={self.methods})"

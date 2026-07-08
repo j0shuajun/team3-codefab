@@ -48,6 +48,21 @@ class ScopeStack:
         scope = self._find_scope(name)
         return scope is not None and scope[name] is False
 
+    def distance_to(self, name):
+        """현재(가장 안쪽) 스코프 기준으로 이름이 몇 단계 위 스코프에 선언돼 있는지 반환한다.
+
+        현재 스코프에 있으면 0, 그보다 한 단계 위면 1, ... 식이다.
+        전역 스코프(스택의 맨 아래)에서 찾았거나 아예 못 찾았으면(=미선언) None 을 반환한다.
+        전역 변수는 Executor 의 globals 환경에 항상 바로 있으므로 정적 바인딩 대상이 아니다.
+        """
+        scopes_from_innermost = list(reversed(self._scopes))
+        global_depth = len(scopes_from_innermost) - 1
+
+        for depth, scope in enumerate(scopes_from_innermost):
+            if name in scope:
+                return None if depth == global_depth else depth
+        return None
+
     def snapshot(self):
         """현재 스코프 스택 상태를 복사해서 반환한다."""
         return [dict(scope) for scope in self._scopes]

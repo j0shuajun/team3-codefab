@@ -15,8 +15,10 @@ from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
+    FunctionStmt,
     IfStmt,
     PrintStmt,
+    ReturnStmt,
     VarStmt,
 )
 from assembler.tokenizer import Token, TokenType
@@ -367,6 +369,44 @@ def test_parse_call_expression():
     assert len(expr.arguments) == 2
     assert expr.arguments[0].value == 1
     assert expr.arguments[1].value == 2
+
+
+def test_parse_function_declaration():
+    statements = parse(
+        [
+            token(TokenType.FUNC, "Func"),
+            token(TokenType.IDENTIFIER, "add"),
+            token(TokenType.LEFT_PAREN, "("),
+            token(TokenType.IDENTIFIER, "a"),
+            token(TokenType.COMMA, ","),
+            token(TokenType.IDENTIFIER, "b"),
+            token(TokenType.RIGHT_PAREN, ")"),
+            token(TokenType.LEFT_BRACE, "{"),
+            token(TokenType.RIGHT_BRACE, "}"),
+        ]
+    )
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, FunctionStmt)
+    assert stmt.name.origin == "add"
+    assert [param.origin for param in stmt.params] == ["a", "b"]
+    assert stmt.body == []
+
+
+def test_parse_return_statement():
+    statements = parse(
+        [
+            token(TokenType.RETURN, "return"),
+            token(TokenType.NUMBER, "10", 10),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    stmt = statements[0]
+
+    assert isinstance(stmt, ReturnStmt)
+    assert stmt.value.value == 10
 
 
 def test_parse_index_get_expression():

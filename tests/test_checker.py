@@ -477,3 +477,58 @@ class TestStmtFlowSensitivity:
 
         assert len(errors) == 1
         assert "x" in errors[0]
+
+
+class TestCheckPerformsConstantFolding:
+    def test_check_folds_constant_subexpression_in_place(self):
+        # var a = 2 + 3;
+        # check() 를 호출하고 나면, 호출부가 들고 있는 statements 트리 자체가
+        # 이미 상수 폴딩된 상태여야 한다 (Checker.check() 가 내부적으로
+        # ConstantFolder 를 먼저 돌리고, 그 결과로 검사를 수행하기 때문).
+        plus = Token(TokenType.PLUS, "+")
+        initializer = BinaryExpr(LiteralExpr(2), plus, LiteralExpr(3))
+        statements = [
+            VarStmt(token("a"), initializer),
+        ]
+
+        errors = check(statements)
+
+        assert errors == []
+        assert isinstance(statements[0].initializer, LiteralExpr)
+        assert statements[0].initializer.value == 5
+
+    def test_check_still_reports_errors_using_the_folded_tree(self):
+        # var a = a + (2 + 3);
+        # 자기 참조 검사는 상수 폴딩 이후에도 정확히 동작해야 한다: 안쪽의
+        # (2 + 3) 은 5 로 접히더라도, 바깥의 VariableExpr(a) 는 그대로 남아
+        # 자기 참조 오류가 검출돼야 한다.
+        plus = Token(TokenType.PLUS, "+")
+        initializer = BinaryExpr(
+            VariableExpr(token("a")),
+            plus,
+            BinaryExpr(LiteralExpr(2), plus, LiteralExpr(3)),
+        )
+        statements = [
+            VarStmt(token("a"), initializer),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "a" in errors[0]
+        assert isinstance(statements[0].initializer.right, LiteralExpr)
+        assert statements[0].initializer.right.value == 5
+
+    def test_division_by_zero_constant_is_left_for_runtime_to_reject(self):
+        # 상수 폴딩이 0으로 나누기를 미리 계산하려다 실패하면, 트리를 그대로
+        # 두어 실행 시점에 지금처럼 런타임 오류가 나게 해야 한다. Checker 는
+        # 이런 계산 실패를 스스로 오류로 보고하지 않는다 (검사 대상이 아님).
+        slash = Token(TokenType.SLASH, "/")
+        statements = [
+            VarStmt(token("a"), BinaryExpr(LiteralExpr(3), slash, LiteralExpr(0))),
+        ]
+
+        errors = check(statements)
+
+        assert errors == []
+        assert isinstance(statements[0].initializer, BinaryExpr)

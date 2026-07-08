@@ -9,62 +9,62 @@ class TokenType(Enum):
     STRING = auto()
     NUMBER = auto()
     # Assignment
-    EQUAL = auto()
+    EQUAL = "="
     # Grouping
-    LEFT_PAREN = auto()
-    RIGHT_PAREN = auto()
+    LEFT_PAREN = "("
+    RIGHT_PAREN = ")"
     # Block scope
-    LEFT_BRACE = auto()
-    RIGHT_BRACE = auto()
+    LEFT_BRACE = "{"
+    RIGHT_BRACE = "}"
     # Array
-    LEFT_BRACKET = auto()
-    RIGHT_BRACKET = auto()
+    LEFT_BRACKET = "["
+    RIGHT_BRACKET = "]"
     # Member access
-    DOT = auto()
+    DOT = "."
     # Inheritance
-    COLON = auto()
+    COLON = ":"
     # Comparison
-    LESS = auto()
-    GREATER = auto()
-    LESS_EQUAL = auto()
-    GREATER_EQUAL = auto()
-    EQUAL_EQUAL = auto()
-    BANG_EQUAL = auto()
+    LESS = "<"
+    GREATER = ">"
+    LESS_EQUAL = "<="
+    GREATER_EQUAL = ">="
+    EQUAL_EQUAL = "=="
+    BANG_EQUAL = "!="
     # Operation
-    PLUS = auto()
-    MINUS = auto()
-    STAR = auto()
-    SLASH = auto()
+    PLUS = "+"
+    MINUS = "-"
+    STAR = "*"
+    SLASH = "/"
     # Logical
-    BANG = auto()
-    AND = auto()
-    OR = auto()
+    BANG = "!"
+    AND = "and"
+    OR = "or"
     # Delimiter
-    SEMICOLON = auto()
-    COMMA = auto()
+    SEMICOLON = ";"
+    COMMA = ","
     # Variable
-    VAR = auto()
+    VAR = "var"
     # Boolean
-    TRUE = auto()
-    FALSE = auto()
+    TRUE = "true"
+    FALSE = "false"
     # Print
-    PRINT = auto()
+    PRINT = "print"
     # Conditional
-    IF = auto()
-    ELSE = auto()
+    IF = "if"
+    ELSE = "else"
     # Loop
-    FOR = auto()
+    FOR = "for"
     # Function
-    FUNC = auto()
-    RETURN = auto()
+    FUNC = "Func"
+    RETURN = "return"
     # Class
-    CLASS = auto()
-    THIS = auto()
-    SUPER = auto()
-    INSTANCEOF = auto()
+    CLASS = "Class"
+    THIS = "This"
+    SUPER = "Super"
+    INSTANCEOF = "instanceof"
     # Import
-    IMPORT = auto()
-    ALIAS = auto()
+    IMPORT = "import"
+    ALIAS = "alias"
 
 
 class Token:
@@ -84,67 +84,11 @@ class Token:
         )
 
     def __repr__(self):
-        return f"Token({self.type}, {self.origin!r}, {getattr(self, "value", None) !r})"
+        return f"Token({self.type}, {self.origin!r}, {getattr(self, 'value', None)!r})"
 
 
 class Tokenizer:
-    _SINGLE_CHARACTER_TOKENS = {
-        # 할당
-        "=": TokenType.EQUAL,
-        # 그룹핑
-        "(": TokenType.LEFT_PAREN,
-        ")": TokenType.RIGHT_PAREN,
-        # 블록스코프
-        "{": TokenType.LEFT_BRACE,
-        "}": TokenType.RIGHT_BRACE,
-        # 비교
-        "<": TokenType.LESS,
-        ">": TokenType.GREATER,
-        # 산술연산
-        "+": TokenType.PLUS,
-        "-": TokenType.MINUS,
-        "*": TokenType.STAR,
-        "/": TokenType.SLASH,
-        # 논리연산
-        "!": TokenType.BANG,
-        # 구분자
-        ";": TokenType.SEMICOLON,
-        ",": TokenType.COMMA,
-        # 배열
-        "[": TokenType.LEFT_BRACKET,
-        "]": TokenType.RIGHT_BRACKET,
-        # 필드 접근
-        ".": TokenType.DOT,
-        # 상속
-        ":": TokenType.COLON,
-    }
-
-    _CHARACTER_WITH_EQUAL_TOKENS = {
-        "!": TokenType.BANG_EQUAL,
-        "=": TokenType.EQUAL_EQUAL,
-        ">": TokenType.GREATER_EQUAL,
-        "<": TokenType.LESS_EQUAL,
-    }
-
-    _RESERVED_TOKENS = {
-        "if": TokenType.IF,
-        "else": TokenType.ELSE,
-        "var": TokenType.VAR,
-        "true": TokenType.TRUE,
-        "false": TokenType.FALSE,
-        "print": TokenType.PRINT,
-        "and": TokenType.AND,
-        "or": TokenType.OR,
-        "for": TokenType.FOR,
-        "Func": TokenType.FUNC,
-        "return": TokenType.RETURN,
-        "Class": TokenType.CLASS,
-        "This": TokenType.THIS,
-        "Super": TokenType.SUPER,
-        "instanceof": TokenType.INSTANCEOF,
-        "import": TokenType.IMPORT,
-        "alias": TokenType.ALIAS,
-    }
+    _TOKENS = {T.value: T for T in TokenType if isinstance(T.value, str)}
 
     def __init__(self):
         self._origin = ""
@@ -159,7 +103,7 @@ class Tokenizer:
             ch = self._peek()
             if ch.isspace():
                 self._idx += 1
-            elif ch in self._SINGLE_CHARACTER_TOKENS:
+            elif ch in self._TOKENS:
                 tokens.append(self._read_single_character())
             elif ch == '"':
                 tokens.append(self._read_string())
@@ -189,15 +133,13 @@ class Tokenizer:
         ch = self._peek()
         self._idx += 1
 
-        if (
-            ch in self._CHARACTER_WITH_EQUAL_TOKENS
-            and self._idx_in_range()
-            and self._peek() == "="
-        ):
-            self._idx += 1
-            return Token(self._CHARACTER_WITH_EQUAL_TOKENS[ch], ch + "=")
+        if self._idx_in_range():
+            combined = ch + self._peek()
+            if combined in self._TOKENS:
+                self._idx += 1
+                return Token(self._TOKENS[combined], combined)
 
-        return Token(self._SINGLE_CHARACTER_TOKENS[ch], ch)
+        return Token(self._TOKENS[ch], ch)
 
     def _read_string(self) -> Token:
         start = self._idx
@@ -222,4 +164,4 @@ class Tokenizer:
 
     def _read_identifier(self) -> Token:
         origin = self._read_multiple_characters(str.isalnum)
-        return Token(self._RESERVED_TOKENS.get(origin, TokenType.IDENTIFIER), origin)
+        return Token(self._TOKENS.get(origin, TokenType.IDENTIFIER), origin)

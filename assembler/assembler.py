@@ -2,15 +2,28 @@ from .expr import (
     AssignExpr,
     BinaryExpr,
     CallExpr,
+    GetExpr,
     GroupingExpr,
     IndexGetExpr,
     IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
+    SetExpr,
+    ThisExpr,
     UnaryExpr,
     VariableExpr,
 )
-from .statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, PrintStmt, VarStmt
+from .statement import (
+    BlockStmt,
+    ClassStmt,
+    ExpressionStmt,
+    ForStmt,
+    FunctionStmt,
+    IfStmt,
+    PrintStmt,
+    ReturnStmt,
+    VarStmt,
+)
 from .tokenizer import TokenType
 
 
@@ -49,6 +62,9 @@ class Assembler:
     def statement(self):
         if self.match(TokenType.PRINT):
             return self.print_statement()
+
+        if self.match(TokenType.RETURN):
+            return self.return_statement()
 
         if self.match(TokenType.IF):
             return self.if_statement()
@@ -128,6 +144,9 @@ class Assembler:
             if isinstance(expression, VariableExpr):
                 return AssignExpr(expression.name, value)
 
+            if isinstance(expression, GetExpr):
+                return SetExpr(expression.object, expression.name, value)
+
             if isinstance(expression, IndexGetExpr):
                 return IndexSetExpr(
                     expression.array, expression.bracket, expression.index, value
@@ -200,6 +219,9 @@ class Assembler:
             self.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
             return GroupingExpr(expression)
 
+        if self.match(TokenType.THIS):
+            return ThisExpr(self.previous())
+
         raise AssemblerError("Expected expression.")
 
     def match(self, *types):
@@ -262,6 +284,12 @@ class Assembler:
         return self.call()
 
     def declaration(self):
+        if self.match(TokenType.CLASS):
+            return self.class_declaration()
+
+        if self.match(TokenType.FUNC):
+            return self.function_declaration()
+
         if self.match(TokenType.VAR):
             return self.var_declaration()
 
@@ -278,17 +306,23 @@ class Assembler:
         return VarStmt(name, initializer)
 
     def call(self):
-        expr = self.primary()
+        expression = self.primary()
 
         while True:
             if self.match(TokenType.LEFT_PAREN):
+                expression = self.finish_call(expression)
+            elif self.match(TokenType.DOT):
+                name = self.consume(
+                    TokenType.IDENTIFIER, "Expected property name after '.'."
+                )
+                expression = GetExpr(expression, name)
                 expr = self.finish_call(expr)
             elif self.match(TokenType.LEFT_BRACKET):
                 expr = self.finish_index(expr)
             else:
                 break
 
-        return expr
+        return expression
 
     def finish_call(self, callee):
         arguments = []
@@ -303,6 +337,74 @@ class Assembler:
         paren = self.consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.")
 
         return CallExpr(callee, paren, arguments)
+
+    def function_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected function name.")
+
+        self.consume(TokenType.LEFT_PAREN, "Expected '(' after function name.")
+
+        params = []
+        if not self.check(TokenType.RIGHT_PAREN):
+            while True:
+                params.append(
+                    self.consume(TokenType.IDENTIFIER, "Expected parameter name.")
+                )
+
+                if not self.match(TokenType.COMMA):
+                    break
+
+        self.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.")
+        self.consume(TokenType.LEFT_BRACE, "Expected '{' before function body.")
+
+        body = self.block()
+
+        return FunctionStmt(name, params, body)
+
+    def return_statement(self):
+        keyword = self.previous()
+
+        value = None
+        if not self.check(TokenType.SEMICOLON):
+            value = self.expression()
+
+        self.consume(TokenType.SEMICOLON, "Expected ';' after return value.")
+
+        return ReturnStmt(keyword, value)
+
+    def class_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected class name.")
+
+        self.consume(TokenType.LEFT_BRACE, "Expected '{' before class body.")
+
+        methods = []
+        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            methods.append(self.method_declaration())
+
+        self.consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.")
+
+        return ClassStmt(name, methods)
+
+    def method_declaration(self):
+        name = self.consume(TokenType.IDENTIFIER, "Expected method name.")
+
+        self.consume(TokenType.LEFT_PAREN, "Expected '(' after method name.")
+
+        params = []
+        if not self.check(TokenType.RIGHT_PAREN):
+            while True:
+                params.append(
+                    self.consume(TokenType.IDENTIFIER, "Expected parameter name.")
+                )
+
+                if not self.match(TokenType.COMMA):
+                    break
+
+        self.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.")
+        self.consume(TokenType.LEFT_BRACE, "Expected '{' before method body.")
+
+        body = self.block()
+
+        return FunctionStmt(name, params, body)
 
     def finish_index(self, array):
         index = self.expression()
