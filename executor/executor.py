@@ -8,14 +8,14 @@ from assembler.expr import (
     UnaryExpr,
     VariableExpr,
 )
-from assembler.runtime import Callable, NativeFunction
+from assembler.runtime import Callable, NativeFunction, UserFunction
 from assembler.statement import (
     BlockStmt,
     ExpressionStmt,
     ForStmt,
     IfStmt,
     PrintStmt,
-    VarStmt,
+    VarStmt, FunctionStmt,
 )
 from assembler.tokenizer import TokenType
 from assembler.environment import Environment
@@ -68,6 +68,11 @@ class Executor:
 
         if isinstance(stmt, ForStmt):
             self.execute_for(stmt)
+            return
+
+        if isinstance(stmt, FunctionStmt):
+            function = UserFunction(stmt, self.environment)
+            self.environment.define(stmt.name.origin, function)
             return
 
         raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")

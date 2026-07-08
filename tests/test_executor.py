@@ -7,7 +7,7 @@ from assembler.expr import (
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr,
+    VariableExpr, CallExpr,
 )
 from assembler.statement import (
     BlockStmt,
@@ -15,7 +15,7 @@ from assembler.statement import (
     ForStmt,
     IfStmt,
     PrintStmt,
-    VarStmt,
+    VarStmt, FunctionStmt,
 )
 from assembler.tokenizer import Token, TokenType
 from executor.executor import CodeFabRuntimeError, Executor
@@ -446,3 +446,24 @@ def test_for_block_statement():
     )
 
     assert executor.outputs == ["0", "1", "2"]
+
+
+def test_execute_function_without_return():
+    executor = run([
+        FunctionStmt(
+            token(TokenType.IDENTIFIER, "hello"),
+            [],
+            [
+                PrintStmt(LiteralExpr("hi"))
+            ],
+        ),
+        ExpressionStmt(
+            CallExpr(
+                VariableExpr(token(TokenType.IDENTIFIER, "hello")),
+                token(TokenType.RIGHT_PAREN, ")"),
+                [],
+            )
+        ),
+    ])
+
+    assert executor.outputs == ["hi"]
