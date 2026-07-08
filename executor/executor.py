@@ -132,6 +132,8 @@ class Executor:
             self.environment.assign(stmt.name, klass)
             return
 
+        raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
+
     def evaluate(self, expr):
         if isinstance(expr, LiteralExpr):
             return expr.value
