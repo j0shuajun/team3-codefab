@@ -67,11 +67,14 @@ class Assembler:
             return self.for_statement()
 
         if self.match(TokenType.LEFT_BRACE):
-            return BlockStmt(self.block())
+            left_brace = self.previous()
+            return BlockStmt(self.block(), line=getattr(left_brace, "line", None))
 
         return self.expression_statement()
 
     def for_statement(self):
+        for_token = self.previous()
+
         self.consume(TokenType.LEFT_PAREN, "Expected '(' after for.")
 
         if self.match(TokenType.SEMICOLON):
@@ -95,9 +98,17 @@ class Assembler:
 
         body = self.statement()
 
-        return ForStmt(initializer, condition, increment, body)
+        return ForStmt(
+            initializer,
+            condition,
+            increment,
+            body,
+            line=getattr(for_token, "line", None),
+        )
 
     def if_statement(self):
+        if_token = self.previous()
+
         self.consume(TokenType.LEFT_PAREN, "Expected '(' after if.")
         condition = self.expression()
         self.consume(TokenType.RIGHT_PAREN, "Expected ')' after if condition.")
@@ -108,7 +119,12 @@ class Assembler:
         if self.match(TokenType.ELSE):
             else_branch = self.statement()
 
-        return IfStmt(condition, then_branch, else_branch)
+        return IfStmt(
+            condition,
+            then_branch,
+            else_branch,
+            line=getattr(if_token, "line", None),
+        )
 
     def block(self):
         statements = []
@@ -120,14 +136,26 @@ class Assembler:
         return statements
 
     def print_statement(self):
+        print_token = self.previous()
+
         expression = self.expression()
         self.consume(TokenType.SEMICOLON, "Expected ';' after value.")
-        return PrintStmt(expression)
+
+        return PrintStmt(
+            expression,
+            line=getattr(print_token, "line", None),
+        )
 
     def expression_statement(self):
+        start_token = self.peek()
+
         expression = self.expression()
         self.consume(TokenType.SEMICOLON, "Expected ';' after expression.")
-        return ExpressionStmt(expression)
+
+        return ExpressionStmt(
+            expression,
+            line=getattr(start_token, "line", None),
+        )
 
     def assignment(self):
         expression = self.logic_or()
