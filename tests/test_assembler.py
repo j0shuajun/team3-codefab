@@ -4,6 +4,7 @@ from assembler.expr import (
     BinaryExpr,
     CallExpr,
     GroupingExpr,
+    IndexGetExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
@@ -365,3 +366,22 @@ def test_parse_call_expression():
     assert len(expr.arguments) == 2
     assert expr.arguments[0].value == 1
     assert expr.arguments[1].value == 2
+
+
+def test_parse_index_get_expression():
+    statements = parse(
+        [
+            token(TokenType.IDENTIFIER, "arr"),
+            token(TokenType.LEFT_BRACKET, "["),
+            token(TokenType.NUMBER, "0", 0),
+            token(TokenType.RIGHT_BRACKET, "]"),
+            token(TokenType.SEMICOLON, ";"),
+        ]
+    )
+
+    expr = statements[0].expression
+
+    assert isinstance(expr, IndexGetExpr)
+    assert isinstance(expr.array, VariableExpr)
+    assert expr.array.name.origin == "arr"
+    assert expr.index.value == 0

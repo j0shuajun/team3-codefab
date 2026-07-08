@@ -81,3 +81,15 @@ class LogicalExpr(Expr):
 
     def __repr__(self):
         return f"LogicalExpr({self.left}, {self.operator.origin}, {self.right})"
+
+
+class IndexGetExpr(Expr):
+    """array[index] 형태의 배열 읽기 노드"""
+
+    def __init__(self, array: Expr, bracket: Token, index: Expr):
+        self.array = array  # Expr: 평가 결과가 배열(list)이어야 함
+        self.bracket = bracket  # Token: ]
+        self.index = index
+
+    def __repr__(self):
+        return f"IndexGetExpr({self.array}, {self.index})"

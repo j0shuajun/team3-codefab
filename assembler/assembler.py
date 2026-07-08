@@ -3,6 +3,7 @@ from .expr import (
     BinaryExpr,
     CallExpr,
     GroupingExpr,
+    IndexGetExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
@@ -276,6 +277,8 @@ class Assembler:
         while True:
             if self.match(TokenType.LEFT_PAREN):
                 expr = self.finish_call(expr)
+            elif self.match(TokenType.LEFT_BRACKET):
+                expr = self.finish_index(expr)
             else:
                 break
 
@@ -294,3 +297,8 @@ class Assembler:
         paren = self.consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.")
 
         return CallExpr(callee, paren, arguments)
+
+    def finish_index(self, array):
+        index = self.expression()
+        bracket = self.consume(TokenType.RIGHT_BRACKET, "Expected ']' after index.")
+        return IndexGetExpr(array, bracket, index)
