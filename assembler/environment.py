@@ -1,3 +1,8 @@
+
+class CodeFabRuntimeError(Exception):
+    pass
+
+
 class Environment:
     def __init__(self, enclosing=None):
         self.values = {}
@@ -15,7 +20,7 @@ class Environment:
         if self.enclosing is not None:
             return self.enclosing.get(name_token)
 
-        raise RuntimeError(f"Undefined variable '{name}'.")
+        raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
 
     def assign(self, name_token, value):
         name = name_token.origin
@@ -28,4 +33,4 @@ class Environment:
             self.enclosing.assign(name_token, value)
             return
 
-        raise RuntimeError(f"Undefined variable '{name}'.")
+        raise CodeFabRuntimeError(f"Undefined variable '{name}'.")

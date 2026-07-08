@@ -501,3 +501,29 @@ def test_execute_function_with_return_value():
     ])
 
     assert executor.outputs == ["10"]
+
+
+def test_function_argument_count_mismatch():
+    with pytest.raises(CodeFabRuntimeError):
+        run([
+            FunctionStmt(
+                token(TokenType.IDENTIFIER, "add"),
+                [
+                    token(TokenType.IDENTIFIER, "a"),
+                    token(TokenType.IDENTIFIER, "b"),
+                ],
+                [
+                    ReturnStmt(
+                        token(TokenType.RETURN, "return"),
+                        LiteralExpr(0),
+                    )
+                ],
+            ),
+            PrintStmt(
+                CallExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "add")),
+                    token(TokenType.RIGHT_PAREN, ")"),
+                    [LiteralExpr(1)],
+                )
+            ),
+        ])

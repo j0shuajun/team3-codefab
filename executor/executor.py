@@ -18,11 +18,7 @@ from assembler.statement import (
     VarStmt, FunctionStmt, ReturnStmt,
 )
 from assembler.tokenizer import TokenType
-from assembler.environment import Environment
-
-
-class CodeFabRuntimeError(Exception):
-    pass
+from assembler.environment import Environment, CodeFabRuntimeError
 
 
 class Executor:
