@@ -10,13 +10,14 @@ class Environment:
         self.values[name] = value
 
     def get(self, name_token):
-        name = name_token.origin
+        return self.get_by_name(name_token.origin)
 
+    def get_by_name(self, name):
         if name in self.values:
             return self.values[name]
 
         if self.enclosing is not None:
-            return self.enclosing.get(name_token)
+            return self.enclosing.get_by_name(name)
 
         raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
 
