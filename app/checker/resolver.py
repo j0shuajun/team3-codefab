@@ -353,7 +353,9 @@ class StatementResolver(Resolver):
         path = statement.path.value
         path_key = f"__import_path__:{path}"
         if not self._scopes.declare(path_key):
-            self._error_reporter.report(f"Import '{path}' already imported in this scope.")
+            self._error_reporter.report(
+                f"Import '{path}' already imported in this scope."
+            )
         self._scopes.initialize(path_key)
 
         alias = statement.alias.origin
