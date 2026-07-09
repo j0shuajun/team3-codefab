@@ -191,11 +191,28 @@ Ctrl-C: 서로의 강점을 복사해 함께 성장하는 팀
 | 파일 실행 | `make run sample.cfab` |
 | 디버그 실행 | `make debug sample.cfab` |
 
-## 아직 ideation으로 남은 것
+## Alias
+Token 값을 alias로 입력해도 실행이 가능하다.
 
-| 아이디어 | 현재 상태 | 다음에 정할 점 |
+| TokenType | 원본 | alias |
 |---|---|---|
-| 이모티콘 문법 | 미구현 | 토큰으로 읽을지, 표준 함수/별칭으로 둘지 결정 필요 |
-| 한글 keyword | 구현 중 | 기존 영어 키워드와 alias를 같이 둘지, 한글 전용 흐름을 둘지 결정 필요 |
-| `ctrl_c()` 팀 소개 | 구현 방향 확정 | 출력 문구와 팀원 표기 형식을 확정해야 함 |
-| `explain` | 구현 중 | statement block을 받을지, 직전 실행 결과를 설명할지 결정 필요 |
+| VAR | var | 값, 만들게 |
+| PRINT | print | 출력, 보여줘, 찍어줘 |
+| FUNC | Func | 함수, 펑펑 |
+| RETURN | return | 반환, 돌려줘 |
+| CLASS | Class | 클래스, 틀, 붕어빵틀 |
+| THIS | This | 이것, 나야 |
+| SUPER | Super | 부모, 엄빠 |
+| IF | if | 만약, 혹시 |
+| ELSE | else | 아니면 |
+| FOR | for | 반복, 또또 |
+| TRUE | true | 참, ㅇㅇ |
+| FALSE | false | 거짓, ㄴㄴ |
+| AND | and | 그리고, 이랑 |
+| OR | or | 또는, 이나 |
+| GREATER | > | 크다 |
+| LESS | < | 작다 |
+| EQUAL_EQUAL | == | 같다, 똑같아 |
+| BANG_EQUAL | != | 다르다, 달라 |
+| GREATER_EQUAL | >= | 크거나같다 |
+| LESS_EQUAL | <= | 작거나같다 |
