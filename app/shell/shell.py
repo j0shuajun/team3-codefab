@@ -1,21 +1,23 @@
 from collections import Counter
 
+from app.shell.commands import ShellCommandFactory
 from app.shell.explain_mode import ExplainMode
 from app.shell.runner import CodeFabRunner
 
 
 class PromptShell:
-    EXIT_COMMANDS = ("exit", "quit")
-    EXPLAIN_COMMAND = "explain"
-
-    def __init__(self, history_size=10):
-        self.runner = CodeFabRunner()
-        self.explainer = ExplainMode()
+    def __init__(self, history_size=10, runner=None, explainer=None):
+        self.runner = runner or CodeFabRunner()
+        self.explainer = explainer or ExplainMode()
 
         self.history_size = history_size
-        self.history = []
+        self.command_history = []
         self.recommended_command = None
         self.is_running = True
+
+    @property
+    def history(self):
+        return [command.history_key() for command in self.command_history]
 
     def run(self):
         print("CodeFab Prompt Shell")
@@ -35,58 +37,36 @@ class PromptShell:
         if source == "":
             return []
 
-        shell_outputs = self.run_shell_command(source)
-        if shell_outputs is not None:
-            return shell_outputs
+        command = ShellCommandFactory.create(source)
 
-        self.save_history(source)
-        return self.run_code(source)
+        if command.should_save_history():
+            self.save_history(command)
 
-    def run_shell_command(self, source):
-        if source in self.EXIT_COMMANDS:
-            self.is_running = False
-            return ["Bye!"]
-
-        if source == "ctrlc":
-            return self.recommend_command()
-
-        if source == "ctrlv":
-            return self.run_recommended_command()
-
-        if source == self.EXPLAIN_COMMAND:
-            return ["Usage: explain <code>"]
-
-        if source.startswith(f"{self.EXPLAIN_COMMAND} "):
-            code = source[len(self.EXPLAIN_COMMAND) :].strip()
-
-            if code == "":
-                return ["Usage: explain <code>"]
-
-            return self.explainer.explain_source(code)
-
-        return None
+        return command.execute(self)
 
     def run_code(self, source):
         return self.runner.run_code(source)
 
-    def save_history(self, source):
-        self.history.append(source)
+    def save_history(self, command):
+        self.command_history.append(command)
 
-        if len(self.history) > self.history_size:
-            self.history.pop(0)
+        if len(self.command_history) > self.history_size:
+            self.command_history.pop(0)
 
     def recommend_command(self):
-        if not self.history:
+        if not self.command_history:
             return ["추천할 명령어가 없습니다."]
 
-        command_counts = Counter(self.history)
+        command_counts = Counter(
+            command.history_key() for command in self.command_history
+        )
         max_count = max(command_counts.values())
 
-        for command in reversed(self.history):
-            if command_counts[command] == max_count:
+        for command in reversed(self.command_history):
+            if command_counts[command.history_key()] == max_count:
                 self.recommended_command = command
                 return [
-                    f"Ctrl+C 추천 명령어: {command}",
+                    f"Ctrl+C 추천 명령어: {command.history_key()}",
                     "ctrlv 를 입력하면 추천 명령어를 다시 실행합니다.",
                 ]
 
@@ -96,7 +76,7 @@ class PromptShell:
         if self.recommended_command is None:
             return ["먼저 ctrlc 로 추천 명령어를 생성해주세요."]
 
-        return self.run_code(self.recommended_command)
+        return self.recommended_command.execute(self)
 
 
 ReplMode = PromptShell
