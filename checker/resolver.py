@@ -309,7 +309,10 @@ class StatementResolver(Resolver):
             )
         self._scopes.initialize(name)
 
-        if statement.superclass is not None and statement.superclass.name.origin == name:
+        if (
+            statement.superclass is not None
+            and statement.superclass.name.origin == name
+        ):
             self._error_reporter.report("A class can't inherit from itself.")
 
         enclosing_class = self._class_context.current

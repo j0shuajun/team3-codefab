@@ -2,10 +2,12 @@ from assembler.expr import (
     AssignExpr,
     BinaryExpr,
     GroupingExpr,
+    IndexGetExpr,
+    IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
-    VariableExpr, IndexGetExpr, IndexSetExpr,
+    VariableExpr,
 )
 from assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
@@ -542,7 +544,9 @@ class TestIndexGetExprIsResolved:
     def test_uninitialized_array_variable_is_error(self):
         statements = [
             VarStmt(token("arr")),
-            ExpressionStmt(IndexGetExpr(VariableExpr(token("arr")), bracket(), LiteralExpr(0))),
+            ExpressionStmt(
+                IndexGetExpr(VariableExpr(token("arr")), bracket(), LiteralExpr(0))
+            ),
         ]
 
         errors = check(statements)
@@ -555,7 +559,9 @@ class TestIndexGetExprIsResolved:
             VarStmt(token("arr"), LiteralExpr(0)),
             VarStmt(token("i")),
             ExpressionStmt(
-                IndexGetExpr(VariableExpr(token("arr")), bracket(), VariableExpr(token("i")))
+                IndexGetExpr(
+                    VariableExpr(token("arr")), bracket(), VariableExpr(token("i"))
+                )
             ),
         ]
 
@@ -583,7 +589,9 @@ class TestIndexGetExprIsResolved:
             VarStmt(token("arr"), LiteralExpr(0)),
             VarStmt(token("i"), LiteralExpr(0)),
             ExpressionStmt(
-                IndexGetExpr(VariableExpr(token("arr")), bracket(), VariableExpr(token("i")))
+                IndexGetExpr(
+                    VariableExpr(token("arr")), bracket(), VariableExpr(token("i"))
+                )
             ),
         ]
 
@@ -615,7 +623,12 @@ class TestIndexSetExprIsResolved:
         statements = [
             VarStmt(token("arr")),
             ExpressionStmt(
-                IndexSetExpr(VariableExpr(token("arr")), bracket(), LiteralExpr(0), LiteralExpr(1))
+                IndexSetExpr(
+                    VariableExpr(token("arr")),
+                    bracket(),
+                    LiteralExpr(0),
+                    LiteralExpr(1),
+                )
             ),
         ]
 

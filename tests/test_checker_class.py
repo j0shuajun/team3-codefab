@@ -71,7 +71,11 @@ class TestThisOutsideClass:
                 [
                     method(
                         "greet",
-                        [ExpressionStmt(GetExpr(ThisExpr(token("This")), token("name")))],
+                        [
+                            ExpressionStmt(
+                                GetExpr(ThisExpr(token("This")), token("name"))
+                            )
+                        ],
                     )
                 ],
             ),
