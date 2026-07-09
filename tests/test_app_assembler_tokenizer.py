@@ -551,6 +551,17 @@ def test_identifier_with_underscore(tokenizer):
     ]
 
 
+def test_heart_operator_token(tokenizer):
+    tokens = tokenizer.tokenize('"a" ♡ "b"')
+
+    assert tokens == [
+        Token(T.STRING, '"a"', value="a"),
+        Token(T.HEART, "♡"),
+        Token(T.STRING, '"b"', value="b"),
+        Token(T.EOF, ""),
+    ]
+
+
 # ===== 배열/필드 접근/상속 토큰 =====
 
 

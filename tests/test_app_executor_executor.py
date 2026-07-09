@@ -57,6 +57,37 @@ def test_binary_expression_plus():
     assert executor.outputs == ["5"]
 
 
+def test_binary_expression_heart_name_compatibility():
+    executor = run(
+        [
+            PrintStmt(
+                BinaryExpr(
+                    LiteralExpr("배성재"),
+                    token(TokenType.HEART, "♡"),
+                    LiteralExpr("장예원"),
+                )
+            )
+        ]
+    )
+
+    assert executor.outputs == ["77"]
+
+
+def test_binary_expression_heart_requires_hangul():
+    with pytest.raises(CodeFabRuntimeError):
+        run(
+            [
+                PrintStmt(
+                    BinaryExpr(
+                        LiteralExpr("abc"),
+                        token(TokenType.HEART, "♡"),
+                        LiteralExpr("장예원"),
+                    )
+                )
+            ]
+        )
+
+
 def test_binary_expression_greater():
     executor = run(
         [

@@ -14,6 +14,14 @@ def test_run_line_executes_code_with_assembler():
     assert outputs == ["37"]
 
 
+def test_run_line_heart_operator_computes_name_compatibility():
+    shell = make_shell()
+
+    outputs = shell.run_line('var a = "김철수" ♡ "박이안"; print a;')
+
+    assert outputs == ["75"]
+
+
 def test_run_line_strips_input():
     shell = make_shell()
 

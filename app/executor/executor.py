@@ -35,8 +35,9 @@ from app.assembler.statement import (
     VarStmt,
 )
 from app.assembler.tokenizer import TokenType
+from app.custom_function.ctrl_c_function import register_custom_functions
+from app.custom_function.name_compatibility import calculate_name_compatibility
 from app.exceptions import CodeFabRuntimeError
-from app.executor.custom_functions import register_custom_functions
 
 
 class Executor:
@@ -287,6 +288,9 @@ class Executor:
                 )
 
             return left.is_instance_of(right)
+
+        if expr.operator.type == TokenType.HEART:
+            return calculate_name_compatibility(left, right)
 
         raise CodeFabRuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 

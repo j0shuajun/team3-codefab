@@ -35,6 +35,7 @@ class TokenType(Enum):
     MINUS = "-"
     STAR = "*"
     SLASH = "/"
+    HEART = "♡"
     # Logical
     BANG = "!"
     AND = "and"
