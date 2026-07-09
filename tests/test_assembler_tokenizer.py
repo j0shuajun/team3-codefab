@@ -688,3 +688,54 @@ def test_import_alias(tokenizer):
         Token(T.IDENTIFIER, "sum"),
         Token(T.EOF, ""),
     ]
+
+
+# ===== line 번호 추적 =====
+
+
+def test_single_line(tokenizer):
+    tokens = tokenizer.tokenize("age = 37")
+
+    assert [token.line for token in tokens] == [1, 1, 1, 1]
+
+
+def test_two_line(tokenizer):
+    tokens = tokenizer.tokenize("var a = 1;\nvar b = 2;")
+
+    lines = [token.line for token in tokens]
+
+    assert lines == [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
+
+
+def test_two_line_with_string(tokenizer):
+    tokens = tokenizer.tokenize('var a = "hi";\nvar b = 1;')
+
+    assert tokens[3].origin == '"hi"'
+    assert tokens[3].line == 1
+    assert tokens[5].line == 2
+
+def test_multiple_new_line(tokenizer):
+    tokens = tokenizer.tokenize("a;\n\nb;")
+
+    lines = [token.line for token in tokens]
+
+    assert lines == [1, 1, 3, 3, 3]
+
+
+
+def test_start_new_line(tokenizer):
+    tokens = tokenizer.tokenize("\n\nvar a=1")
+
+    lines = [token.line for token in tokens]
+
+    assert lines == [3, 3, 3, 3, 3]
+
+def test_new_line_implied(tokenizer):
+    tokens = tokenizer.tokenize(
+        """var a = 1;
+var b = 2;"""
+    )
+
+    lines = [token.line for token in tokens]
+
+    assert lines == [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
