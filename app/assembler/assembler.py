@@ -21,6 +21,7 @@ from .statement import (
     ForStmt,
     FunctionStmt,
     IfStmt,
+    ImportStmt,
     PrintStmt,
     ReturnStmt,
     VarStmt,
@@ -331,7 +332,20 @@ class Assembler:
         if self.match(TokenType.VAR):
             return self.var_declaration()
 
+        if self.match(TokenType.IMPORT):
+            return self.import_declaration()
+
         return self.statement()
+
+    def import_declaration(self):
+        import_token = self.previous()
+
+        path = self.consume(TokenType.STRING, "Expected import path string.")
+        self.consume(TokenType.ALIAS, "Expected 'alias' after import path.")
+        alias = self.consume(TokenType.IDENTIFIER, "Expected alias name.")
+        self.consume(TokenType.SEMICOLON, "Expected ';' after import statement.")
+
+        return ImportStmt(path, alias, line=getattr(import_token, "line", None))
 
     def var_declaration(self):
         name = self.consume(TokenType.IDENTIFIER, "Expected variable name.")
