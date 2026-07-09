@@ -180,7 +180,7 @@ bark
 true
 ```
 
-> 이 예제에는 `This`/`Super` 호출이 없어서 그 alias(`이것`/`나야`, `부모`/`엄빠`)는 예제로는 못 보여주지만, `tests/test_app_alias_this_super_acceptance.py`에서 실행까지 확인했습니다.
+> 이 예제는 `Class`/상속/`instanceof`에 집중한 예제라 `This`/`Super`를 직접 쓰지 않습니다. 실제 사용은 12번 예제에서 보여줍니다.
 
 ## 06. Array(size), index get/set
 
@@ -297,6 +297,186 @@ print "김철수" ♡ "이영희";
 ```
 
 두 문자열의 각 글자 초성/중성/종성 획수를 엇갈려 더해가며 두 자리 숫자로 줄이는 손가락 이름궁합 계산 방식입니다 (`app/custom_function/name_compatibility.py`).
+
+## 11. and/or 논리 연산자
+
+`11_logical.ctrlc`
+
+```
+var a = true;
+var b = false;
+
+print a and b;
+print a or b;
+```
+
+`11_logical_alias.ctrlc`
+
+```
+값 a = 참;
+값 b = 거짓;
+
+보여줘 a 그리고 b;
+보여줘 a 또는 b;
+```
+
+실행 결과:
+
+```
+false
+true
+```
+
+## 12. This/Super 실제 사용 (필드 접근 + 부모 method 호출)
+
+`12_this_super.ctrlc`
+
+```
+Class Robot {
+  init(name) {
+    This.name = name;
+  }
+  greet() {
+    print This.name;
+  }
+}
+
+var r = Robot("Bolt");
+r.greet();
+
+Class Animal {
+  speak() {
+    print "sound";
+  }
+}
+
+Class Dog: Animal {
+  speak() {
+    Super.speak();
+    print "bark";
+  }
+}
+
+var dog = Dog();
+dog.speak();
+```
+
+`12_this_super_alias.ctrlc`
+
+```
+클래스 Robot {
+  init(name) {
+    나야.name = name;
+  }
+  greet() {
+    보여줘 나야.name;
+  }
+}
+
+값 r = Robot("Bolt");
+r.greet();
+
+클래스 Animal {
+  speak() {
+    보여줘 "sound";
+  }
+}
+
+붕어빵틀 Dog: Animal {
+  speak() {
+    엄빠.speak();
+    보여줘 "bark";
+  }
+}
+
+값 dog = Dog();
+dog.speak();
+```
+
+실행 결과:
+
+```
+Bolt
+sound
+bark
+```
+
+## 13. Checker 오류 — 초기화 전 사용
+
+`13_checker_error_uninitialized.ctrlc`
+
+```
+{
+  var a = a;
+}
+```
+
+실행 결과:
+
+```
+Variable 'a' is used before initialization.
+```
+
+## 14. Checker 오류 — 클래스 밖에서 This 사용
+
+`14_checker_error_this_outside_class.ctrlc`
+
+```
+print This;
+```
+
+실행 결과:
+
+```
+Cannot use 'This' outside of a class.
+```
+
+## 15. 실행 중 오류 — 함수 인자 개수 불일치
+
+`15_runtime_error_function_arity.ctrlc`
+
+```
+Func add(a, b) {
+  return a + b;
+}
+
+print add(1);
+```
+
+실행 결과:
+
+```
+Error at line 5: Expected 2 arguments but got 1.
+```
+
+## 16. 실행 중 오류 — Array 크기가 음수
+
+`16_array_negative_size_error.ctrlc`
+
+```
+var arr = Array(-1);
+```
+
+실행 결과:
+
+```
+Error at line 1: Array size must not be negative.
+```
+
+## 17. 실행 중 오류 — Array index 범위 초과
+
+`17_array_out_of_range_error.ctrlc`
+
+```
+var arr = Array(2);
+print arr[5];
+```
+
+실행 결과:
+
+```
+Error at line 2: Array index out of range.
+```
 
 ## 부록. 디버그 모드
 
