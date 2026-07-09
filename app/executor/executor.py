@@ -36,6 +36,7 @@ from app.assembler.statement import (
 )
 from app.assembler.tokenizer import TokenType
 from app.exceptions import CodeFabRuntimeError
+from app.executor.custom_functions import register_custom_functions
 
 
 class Executor:
@@ -46,6 +47,7 @@ class Executor:
 
         self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
         self.globals.define("Array", NativeFunction("Array", 1, self._make_array))
+        register_custom_functions(self)
 
     def _make_array(self, size):
         if not self.is_number(size):

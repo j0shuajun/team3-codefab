@@ -540,6 +540,17 @@ def test_similar_to_for_assign(tokenizer):
     ]
 
 
+def test_identifier_with_underscore(tokenizer):
+    tokens = tokenizer.tokenize("ctrl_c()")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "ctrl_c"),
+        Token(T.LEFT_PAREN, "("),
+        Token(T.RIGHT_PAREN, ")"),
+        Token(T.EOF, ""),
+    ]
+
+
 # ===== 배열/필드 접근/상속 토큰 =====
 
 
