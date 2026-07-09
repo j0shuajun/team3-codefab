@@ -1,3 +1,6 @@
+import os
+
+from app.assembler.assembler import Assembler
 from app.assembler.environment import Environment
 from app.assembler.expr import (
     AssignExpr,
@@ -24,6 +27,7 @@ from app.assembler.runtime import (
     UserFunction,
     UserInstance,
 )
+from app.assembler.import_manager import ImportManager
 from app.assembler.statement import (
     BlockStmt,
     ClassStmt,
@@ -31,19 +35,23 @@ from app.assembler.statement import (
     ForStmt,
     FunctionStmt,
     IfStmt,
+    ImportStmt,
     PrintStmt,
     ReturnStmt,
     VarStmt,
 )
-from app.assembler.tokenizer import TokenType
+from app.assembler.tokenizer import Tokenizer, TokenType
 from app.exceptions import CodeFabRuntimeError
 
 
 class Executor:
-    def __init__(self):
+    def __init__(self, import_base_dir="."):
         self.globals = Environment()
         self.environment = self.globals
         self.outputs = []
+
+        self.import_manager = ImportManager(base_dir=import_base_dir)
+        self._import_dirs = [import_base_dir]
 
         self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
         self.globals.define("Array", NativeFunction("Array", 1, self._make_array))
@@ -141,7 +149,33 @@ class Executor:
             self.environment.assign(stmt.name, klass)
             return
 
+        if isinstance(stmt, ImportStmt):
+            self.execute_import(stmt)
+            return
+
         raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
+
+    def execute_import(self, stmt):
+        path = stmt.path.value
+        base_dir = self._import_dirs[-1]
+
+        with self.import_manager.importing(path, base_dir=base_dir) as resolved:
+            source = self.import_manager.read(resolved)
+            statements = Assembler(Tokenizer().tokenize(source)).parse()
+
+            module_environment = Environment(self.globals)
+            previous_environment = self.environment
+            self._import_dirs.append(os.path.dirname(resolved))
+
+            try:
+                self.environment = module_environment
+                self.execute(statements)
+            finally:
+                self.environment = previous_environment
+                self._import_dirs.pop()
+
+        module = ImportedModule(stmt.alias.origin, module_environment.values)
+        self.environment.define(stmt.alias.origin, module)
 
     def evaluate(self, expr):
         if isinstance(expr, LiteralExpr):
