@@ -1,0 +1,27 @@
+Class Robot {
+  init(name) {
+    This.name = name;
+  }
+  greet() {
+    print This.name;
+  }
+}
+
+var r = Robot("Bolt");
+r.greet();
+
+Class Animal {
+  speak() {
+    print "sound";
+  }
+}
+
+Class Dog: Animal {
+  speak() {
+    Super.speak();
+    print "bark";
+  }
+}
+
+var dog = Dog();
+dog.speak();
