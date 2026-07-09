@@ -78,6 +78,37 @@ class TestLoad:
         with pytest.raises(CodeFabRuntimeError):
             manager.load("missing.txt")
 
+    def test_load_rejects_print_statement(self, tmp_path):
+        write(tmp_path, "broken.txt", 'print "hi";')
+        manager = ImportManager(base_dir=str(tmp_path))
+
+        with pytest.raises(CodeFabRuntimeError):
+            manager.load("broken.txt")
+
+    def test_load_rejects_if_statement(self, tmp_path):
+        write(tmp_path, "broken.txt", "if (true) { var x = 1; }")
+        manager = ImportManager(base_dir=str(tmp_path))
+
+        with pytest.raises(CodeFabRuntimeError):
+            manager.load("broken.txt")
+
+    def test_load_allows_import_func_class_var_together(self, tmp_path):
+        write(tmp_path, "lib.txt", "Func helper() { return 1; }")
+        write(
+            tmp_path,
+            "sum.txt",
+            'import "lib.txt" alias lib;\n'
+            "var count = 0;\n"
+            "Class Point {\n"
+            "  init(x) { This.x = x; }\n"
+            "}\n",
+        )
+        manager = ImportManager(base_dir=str(tmp_path))
+
+        statements = manager.load("sum.txt")
+
+        assert len(statements) == 3
+
 
 class TestImporting:
     def test_importing_yields_resolved_path(self, tmp_path):

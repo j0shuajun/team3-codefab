@@ -9,13 +9,24 @@ from app.assembler.expr import (
     UnaryExpr,
     VariableExpr,
 )
-from app.assembler.statement import BlockStmt, ExpressionStmt, ForStmt, IfStmt, VarStmt
+from app.assembler.statement import (
+    BlockStmt,
+    ExpressionStmt,
+    ForStmt,
+    IfStmt,
+    ImportStmt,
+    VarStmt,
+)
 from app.assembler.tokenizer import Token, TokenType
 from app.checker.checker import Checker
 
 
 def token(origin):
     return Token(TokenType.IDENTIFIER, origin)
+
+
+def import_stmt(path, alias):
+    return ImportStmt(Token(TokenType.STRING, path, value=path), token(alias))
 
 
 def bracket():
@@ -687,6 +698,83 @@ class TestIndexSetExprIsResolved:
                     VariableExpr(token("i")),
                     LiteralExpr(1),
                 )
+            ),
+        ]
+
+        assert check(statements) == []
+
+
+class TestImportAliasConflict:
+    def test_alias_conflicting_with_existing_variable_is_error(self):
+        statements = [
+            VarStmt(token("sum"), LiteralExpr(1)),
+            import_stmt("sum.txt", "sum"),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "sum" in errors[0]
+
+    def test_two_imports_with_same_alias_is_error(self):
+        statements = [
+            import_stmt("a.txt", "lib"),
+            import_stmt("b.txt", "lib"),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "lib" in errors[0]
+
+    def test_import_alias_usable_afterward_without_error(self):
+        statements = [
+            import_stmt("sum.txt", "sum"),
+            ExpressionStmt(VariableExpr(token("sum"))),
+        ]
+
+        assert check(statements) == []
+
+    def test_alias_shadowed_in_nested_block_is_allowed(self):
+        statements = [
+            import_stmt("sum.txt", "sum"),
+            BlockStmt(
+                [
+                    VarStmt(token("sum"), LiteralExpr(1)),
+                ]
+            ),
+        ]
+
+        assert check(statements) == []
+
+
+class TestDuplicateImport:
+    def test_same_path_imported_twice_is_error(self):
+        statements = [
+            import_stmt("sum.txt", "sum"),
+            import_stmt("sum.txt", "sum2"),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "sum.txt" in errors[0]
+
+    def test_different_paths_produce_no_error(self):
+        statements = [
+            import_stmt("sum.txt", "sum"),
+            import_stmt("avg.txt", "avg"),
+        ]
+
+        assert check(statements) == []
+
+    def test_same_path_imported_again_in_nested_block_is_allowed(self):
+        statements = [
+            import_stmt("sum.txt", "sum"),
+            BlockStmt(
+                [
+                    import_stmt("sum.txt", "sum2"),
+                ]
             ),
         ]
 
