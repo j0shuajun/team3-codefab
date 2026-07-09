@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from assembler.expr import Expr, VariableExpr
+from assembler.expr import Expr
 from assembler.tokenizer import Token
 
 
