@@ -49,6 +49,7 @@ class Assembler:
     def __init__(self, tokens):
         self.tokens = tokens
         self.current = 0
+        self._loop_depth = 0
 
     def expression(self):
         return self.assignment()
@@ -104,7 +105,11 @@ class Assembler:
 
         self.consume(TokenType.RIGHT_PAREN, "Expected ')' after for clauses.")
 
-        body = self.statement()
+        self._loop_depth += 1
+        try:
+            body = self.statement()
+        finally:
+            self._loop_depth -= 1
 
         return ForStmt(
             initializer,
@@ -339,6 +344,9 @@ class Assembler:
 
     def import_declaration(self):
         import_token = self.previous()
+
+        if self._loop_depth > 0:
+            raise AssemblerError("Cannot use import inside a loop.")
 
         path = self.consume(TokenType.STRING, "Expected import path string.")
         self.consume(TokenType.ALIAS, "Expected 'alias' after import path.")
