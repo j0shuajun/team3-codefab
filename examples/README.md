@@ -266,10 +266,10 @@ Func add(a, b) {
 }
 ```
 
-`09_import.ctrlc` (진입점 — repo 루트 기준 상대 경로로 import)
+`09_import.ctrlc` (진입점 — import 경로는 이 파일 자신의 위치를 기준으로 한 상대 경로)
 
 ```
-import "examples/09_import_lib.ctrlc" alias lib;
+import "09_import_lib.ctrlc" alias lib;
 
 print lib.pi;
 print lib.add(1, 2);

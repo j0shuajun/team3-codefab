@@ -1,0 +1,27 @@
+클래스 Robot {
+  init(name) {
+    나야.name = name;
+  }
+  greet() {
+    보여줘 나야.name;
+  }
+}
+
+값 r = Robot("Bolt");
+r.greet();
+
+클래스 Animal {
+  speak() {
+    보여줘 "sound";
+  }
+}
+
+붕어빵틀 Dog: Animal {
+  speak() {
+    엄빠.speak();
+    보여줘 "bark";
+  }
+}
+
+값 dog = Dog();
+dog.speak();
