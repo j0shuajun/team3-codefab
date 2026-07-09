@@ -138,11 +138,6 @@ def build_ctrl_c_lines():
     return lines
 
 
-# 출력 테스트
-for line in build_ctrl_c_lines():
-    print(line)
-
-
 def _make_ctrl_c(executor):
     def ctrl_c():
         executor.outputs.extend(build_ctrl_c_lines())
