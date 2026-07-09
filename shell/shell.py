@@ -207,7 +207,7 @@ class PromptShell:
             return ["Usage: explain <code>"]
 
         if source.startswith(f"{self.EXPLAIN_COMMAND} "):
-            code = source[len(self.EXPLAIN_COMMAND):].strip()
+            code = source[len(self.EXPLAIN_COMMAND) :].strip()
 
             if code == "":
                 return ["Usage: explain <code>"]
