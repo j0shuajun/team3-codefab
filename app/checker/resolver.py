@@ -25,6 +25,7 @@ from app.assembler.statement import (
     ForStmt,
     FunctionStmt,
     IfStmt,
+    ImportStmt,
     PrintStmt,
     ReturnStmt,
     Stmt,
@@ -175,6 +176,7 @@ class StatementResolver(Resolver):
             FunctionStmt: self._resolve_function_stmt,
             ReturnStmt: self._resolve_return_stmt,
             ClassStmt: self._resolve_class_stmt,
+            ImportStmt: self._resolve_import_stmt,
         }
 
     def reset(self):
@@ -346,3 +348,11 @@ class StatementResolver(Resolver):
             self._resolve_function_body(method, function_type)
 
         self._class_context.current = enclosing_class
+
+    def _resolve_import_stmt(self, statement):
+        alias = statement.alias.origin
+        if not self._scopes.declare(alias):
+            self._error_reporter.report(
+                f"Alias '{alias}' already declared in this scope."
+            )
+        self._scopes.initialize(alias)
