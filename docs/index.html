@@ -35,6 +35,8 @@
         font-family:
           Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
           sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
 
       main {
@@ -293,14 +295,25 @@
       }
 
       @media print {
+        @page {
+          size: 16in 9in;
+          margin: 0;
+        }
+
         body {
-          background: #fff;
+          background:
+            linear-gradient(90deg, rgba(0, 109, 104, 0.08) 1px, transparent 1px),
+            linear-gradient(180deg, rgba(0, 109, 104, 0.08) 1px, transparent 1px),
+            var(--paper);
+          background-size: 28px 28px;
         }
 
         section {
+          width: 100vw;
           height: 100vh;
           min-height: 100vh;
           page-break-after: always;
+          break-after: page;
         }
 
         .progress {
@@ -315,8 +328,9 @@
         <p class="eyebrow">CRA Team 3 · Ctrl-C</p>
         <h1>CodeFab</h1>
         <p class="lead">
-          작은 Custom Language와 Interpreter를 만들고, 리뷰와 CI로 품질을
-          끌어올린 팀 프로젝트입니다.
+          app 패키지로 정리된 Custom Language Interpreter에
+          <code>ctrl_c()</code>, <code>explain</code>, 한글 키워드를 더한
+          팀 프로젝트입니다.
         </p>
         <div class="badge-row">
           <span class="badge">Custom Language</span>
@@ -336,17 +350,17 @@
             <ul>
               <li>변수, 조건문, 반복문, 함수</li>
               <li>클래스, 메서드, 생성자, 상속</li>
-              <li>배열과 정적 검사</li>
-              <li>한글 keyword alias</li>
+              <li>배열, 정적 검사, line-aware error</li>
+              <li><code>ctrl_c()</code>, <code>explain</code>, 한글 키워드</li>
             </ul>
           </article>
           <article class="panel">
             <h3>실행기</h3>
             <ul>
-              <li>소스코드를 Token, AST로 변환</li>
+              <li><code>app/</code> 패키지 기준 구조 정리</li>
+              <li>소스 코드를 Token, AST로 변환</li>
               <li>실행 전 Checker로 오류 탐지</li>
               <li>Executor가 AST를 순회하며 실행</li>
-              <li><code>explain</code>으로 처리 과정을 확인</li>
             </ul>
           </article>
           <article class="panel">
@@ -383,8 +397,8 @@
           </div>
         </div>
         <p class="note">
-          CodeFab 교안의 Assembler Unit, Checker Unit, Executor Unit 구조를
-          그대로 프로젝트 구조로 옮겼습니다.
+          최신 main 기준으로 <code>app/assembler</code>, <code>app/checker</code>,
+          <code>app/executor</code>, <code>app/shell</code>이 같은 파이프라인을 공유합니다.
         </p>
       </section>
 
@@ -403,7 +417,7 @@
 }
 
 print sum(5);</code></pre>
-          <pre class="terminal"><code><span class="prompt">CodeFab&gt;</span> print sum(5);
+          <pre class="terminal"><code><span class="prompt">$</span> make run demo.cfab
 15</code></pre>
         </div>
       </section>
@@ -444,6 +458,14 @@ r.move();</code></pre>
         <h2>작지만 CodeFab다운 확장</h2>
         <div class="grid">
           <article class="panel">
+            <h3><code>ctrl_c()</code></h3>
+            <ul>
+              <li>CodeFab 코드 안에서 호출하는 추천/보조 함수입니다.</li>
+              <li>현재 코드와 실행 맥락을 바탕으로 다음 행동을 돕습니다.</li>
+              <li>Issue #12의 <code>ctrl c</code> 아이디어를 언어 기능으로 옮겼습니다.</li>
+            </ul>
+          </article>
+          <article class="panel">
             <h3><code>explain</code></h3>
             <ul>
               <li>입력 코드가 파이프라인을 어떻게 지나는지 보여줍니다.</li>
@@ -466,18 +488,26 @@ r.move();</code></pre>
         <p class="eyebrow">Explain</p>
         <h2>구조를 보여주는 기능</h2>
         <div class="two">
-          <pre><code>explain var x = 1 + 2 * 3;</code></pre>
+          <pre><code>explain {
+    var x = 1 + 2 * 3;
+    ctrl_c();
+}</code></pre>
           <pre class="terminal"><code>[Tokens]
-VAR IDENTIFIER EQUAL NUMBER PLUS NUMBER STAR NUMBER SEMICOLON EOF
+VAR IDENTIFIER EQUAL NUMBER PLUS NUMBER STAR NUMBER SEMICOLON
+IDENTIFIER LEFT_PAREN RIGHT_PAREN SEMICOLON EOF
 
 [AST]
-VarStmt(x, BinaryExpr(1, +, BinaryExpr(2, *, 3)))
+BlockStmt(
+  VarStmt(x, BinaryExpr(1, +, BinaryExpr(2, *, 3))),
+  ExpressionStmt(CallExpr(ctrl_c))
+)
 
 [Checker]
 No errors
 
 [Result]
-x = 7</code></pre>
+x = 7
+ctrl_c: next step suggested</code></pre>
         </div>
       </section>
 
@@ -494,9 +524,14 @@ x = 7</code></pre>
           </thead>
           <tbody>
             <tr>
-              <td><code>var</code></td>
-              <td><code>값</code></td>
+              <td><code>print</code>, <code>var</code></td>
+              <td><code>출력</code>, <code>값</code></td>
               <td>값을 이름에 묶습니다.</td>
+            </tr>
+            <tr>
+              <td><code>if</code>, <code>else</code>, <code>for</code></td>
+              <td><code>만약</code>, <code>아니면</code>, <code>반복</code></td>
+              <td>흐름 제어를 표현합니다.</td>
             </tr>
             <tr>
               <td><code>Func</code>, <code>return</code></td>
@@ -518,6 +553,11 @@ x = 7</code></pre>
               <td><code>참</code>, <code>거짓</code>, <code>ㅇㅇ</code>, <code>ㄴㄴ</code></td>
               <td>Boolean literal입니다.</td>
             </tr>
+            <tr>
+              <td><code>and</code>, <code>or</code></td>
+              <td><code>그리고</code>, <code>또는</code></td>
+              <td>조건을 조합합니다.</td>
+            </tr>
           </tbody>
         </table>
       </section>
@@ -535,7 +575,7 @@ x = 7</code></pre>
     반환 total;
 }
 
-값 enabled = ㅇㅇ;
+값 enabled = 참;
 값 result = 합계(5);
 
 만약 (enabled 그리고 result > 10) {
@@ -632,31 +672,28 @@ Executor -> callee.call(executor, arguments)</code></pre>
 
       <section>
         <p class="eyebrow">Design Pattern 4</p>
-        <h2>Command Pattern: Shell 리팩토링 후보</h2>
+        <h2>Command Pattern: Custom 기능을 명령으로 분리하기</h2>
         <div class="two">
           <pre><code>Before
 
-if source == "exit":
-    ...
-if source == "ctrlc":
-    ...
-if source == "ctrlv":
-    ...
-else:
-    run_code(source)</code></pre>
+if name == "ctrl_c":
+    suggest()
+if keyword == "explain":
+    print_pipeline()
+if keyword in korean_alias:
+    normalize()</code></pre>
           <pre><code>리팩토링 후보
 
-ExitCommand
 CtrlCCommand
-CtrlVCommand
 ExplainCommand
-RunCodeCommand
+AliasNormalizeCommand
+RunProgramCommand
 
-PromptShell -> command.execute()</code></pre>
+Interpreter -> command.execute(context)</code></pre>
         </div>
         <p class="note">
-          현재 shell은 충분히 동작합니다. 다만 <code>explain</code>처럼 명령이
-          늘어나면, Command Pattern으로 분리하기 좋은 구조입니다.
+          custom 기능이 늘어날수록 조건문을 키우기보다, 기능별 명령 객체로
+          분리하는 편이 테스트와 설명에 유리합니다.
         </p>
       </section>
 
@@ -716,6 +753,8 @@ PromptShell -> command.execute()</code></pre>
               <li><code>make install</code>: 개발 의존성 설치</li>
               <li><code>make lint</code>: black, isort, ruff 실행</li>
               <li><code>make test</code>: pytest 전체 실행</li>
+              <li><code>make run &lt;file&gt;</code>: 파일 모드 실행</li>
+              <li><code>make debug &lt;file&gt;</code>: 디버그 모드 실행</li>
               <li>로컬에서도 CI와 같은 기준을 사용합니다.</li>
             </ul>
           </div>
@@ -725,7 +764,7 @@ PromptShell -> command.execute()</code></pre>
               <li>Lint workflow: formatting, import order, ruff</li>
               <li>Unit Tests workflow: pytest와 coverage</li>
               <li>Gist Acceptance workflow: 외부 예제 기반 수용 테스트</li>
-              <li>Codecov로 변경 범위의 테스트 공백 확인</li>
+              <li><code>app</code> 패키지 기준 coverage 확인</li>
             </ul>
           </div>
         </div>

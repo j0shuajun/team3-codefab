@@ -40,8 +40,8 @@ flowchart LR
 | `make run sample.cfab` | 파일 전체 실행 | 발표 예시나 긴 프로그램 실행 |
 | `make debug sample.cfab` | 디버그 모드 실행 | 줄 단위 step, breakpoint, watch 확인 |
 
-`PromptShell`은 `ctrlc`와 `ctrlv`라는 프로젝트 고유 명령을 제공한다. 실제 키 입력 조합이 아니라 shell 안에서
-입력하는 명령어이며, 최근 history에서 가장 자주 쓴 CodeFab 명령을 추천하고 다시 실행한다.
+Custom language 기능은 `ctrl_c()`를 CodeFab 코드 안에서 호출하는 방향으로 정리 중이다. `explain` 기능과
+한글 키워드도 구현 중이므로, 최종 문법은 `docs/custom_language.md`와 해당 구현 PR을 함께 확인한다.
 
 ## 주요 데이터 계약
 
