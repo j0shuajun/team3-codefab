@@ -252,14 +252,13 @@ class Executor:
             return value
 
         if isinstance(expr, ThisExpr):
-            return self.environment.get(expr.keyword)
+            # 소스에 쓰인 alias(예: 나야)와 무관하게 항상 고정 키 "This"로 바인딩되어 있음
+            return self.environment.get_by_name("This")
 
         if isinstance(expr, SuperExpr):
-            superclass = self.environment.get(expr.keyword)
-
-            this_token = type("TokenLike", (), {"origin": "This"})()
-
-            instance = self.environment.get(this_token)
+            # 소스에 쓰인 alias(예: 부모)와 무관하게 항상 고정 키 "Super"/"This"로 바인딩되어 있음
+            superclass = self.environment.get_by_name("Super")
+            instance = self.environment.get_by_name("This")
 
             method = superclass.find_method(expr.method.origin)
 
