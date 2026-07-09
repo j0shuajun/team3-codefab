@@ -1,6 +1,6 @@
 from checker.constant_folder import ConstantFolder
 from checker.error_reporter import ErrorReporter
-from checker.resolver import ExpressionResolver, StatementResolver
+from checker.resolver import ClassContext, ExpressionResolver, StatementResolver
 from checker.scope_stack import ScopeStack
 
 
@@ -9,11 +9,15 @@ class Checker:
         self._constant_folder = ConstantFolder()
         self._scopes = ScopeStack()
         self._error_reporter = ErrorReporter()
+        self._class_context = ClassContext()
         self._expression_resolver = ExpressionResolver(
-            self._scopes, self._error_reporter
+            self._scopes, self._error_reporter, self._class_context
         )
         self._statement_resolver = StatementResolver(
-            self._scopes, self._error_reporter, self._expression_resolver
+            self._scopes,
+            self._error_reporter,
+            self._expression_resolver,
+            self._class_context,
         )
 
     def check(self, statements):

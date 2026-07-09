@@ -4,17 +4,23 @@ from enum import Enum, auto
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
+    CallExpr,
     Expr,
+    GetExpr,
     GroupingExpr,
     IndexGetExpr,
     IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
+    SetExpr,
+    SuperExpr,
+    ThisExpr,
     UnaryExpr,
     VariableExpr,
 )
 from assembler.statement import (
     BlockStmt,
+    ClassStmt,
     ExpressionStmt,
     ForStmt,
     FunctionStmt,
@@ -30,6 +36,28 @@ from exceptions import CodeFabTypeError
 class FunctionType(Enum):
     NONE = auto()
     FUNCTION = auto()
+    METHOD = auto()
+    INITIALIZER = auto()
+
+
+class ClassType(Enum):
+    NONE = auto()
+    CLASS = auto()
+    SUBCLASS = auto()
+
+
+class ClassContext:
+    """지금 클래스 본문(메서드) 안에서 resolve 중인지를 StatementResolver 와
+    ExpressionResolver 가 공유하기 위한 상태. This/Super 는 어디서든(중첩된
+    표현식 안에서도) 나타날 수 있어 ExpressionResolver 가 직접 검사해야 하지만,
+    "지금 어떤 클래스 안에 있는지"는 ClassStmt 를 다루는 StatementResolver 만
+    알 수 있으므로 이 작은 객체를 통해 상태를 공유한다."""
+
+    def __init__(self):
+        self.current = ClassType.NONE
+
+    def reset(self):
+        self.current = ClassType.NONE
 
 
 class Resolver(ABC):
@@ -39,9 +67,10 @@ class Resolver(ABC):
 
 
 class ExpressionResolver(Resolver):
-    def __init__(self, scopes, error_reporter):
+    def __init__(self, scopes, error_reporter, class_context):
         self._scopes = scopes
         self._error_reporter = error_reporter
+        self._class_context = class_context
         self._resolvers = {
             VariableExpr: self._resolve_variable_expr,
             AssignExpr: self._resolve_assign_expr,
@@ -52,6 +81,11 @@ class ExpressionResolver(Resolver):
             LiteralExpr: self._resolve_literal_expr,
             IndexGetExpr: self._resolve_index_get_expr,
             IndexSetExpr: self._resolve_index_set_expr,
+            ThisExpr: self._resolve_this_expr,
+            SuperExpr: self._resolve_super_expr,
+            CallExpr: self._resolve_call_expr,
+            GetExpr: self._resolve_get_expr,
+            SetExpr: self._resolve_set_expr,
         }
 
     def resolve(self, expr):
@@ -99,12 +133,37 @@ class ExpressionResolver(Resolver):
         self.resolve(expr.index)
         self.resolve(expr.value)
 
+    def _resolve_this_expr(self, expr):
+        if self._class_context.current == ClassType.NONE:
+            self._error_reporter.report("Cannot use 'This' outside of a class.")
+
+    def _resolve_super_expr(self, expr):
+        if self._class_context.current == ClassType.NONE:
+            self._error_reporter.report("Cannot use 'Super' outside of a class.")
+        elif self._class_context.current != ClassType.SUBCLASS:
+            self._error_reporter.report(
+                "Cannot use 'Super' in a class with no superclass."
+            )
+
+    def _resolve_call_expr(self, expr):
+        self.resolve(expr.callee)
+        for argument in expr.arguments:
+            self.resolve(argument)
+
+    def _resolve_get_expr(self, expr):
+        self.resolve(expr.object)
+
+    def _resolve_set_expr(self, expr):
+        self.resolve(expr.object)
+        self.resolve(expr.value)
+
 
 class StatementResolver(Resolver):
-    def __init__(self, scopes, error_reporter, expression_resolver):
+    def __init__(self, scopes, error_reporter, expression_resolver, class_context):
         self._scopes = scopes
         self._error_reporter = error_reporter
         self._expression_resolver = expression_resolver
+        self._class_context = class_context
         self._current_function = FunctionType.NONE
         self._resolvers = {
             VarStmt: self._resolve_var_stmt,
@@ -115,10 +174,12 @@ class StatementResolver(Resolver):
             ForStmt: self._resolve_for_stmt,
             FunctionStmt: self._resolve_function_stmt,
             ReturnStmt: self._resolve_return_stmt,
+            ClassStmt: self._resolve_class_stmt,
         }
 
     def reset(self):
         self._current_function = FunctionType.NONE
+        self._class_context.reset()
 
     def resolve_all(self, statements):
         for statement in statements:
@@ -234,5 +295,36 @@ class StatementResolver(Resolver):
         if self._current_function == FunctionType.NONE:
             self._error_reporter.report("Cannot return from top-level code.")
 
+        if self._current_function == FunctionType.INITIALIZER:
+            self._error_reporter.report("Cannot return from an initializer.")
+
         if statement.value is not None:
             self._expression_resolver.resolve(statement.value)
+
+    def _resolve_class_stmt(self, statement):
+        name = statement.name.origin
+        if not self._scopes.declare(name):
+            self._error_reporter.report(
+                f"Variable '{name}' already declared in this scope."
+            )
+        self._scopes.initialize(name)
+
+        if statement.superclass is not None and statement.superclass.name.origin == name:
+            self._error_reporter.report("A class can't inherit from itself.")
+
+        enclosing_class = self._class_context.current
+        self._class_context.current = ClassType.CLASS
+
+        if statement.superclass is not None:
+            self._class_context.current = ClassType.SUBCLASS
+            self._expression_resolver.resolve(statement.superclass)
+
+        for method in statement.methods:
+            function_type = (
+                FunctionType.INITIALIZER
+                if method.name.origin == "init"
+                else FunctionType.METHOD
+            )
+            self._resolve_function_body(method, function_type)
+
+        self._class_context.current = enclosing_class
