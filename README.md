@@ -21,6 +21,9 @@
 make install   # requirements-dev.txt 설치
 make lint      # black / isort / ruff --fix 실행
 make test      # PYTHONPATH=. pytest -q 실행
+make run       # 프롬프트 쉘 실행
+make run <file>    # 파일 실행
+make debug <file>  # 디버그 모드 실행
 ```
 
 ### 팀 협업 규칙

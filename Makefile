@@ -6,7 +6,14 @@ else
     PYTHON := .venv/bin/python
 endif
 
-.PHONY: install lint test
+RUN_ARG := $(word 2,$(MAKECMDGOALS))
+
+.PHONY: install lint test run debug
+ifneq ($(RUN_ARG),)
+.PHONY: $(RUN_ARG)
+$(RUN_ARG):
+	@:
+endif
 
 install:
 	pip install -r requirements-dev.txt
@@ -23,3 +30,20 @@ lint:
 # pythonpath setting, so no PYTHONPATH env var (shell-syntax dependent) is needed.
 test:
 	$(PYTHON) -m pytest -q
+
+run:
+ifeq ($(RUN_ARG),)
+	$(PYTHON) -m app.main
+else
+	$(PYTHON) -m app.main $(RUN_ARG)
+endif
+
+debug:
+ifeq ($(RUN_ARG),)
+	$(error Usage: make debug <file>)
+else
+	$(PYTHON) -m app.main debug $(RUN_ARG)
+endif
+
+%:
+	@:
