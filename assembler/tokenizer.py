@@ -119,7 +119,6 @@ class Tokenizer:
         "작거나같다": TokenType.LESS_EQUAL,
     }
     _TOKENS = {T.value: T for T in TokenType if isinstance(T.value, str)} | _ALIASES
-    _TOKEN_PREFIXES = {key[:i] for key in _TOKENS for i in range(1, len(key) + 1)}
 
     def __init__(self):
         self._origin = ""
