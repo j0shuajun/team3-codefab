@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from assembler.expr import Expr
+from assembler.expr import Expr, VariableExpr
 from assembler.tokenizer import Token
 
 
@@ -116,10 +116,38 @@ class FunctionStmt(Stmt):
 class ReturnStmt(Stmt):
     """return expression; 문장"""
 
-    def __init__(self, keyword: Token, value=None, line=None):
+    def __init__(self, keyword: Token, value: Optional[Expr] = None, line=None):
         super().__init__(line if line is not None else getattr(keyword, "line", None))
         self.keyword = keyword
         self.value = value
 
     def __repr__(self):
         return f"ReturnStmt({self.value})"
+
+
+class ClassStmt(Stmt):
+    """Class Name (: SuperClass)? { methods... } 클래스 선언문"""
+
+    def __init__(
+        self,
+        name: Token,
+        methods: list[FunctionStmt],
+        superclass=None,
+        line=None,
+    ):
+        super().__init__(line if line is not None else getattr(name, "line", None))
+        self.name = name
+        self.methods = methods
+        self.superclass = superclass
+
+    def __repr__(self):
+        superclass_name = None
+        if self.superclass is not None:
+            superclass_name = self.superclass.name.origin
+
+        return (
+            f"ClassStmt("
+            f"{self.name.origin}, "
+            f"superclass={superclass_name}, "
+            f"methods={self.methods})"
+        )

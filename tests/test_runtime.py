@@ -3,11 +3,14 @@ import pytest
 from assembler.expr import (
     BinaryExpr,
     CallExpr,
+    GetExpr,
     LiteralExpr,
     VariableExpr,
 )
 from assembler.statement import (
+    ClassStmt,
     PrintStmt,
+    VarStmt,
 )
 from assembler.tokenizer import Token, TokenType
 from executor.executor import CodeFabRuntimeError, Executor
@@ -103,5 +106,45 @@ def test_runtime_error_call_argument_count_mismatch():
                         [LiteralExpr(1)],
                     )
                 )
+            ]
+        )
+
+
+def test_runtime_error_get_unknown_property():
+    with pytest.raises(RuntimeError):
+        run(
+            [
+                ClassStmt(token(TokenType.IDENTIFIER, "Robot"), []),
+                VarStmt(
+                    token(TokenType.IDENTIFIER, "r"),
+                    CallExpr(
+                        VariableExpr(token(TokenType.IDENTIFIER, "Robot")),
+                        token(TokenType.RIGHT_PAREN, ")"),
+                        [],
+                    ),
+                ),
+                PrintStmt(
+                    GetExpr(
+                        VariableExpr(token(TokenType.IDENTIFIER, "r")),
+                        token(TokenType.IDENTIFIER, "power"),
+                    )
+                ),
+            ]
+        )
+
+
+def test_runtime_error_superclass_must_be_class():
+    with pytest.raises(RuntimeError):
+        run(
+            [
+                VarStmt(
+                    token(TokenType.IDENTIFIER, "NotClass"),
+                    LiteralExpr(10),
+                ),
+                ClassStmt(
+                    token(TokenType.IDENTIFIER, "Robot"),
+                    [],
+                    VariableExpr(token(TokenType.IDENTIFIER, "NotClass")),
+                ),
             ]
         )

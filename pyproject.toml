@@ -1,2 +1,8 @@
+[project]
+requires-python = ">=3.13,<3.14"
+
 [tool.isort]
 profile = "black"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

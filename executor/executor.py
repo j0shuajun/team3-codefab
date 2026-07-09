@@ -1,17 +1,31 @@
-from assembler.environment import CodeFabRuntimeError, Environment
+from assembler.environment import Environment
 from assembler.expr import (
     AssignExpr,
     BinaryExpr,
     CallExpr,
+    GetExpr,
     GroupingExpr,
+    IndexGetExpr,
+    IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
+    SetExpr,
+    SuperExpr,
+    ThisExpr,
     UnaryExpr,
     VariableExpr,
 )
-from assembler.runtime import Callable, NativeFunction, ReturnSignal, UserFunction
+from assembler.runtime import (
+    Callable,
+    NativeFunction,
+    ReturnSignal,
+    UserClass,
+    UserFunction,
+    UserInstance,
+)
 from assembler.statement import (
     BlockStmt,
+    ClassStmt,
     ExpressionStmt,
     ForStmt,
     FunctionStmt,
@@ -21,6 +35,7 @@ from assembler.statement import (
     VarStmt,
 )
 from assembler.tokenizer import TokenType
+from exceptions import CodeFabRuntimeError
 
 
 class Executor:
@@ -30,6 +45,16 @@ class Executor:
         self.outputs = []
 
         self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
+        self.globals.define("Array", NativeFunction("Array", 1, self._make_array))
+
+    def _make_array(self, size):
+        if not self.is_number(size):
+            raise CodeFabRuntimeError("Array size must be a number.")
+        if not float(size).is_integer():
+            raise CodeFabRuntimeError("Array size must be an integer.")
+        if size < 0:
+            raise CodeFabRuntimeError("Array size must not be negative.")
+        return [None] * int(size)
 
     def execute(self, statements):
         for statement in statements:
@@ -87,6 +112,34 @@ class Executor:
                 value = self.evaluate(stmt.value)
             raise ReturnSignal(value)
 
+        if isinstance(stmt, ClassStmt):
+            superclass = None
+
+            if stmt.superclass is not None:
+                superclass = self.evaluate(stmt.superclass)
+
+                if not isinstance(superclass, UserClass):
+                    raise CodeFabRuntimeError("Superclass must be a class.")
+
+            self.environment.define(stmt.name.origin, None)
+
+            if superclass is not None:
+                self.environment = Environment(self.environment)
+                self.environment.define("Super", superclass)
+
+            methods = {}
+            for method in stmt.methods:
+                function = UserFunction(method, self.environment)
+                methods[method.name.origin] = function
+
+            klass = UserClass(stmt.name.origin, methods, superclass)
+
+            if superclass is not None:
+                self.environment = self.environment.enclosing
+
+            self.environment.assign(stmt.name, klass)
+            return
+
         raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def evaluate(self, expr):
@@ -112,17 +165,64 @@ class Executor:
             raise CodeFabRuntimeError(f"Unknown unary operator: {expr.operator.origin}")
 
         if isinstance(expr, VariableExpr):
+            distance = getattr(expr, "distance", None)
+            if distance is not None:
+                return self.environment.get_at(distance, expr.name.origin)
             return self.environment.get(expr.name)
 
         if isinstance(expr, AssignExpr):
             value = self.evaluate(expr.value)
-            self.environment.assign(expr.name, value)
+            distance = getattr(expr, "distance", None)
+            if distance is not None:
+                self.environment.assign_at(distance, expr.name.origin, value)
+            else:
+                self.environment.assign(expr.name, value)
             return value
 
         if isinstance(expr, LogicalExpr):
             return self.evaluate_logical(expr)
+
         if isinstance(expr, CallExpr):
             return self.evaluate_call(expr)
+        if isinstance(expr, IndexGetExpr):
+            return self.evaluate_index_get(expr)
+        if isinstance(expr, IndexSetExpr):
+            return self.evaluate_index_set(expr)
+
+        if isinstance(expr, GetExpr):
+            obj = self.evaluate(expr.object)
+
+            if isinstance(obj, UserInstance):
+                return obj.get(expr.name)
+
+            raise CodeFabRuntimeError("Only instances have properties.")
+
+        if isinstance(expr, SetExpr):
+            obj = self.evaluate(expr.object)
+
+            if not isinstance(obj, UserInstance):
+                raise CodeFabRuntimeError("Only instances have fields.")
+
+            value = self.evaluate(expr.value)
+            obj.set(expr.name, value)
+            return value
+
+        if isinstance(expr, ThisExpr):
+            return self.environment.get(expr.keyword)
+
+        if isinstance(expr, SuperExpr):
+            superclass = self.environment.get(expr.keyword)
+
+            this_token = type("TokenLike", (), {"origin": "This"})()
+
+            instance = self.environment.get(this_token)
+
+            method = superclass.find_method(expr.method.origin)
+
+            if method is None:
+                raise CodeFabRuntimeError(f"Undefined property '{expr.method.origin}'.")
+
+            return method.bind(instance)
 
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
@@ -174,6 +274,17 @@ class Executor:
 
         if expr.operator.type == TokenType.BANG_EQUAL:
             return left != right
+
+        if expr.operator.type == TokenType.INSTANCEOF:
+            if not isinstance(left, UserInstance):
+                return False
+
+            if not isinstance(right, UserClass):
+                raise CodeFabRuntimeError(
+                    "Right operand of instanceof must be a class."
+                )
+
+            return left.is_instance_of(right)
 
         raise CodeFabRuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 
@@ -270,7 +381,7 @@ class Executor:
                 return
             raise CodeFabRuntimeError("Left/Right type mismatch.")
 
-        if left.type == right.type:
+        if type(left) is type(right):
             return
         raise CodeFabRuntimeError("Left/Right type mismatch.")
 
@@ -290,3 +401,33 @@ class Executor:
             )
 
         return callee.call(self, arguments)
+
+    def evaluate_index_get(self, expr):
+        array, index = self.resolve_index(expr)
+        return array[index]
+
+    def evaluate_index_set(self, expr):
+        array, index = self.resolve_index(expr)
+        value = self.evaluate(expr.value)
+        array[index] = value
+        return value
+
+    def resolve_index(self, expr):
+        array = self.evaluate(expr.array)
+
+        if not isinstance(array, list):
+            raise CodeFabRuntimeError("Can only index into an array.")
+
+        index = self.evaluate(expr.index)
+
+        if not self.is_number(index):
+            raise CodeFabRuntimeError("Array index must be a number.")
+
+        if not float(index).is_integer():
+            raise CodeFabRuntimeError("Array index must be an integer.")
+
+        index = int(index)
+        if index < 0 or index >= len(array):
+            raise CodeFabRuntimeError("Array index out of range.")
+
+        return array, index

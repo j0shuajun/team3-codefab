@@ -1,7 +1,4 @@
-class CodeFabRuntimeError(RuntimeError):
-    def __init__(self, message, line=None):
-        super().__init__(message)
-        self.line = line
+from exceptions import CodeFabRuntimeError
 
 
 class Environment:
@@ -35,3 +32,21 @@ class Environment:
             return
 
         raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
+
+    def ancestor(self, distance):
+        environment = self
+        for _ in range(distance):
+            environment = environment.enclosing
+        return environment
+
+    def get_at(self, distance, name):
+        environment = self.ancestor(distance)
+        if name not in environment.values:
+            raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
+        return environment.values[name]
+
+    def assign_at(self, distance, name, value):
+        environment = self.ancestor(distance)
+        if name not in environment.values:
+            raise CodeFabRuntimeError(f"Undefined variable '{name}'.")
+        environment.values[name] = value

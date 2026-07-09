@@ -3,7 +3,8 @@ import pytest
 from assembler.assembler import Assembler, AssemblerError
 from assembler.tokenizer import Tokenizer
 from checker.checker import Checker
-from executor.executor import CodeFabRuntimeError, Executor
+from exceptions import CodeFabRuntimeError
+from executor.executor import Executor
 
 
 def run_source(source):
