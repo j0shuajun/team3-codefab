@@ -184,7 +184,7 @@ Prevention:
 
 Likely cause:
 Issue #21과 PR #24에서 다룬 AST 계약 문제다. `VariableExpr.name`, `AssignExpr.name`, `VarStmt.name`,
-operator field 등은 실행기와 checker가 `Token.origin`, `Token.type`을 기대하는 경우가 많다.
+operator field 등은 executor와 checker가 `Token.origin`, `Token.type`을 기대하는 경우가 많다.
 
 How to confirm:
 테스트에서 `VarStmt("a", ...)`처럼 문자열을 직접 넣고 있지 않은지 본다.

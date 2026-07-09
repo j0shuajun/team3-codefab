@@ -18,8 +18,8 @@ flowchart LR
     E --> G
 ```
 
-사용자가 `make run`, `make run <file>`, `make debug <file>`을 실행하면 결국 `app/main.py`가 모드를 고르고,
-각 모드는 같은 파이프라인을 사용한다.
+사용자가 `make run`, `make run <file>`, `make debug <file>`을 실행하면 `app/main.py`가 prompt, file,
+debug 중 알맞은 실행 모드를 선택한다.
 
 ## 패키지 책임
 
@@ -29,7 +29,7 @@ flowchart LR
 | Shell | `app/shell/` | 사용자 입력, 파일 실행, 디버그 명령 처리 | `CodeFabRunner`가 공통 실행 파이프라인을 묶는다 |
 | Token / AST / Parser | `app/assembler/` | 문자열을 토큰으로, 토큰을 AST로 변환 | `expr.py`, `statement.py`의 노드 계약이 checker/executor의 공통 언어다 |
 | 정적 검사 | `app/checker/` | 실행 전 오류 후보를 수집하고 일부 최적화 정보를 AST에 붙임 | 스코프, 함수/클래스 문맥, 초기화 상태를 보수적으로 계산한다 |
-| 실행기 | `app/executor/` | AST를 직접 순회하며 값을 계산하고 출력 리스트를 만든다 | 런타임 값, 함수, 클래스, 인스턴스, 배열을 처리한다 |
+| 실행 | `app/executor/` | AST를 직접 순회하며 값을 계산하고 출력 리스트를 만든다 | 런타임 값, 함수, 클래스, 인스턴스, 배열을 처리한다 |
 | 예외 | `app/exceptions.py` | CodeFab 전용 런타임/타입 오류 | line 정보가 있으면 shell/file/debug 모드가 사용자 메시지에 반영한다 |
 
 ## 실행 모드
@@ -40,8 +40,8 @@ flowchart LR
 | `make run sample.cfab` | 파일 전체 실행 | 발표 예시나 긴 프로그램 실행 |
 | `make debug sample.cfab` | 디버그 모드 실행 | 줄 단위 step, breakpoint, watch 확인 |
 
-Custom language 기능은 `ctrl_c()`를 CodeFab 코드 안에서 호출하는 방향으로 정리 중이다. `explain` 기능과
-한글 키워드도 구현 중이므로, 최종 문법은 `docs/custom_language.md`와 해당 구현 PR을 함께 확인한다.
+`ctrl_c()`, `explain`, 한글 키워드는 사용자가 코드를 작성하고 이해하는 방식을 넓히는 기능이다.
+정확한 문법과 출력 형식은 `docs/custom_language.md`와 해당 구현 PR을 함께 확인한다.
 
 ## 주요 데이터 계약
 
