@@ -1,0 +1,8 @@
+값 name = "CodeFab";
+보여줘 name;
+
+name = "Ctrl-C";
+보여줘 name;
+
+보여줘 1 + 2;
+보여줘 참;

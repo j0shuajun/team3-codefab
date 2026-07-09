@@ -1,0 +1,15 @@
+클래스 Animal {
+  speak() {
+    보여줘 "sound";
+  }
+}
+
+붕어빵틀 Dog: Animal {
+  speak() {
+    보여줘 "bark";
+  }
+}
+
+값 dog = Dog();
+dog.speak();
+보여줘 dog instanceof Dog;
