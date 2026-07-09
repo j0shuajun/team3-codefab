@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from assembler.assembler import Assembler
 from assembler.environment import Environment
-from assembler.statement import BlockStmt, IfStmt
+from assembler.statement import BlockStmt, ForStmt, IfStmt
 from shell.shell import CodeFabRunner
 
 
@@ -12,6 +12,10 @@ class DebugFrame:
     index: int = 0
     previous_environment: object = None
     restore_environment: bool = False
+
+    is_for_frame: bool = False
+    for_stmt: object = None
+    needs_increment: bool = False
 
 
 class VariableStoreReader:
@@ -96,22 +100,28 @@ class DebugSession:
         return [f"Unknown debug command: {command}"]
 
     def execute_current_statement(self, enter_block):
-        self.normalize_frames()
-
-        if self.is_finished:
-            return ["Program finished."]
-
-        statement = self.current_statement()
-        statement_line = getattr(statement, "line", None)
         before_output_count = len(self.runner.executor.outputs)
+        statement_line = None
 
         try:
+            self.normalize_frames()
+
+            if self.is_finished:
+                return ["Program finished."]
+
+            statement = self.current_statement()
+            statement_line = getattr(statement, "line", None)
+
             if enter_block and isinstance(statement, BlockStmt):
                 self.enter_block(statement)
                 return []
 
             if enter_block and isinstance(statement, IfStmt):
                 self.enter_if_branch(statement)
+                return []
+
+            if enter_block and isinstance(statement, ForStmt):
+                self.enter_for_loop(statement)
                 return []
 
             self.runner.executor.execute([statement])
@@ -182,6 +192,30 @@ class DebugSession:
             )
         else:
             self.frames.append(DebugFrame([selected_branch]))
+
+        self.normalize_frames()
+
+    def enter_for_loop(self, for_stmt):
+        current_frame = self.current_frame()
+        current_frame.index += 1
+
+        previous_environment = self.runner.executor.environment
+        loop_environment = Environment(previous_environment)
+        self.runner.executor.environment = loop_environment
+
+        if for_stmt.initializer is not None:
+            self.runner.executor.execute([for_stmt.initializer])
+
+        self.frames.append(
+            DebugFrame(
+                [],
+                previous_environment=previous_environment,
+                restore_environment=True,
+                is_for_frame=True,
+                for_stmt=for_stmt,
+                needs_increment=False,
+            )
+        )
 
         self.normalize_frames()
 
@@ -292,7 +326,16 @@ class DebugSession:
         return outputs
 
     def normalize_frames(self):
-        while self.frames and self.frames[-1].index >= len(self.frames[-1].statements):
+        while self.frames:
+            frame = self.current_frame()
+
+            if frame.is_for_frame:
+                self.normalize_for_frame(frame)
+                continue
+
+            if frame.index < len(frame.statements):
+                break
+
             finished_frame = self.frames.pop()
 
             if finished_frame.restore_environment:
@@ -300,6 +343,68 @@ class DebugSession:
 
         if not self.frames:
             self.is_finished = True
+
+    def normalize_for_frame(self, frame):
+        for_stmt = frame.for_stmt
+
+        if frame.needs_increment:
+            self.execute_for_increment(for_stmt)
+            frame.needs_increment = False
+
+        if self.is_for_condition_truthy(for_stmt):
+            self.push_for_body_frame(frame)
+            return
+
+        finished_frame = self.frames.pop()
+
+        if finished_frame.restore_environment:
+            self.runner.executor.environment = finished_frame.previous_environment
+
+    def is_for_condition_truthy(self, for_stmt):
+        if for_stmt.condition is None:
+            return True
+
+        try:
+            return self.runner.executor.is_truthy(
+                self.runner.executor.evaluate(for_stmt.condition)
+            )
+        except Exception as error:
+            if getattr(error, "line", None) is None:
+                error.line = getattr(for_stmt, "line", None)
+            raise
+
+    def execute_for_increment(self, for_stmt):
+        if for_stmt.increment is None:
+            return
+
+        try:
+            self.runner.executor.evaluate(for_stmt.increment)
+        except Exception as error:
+            if getattr(error, "line", None) is None:
+                error.line = getattr(for_stmt, "line", None)
+            raise
+
+    def push_for_body_frame(self, frame):
+        for_stmt = frame.for_stmt
+        frame.needs_increment = True
+
+        body = for_stmt.body
+
+        if isinstance(body, BlockStmt):
+            previous_environment = self.runner.executor.environment
+            block_environment = Environment(previous_environment)
+            self.runner.executor.environment = block_environment
+
+            self.frames.append(
+                DebugFrame(
+                    body.statements,
+                    previous_environment=previous_environment,
+                    restore_environment=True,
+                )
+            )
+            return
+
+        self.frames.append(DebugFrame([body]))
 
     def current_frame(self):
         return self.frames[-1]
