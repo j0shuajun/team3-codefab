@@ -1,4 +1,6 @@
-from .environment import CodeFabRuntimeError, Environment
+from exceptions import CodeFabRuntimeError
+
+from .environment import Environment
 
 
 class Callable:

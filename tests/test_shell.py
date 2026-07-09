@@ -1,4 +1,5 @@
-from shell.shell import PromptShell
+from shell.file_mode import FileMode
+from shell.shell import CodeFabRunner, PromptShell
 
 
 def make_shell():
@@ -9,6 +10,14 @@ def test_run_line_executes_code_with_assembler():
     shell = make_shell()
 
     outputs = shell.run_line("print 37;")
+
+    assert outputs == ["37"]
+
+
+def test_run_line_strips_input():
+    shell = make_shell()
+
+    outputs = shell.run_line("  print 37;  ")
 
     assert outputs == ["37"]
 
@@ -89,6 +98,15 @@ def test_exit_stops_shell():
     assert shell.is_running is False
 
 
+def test_quit_stops_shell():
+    shell = make_shell()
+
+    outputs = shell.run_line("quit")
+
+    assert outputs == ["Bye!"]
+    assert shell.is_running is False
+
+
 def test_empty_input_returns_empty_output():
     shell = make_shell()
 
@@ -133,4 +151,85 @@ def test_ctrlc_recommends_with_limited_history():
     assert outputs == [
         "Ctrl+C 추천 명령어: print 2;",
         "ctrlv 를 입력하면 추천 명령어를 다시 실행합니다.",
+    ]
+
+
+def test_file_mode_executes_source_file(tmp_path):
+    source_file = tmp_path / "sample.txt"
+    source_file.write_text("print 1 + 2;", encoding="utf-8")
+
+    outputs = FileMode().run_file(str(source_file))
+
+    assert outputs == ["3"]
+
+
+def test_file_mode_returns_error_when_file_not_found(tmp_path):
+    missing_file = tmp_path / "missing.txt"
+
+    outputs = FileMode().run_file(str(missing_file))
+
+    assert outputs == [f"Error: file not found: {missing_file}"]
+
+
+def test_runner_returns_outputs_before_runtime_error(mocker):
+    runner = CodeFabRunner()
+    runner.executor.outputs.append("before")
+
+    mocker.patch.object(runner.tokenizer, "tokenize", return_value=[])
+    mocker.patch("shell.shell.Assembler").return_value.parse.return_value = []
+    mocker.patch.object(runner.checker, "check", return_value=[])
+    mocker.patch.object(
+        runner.executor,
+        "execute",
+        side_effect=Exception("runtime error"),
+    )
+
+    outputs = runner.run_code("invalid code")
+
+    assert outputs == ["Error: runtime error"]
+
+
+def test_file_mode_stops_immediately_when_runtime_error_occurs(tmp_path):
+    source_file = tmp_path / "sample.txt"
+    source_file.write_text(
+        "print 1;\n" "print 10 / 0;\n" "print 3;\n",
+        encoding="utf-8",
+    )
+
+    outputs = FileMode().run_file(str(source_file))
+
+    assert outputs == [
+        "1",
+        "Error at line 2: Division by zero.",
+    ]
+
+
+def test_file_mode_prints_runtime_error_with_line_number(tmp_path):
+    source_file = tmp_path / "sample.txt"
+    source_file.write_text(
+        "print 1;\n" "print 10 / 0;\n" "print 3;\n",
+        encoding="utf-8",
+    )
+
+    outputs = FileMode().run_file(str(source_file))
+
+    assert outputs == [
+        "1",
+        "Error at line 2: Division by zero.",
+    ]
+
+
+def test_file_mode_stops_immediately_after_runtime_error(tmp_path):
+    source_file = tmp_path / "sample.txt"
+    source_file.write_text(
+        "print 1;\n" "print 10 / 0;\n" "print 999;\n",
+        encoding="utf-8",
+    )
+
+    outputs = FileMode().run_file(str(source_file))
+
+    assert "999" not in outputs
+    assert outputs == [
+        "1",
+        "Error at line 2: Division by zero.",
     ]

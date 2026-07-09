@@ -6,11 +6,37 @@ from checker.checker import Checker
 from executor.executor import Executor
 
 
-class PromptShell:
-    def __init__(self, history_size=10):
+class CodeFabRunner:
+    def __init__(self):
         self.tokenizer = Tokenizer()
         self.checker = Checker()
         self.executor = Executor()
+
+    def run_code(self, source):
+        before_output_count = len(self.executor.outputs)
+
+        try:
+            tokens = self.tokenizer.tokenize(source)
+            statements = Assembler(tokens).parse()
+
+            errors = self.checker.check(statements)
+            if errors:
+                return errors
+
+            self.executor.execute(statements)
+
+            return self.executor.outputs[before_output_count:]
+
+        except Exception as error:
+            outputs = self.executor.outputs[before_output_count:]
+            return outputs + [f"Error: {error}"]
+
+
+class PromptShell:
+    EXIT_COMMANDS = ("exit", "quit")
+
+    def __init__(self, history_size=10):
+        self.runner = CodeFabRunner()
 
         self.history_size = history_size
         self.history = []
@@ -19,7 +45,7 @@ class PromptShell:
 
     def run(self):
         print("CodeFab Prompt Shell")
-        print("Type exit to quit, ctrlc to recommend, ctrlv to rerun.")
+        print("Type exit or quit to quit, ctrlc to recommend, ctrlv to rerun.")
 
         while self.is_running:
             source = input("CodeFab> ")
@@ -34,7 +60,15 @@ class PromptShell:
         if source == "":
             return []
 
-        if source == "exit":
+        shell_outputs = self.run_shell_command(source)
+        if shell_outputs is not None:
+            return shell_outputs
+
+        self.save_history(source)
+        return self.run_code(source)
+
+    def run_shell_command(self, source):
+        if source in self.EXIT_COMMANDS:
             self.is_running = False
             return ["Bye!"]
 
@@ -44,28 +78,10 @@ class PromptShell:
         if source == "ctrlv":
             return self.run_recommended_command()
 
-        self.save_history(source)
-        return self.run_code(source)
+        return None
 
     def run_code(self, source):
-        try:
-            tokens = self.tokenizer.tokenize(source)
-
-            assembler = Assembler(tokens)
-            statements = assembler.parse()
-
-            errors = self.checker.check(statements)
-            if errors:
-                return errors
-
-            before_output_count = len(self.executor.outputs)
-
-            self.executor.execute(statements)
-
-            return self.executor.outputs[before_output_count:]
-
-        except Exception as error:
-            return [f"Error: {error}"]
+        return self.runner.run_code(source)
 
     def save_history(self, source):
         self.history.append(source)
@@ -95,3 +111,6 @@ class PromptShell:
             return ["먼저 ctrlc 로 추천 명령어를 생성해주세요."]
 
         return self.run_code(self.recommended_command)
+
+
+ReplMode = PromptShell

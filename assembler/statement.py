@@ -2,18 +2,20 @@ from __future__ import annotations
 
 from typing import Optional
 
-from assembler.expr import Expr, VariableExpr
+from assembler.expr import Expr
 from assembler.tokenizer import Token
 
 
 class Stmt:
     """Base class for every statement node."""
 
-    pass
+    def __init__(self, line=None):
+        self.line = line
 
 
 class ExpressionStmt(Stmt):
-    def __init__(self, expression: Expr):
+    def __init__(self, expression: Expr, line=None):
+        super().__init__(line)
         self.expression = expression
 
     def __repr__(self):
@@ -21,7 +23,8 @@ class ExpressionStmt(Stmt):
 
 
 class PrintStmt(Stmt):
-    def __init__(self, expression: Expr):
+    def __init__(self, expression: Expr, line=None):
+        super().__init__(line)
         self.expression = expression
 
     def __repr__(self):
@@ -29,7 +32,8 @@ class PrintStmt(Stmt):
 
 
 class VarStmt(Stmt):
-    def __init__(self, name: Token, initializer: Optional[Expr] = None):
+    def __init__(self, name: Token, initializer: Optional[Expr] = None, line=None):
+        super().__init__(line if line is not None else getattr(name, "line", None))
         self.name = name
         self.initializer = initializer
 
@@ -38,7 +42,8 @@ class VarStmt(Stmt):
 
 
 class BlockStmt(Stmt):
-    def __init__(self, statements: list[Stmt]):
+    def __init__(self, statements: list[Stmt], line=None):
+        super().__init__(line)
         self.statements = statements
 
     def __repr__(self):
@@ -51,7 +56,9 @@ class IfStmt(Stmt):
         condition: Expr,
         then_branch: Stmt,
         else_branch: Optional[Stmt] = None,
+        line=None,
     ):
+        super().__init__(line)
         self.condition = condition
         self.then_branch = then_branch
         self.else_branch = else_branch
@@ -72,7 +79,9 @@ class ForStmt(Stmt):
         condition: Optional[Expr],
         increment: Optional[Expr],
         body: Stmt,
+        line=None,
     ):
+        super().__init__(line)
         self.initializer = initializer
         self.condition = condition
         self.increment = increment
@@ -91,7 +100,8 @@ class ForStmt(Stmt):
 class FunctionStmt(Stmt):
     """Func name(params) { body } 함수 선언문"""
 
-    def __init__(self, name: Token, params: list[Token], body: list[Stmt]):
+    def __init__(self, name: Token, params: list[Token], body: list[Stmt], line=None):
+        super().__init__(line if line is not None else getattr(name, "line", None))
         self.name = name
         self.params = params
         self.body = body
@@ -106,7 +116,8 @@ class FunctionStmt(Stmt):
 class ReturnStmt(Stmt):
     """return expression; 문장"""
 
-    def __init__(self, keyword: Token, value: Expr = None):
+    def __init__(self, keyword: Token, value: Optional[Expr] = None, line=None):
+        super().__init__(line if line is not None else getattr(keyword, "line", None))
         self.keyword = keyword
         self.value = value
 
@@ -118,8 +129,13 @@ class ClassStmt(Stmt):
     """Class Name (: SuperClass)? { methods... } 클래스 선언문"""
 
     def __init__(
-        self, name: Token, methods: list[FunctionStmt], superclass: VariableExpr = None
+        self,
+        name: Token,
+        methods: list[FunctionStmt],
+        superclass=None,
+        line=None,
     ):
+        super().__init__(line if line is not None else getattr(name, "line", None))
         self.name = name
         self.methods = methods
         self.superclass = superclass

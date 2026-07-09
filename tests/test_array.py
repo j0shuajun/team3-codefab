@@ -9,7 +9,8 @@ from assembler.expr import (
 )
 from assembler.statement import PrintStmt, VarStmt
 from assembler.tokenizer import Token, TokenType
-from executor.executor import CodeFabRuntimeError, Executor
+from exceptions import CodeFabRuntimeError
+from executor.executor import Executor
 
 # ===== Array(3) 호출로 배열 생성 =====
 
