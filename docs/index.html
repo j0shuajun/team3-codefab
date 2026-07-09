@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CodeFab 발표 자료</title>
+    <style>
+      :root {
+        --ink: #18212b;
+        --muted: #66717f;
+        --paper: #fbfaf7;
+        --panel: #ffffff;
+        --line: #d9ded8;
+        --mint: #ddf2e6;
+        --teal: #006d68;
+        --amber: #f4c867;
+        --rose: #ef8b85;
+        --blue: #5c7cfa;
+        --code: #101820;
+        --code-text: #e7f2ee;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(90deg, rgba(0, 109, 104, 0.08) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(0, 109, 104, 0.08) 1px, transparent 1px),
+          var(--paper);
+        background-size: 28px 28px;
+        font-family:
+          Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      main {
+        scroll-snap-type: y mandatory;
+      }
+
+      section {
+        min-height: 100vh;
+        padding: 64px min(7vw, 96px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 28px;
+        scroll-snap-align: start;
+        border-bottom: 1px solid rgba(24, 33, 43, 0.08);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 980px;
+        font-size: clamp(48px, 8vw, 92px);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        font-size: clamp(34px, 5vw, 58px);
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        font-size: 22px;
+        line-height: 1.2;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: clamp(17px, 1.6vw, 22px);
+        line-height: 1.55;
+      }
+
+      .eyebrow {
+        color: var(--teal);
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .lead {
+        max-width: 920px;
+        color: var(--muted);
+        font-size: clamp(21px, 2.4vw, 30px);
+        line-height: 1.45;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+
+      .two {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 22px;
+        box-shadow: 0 12px 30px rgba(24, 33, 43, 0.08);
+      }
+
+      .panel.accent {
+        background: var(--mint);
+        border-color: rgba(0, 109, 104, 0.22);
+      }
+
+      .panel h3 {
+        margin-bottom: 10px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.1em;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      code {
+        padding: 0.08em 0.28em;
+        border-radius: 4px;
+        background: rgba(16, 24, 32, 0.08);
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      pre {
+        margin: 0;
+        overflow: auto;
+        white-space: pre;
+        border-radius: 8px;
+        padding: 20px;
+        background: var(--code);
+        color: var(--code-text);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        font-size: clamp(14px, 1.25vw, 18px);
+        line-height: 1.55;
+      }
+
+      pre code {
+        padding: 0;
+        background: transparent;
+        color: inherit;
+        font-size: inherit;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 8px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+      }
+
+      th {
+        color: var(--teal);
+        background: rgba(0, 109, 104, 0.08);
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(150px, 1fr));
+        gap: 14px;
+      }
+
+      .stage {
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-radius: 8px;
+        padding: 18px;
+        background: var(--panel);
+        border: 2px solid var(--line);
+      }
+
+      .stage strong {
+        font-size: 24px;
+      }
+
+      .stage span {
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      .stage:nth-child(1) {
+        border-color: var(--amber);
+      }
+
+      .stage:nth-child(2) {
+        border-color: var(--teal);
+      }
+
+      .stage:nth-child(3) {
+        border-color: var(--rose);
+      }
+
+      .stage:nth-child(4) {
+        border-color: var(--blue);
+      }
+
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        padding: 6px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--panel);
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .terminal {
+        background: #0e151b;
+        color: #d9f7e8;
+      }
+
+      .terminal .prompt {
+        color: #8fe1c4;
+      }
+
+      .note {
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .progress {
+        position: fixed;
+        right: 18px;
+        bottom: 14px;
+        z-index: 5;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+        backdrop-filter: blur(8px);
+      }
+
+      @media (max-width: 900px) {
+        section {
+          padding: 48px 22px;
+        }
+
+        .two,
+        .pipeline {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+
+        section {
+          min-height: auto;
+          page-break-after: always;
+        }
+
+        .progress {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section>
+        <p class="eyebrow">CRA Team 3 · Ctrl-C</p>
+        <h1>CodeFab</h1>
+        <p class="lead">
+          작은 Custom Language와 Interpreter를 만들고, 리뷰와 CI로 품질을
+          끌어올린 팀 프로젝트입니다.
+        </p>
+        <div class="badge-row">
+          <span class="badge">Custom Language</span>
+          <span class="badge">Interpreter Pipeline</span>
+          <span class="badge">Code Review</span>
+          <span class="badge">GitHub Actions</span>
+          <span class="badge">Design Patterns</span>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Goal</p>
+        <h2>우리가 만든 것</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>언어</h3>
+            <ul>
+              <li>변수, 조건문, 반복문, 함수</li>
+              <li>클래스, 메서드, 생성자, 상속</li>
+              <li>배열과 정적 검사</li>
+              <li>한글 keyword alias</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>실행기</h3>
+            <ul>
+              <li>소스코드를 Token, AST로 변환</li>
+              <li>실행 전 Checker로 오류 탐지</li>
+              <li>Executor가 AST를 순회하며 실행</li>
+              <li><code>explain</code>으로 처리 과정을 확인</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>개발 문화</h3>
+            <ul>
+              <li>PR template 기반 리뷰</li>
+              <li>최소 2명 approve</li>
+              <li>GitHub Actions로 lint/test 자동화</li>
+              <li>Makefile로 로컬 명령 통일</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Language Pipeline</p>
+        <h2>CodeFab은 공장처럼 동작합니다</h2>
+        <div class="pipeline" aria-label="CodeFab pipeline">
+          <div class="stage">
+            <strong>Tokenizer</strong>
+            <span>문자열을 의미 있는 부품인 Token으로 자릅니다.</span>
+          </div>
+          <div class="stage">
+            <strong>Assembler</strong>
+            <span>Token을 조립해서 Expr/Stmt 트리로 만듭니다.</span>
+          </div>
+          <div class="stage">
+            <strong>Checker</strong>
+            <span>실행 전에 초기화, scope, 호출 오류를 확인합니다.</span>
+          </div>
+          <div class="stage">
+            <strong>Executor</strong>
+            <span>AST를 순회하며 실제 결과를 만듭니다.</span>
+          </div>
+        </div>
+        <p class="note">
+          CodeFab 교안의 Assembler Unit, Checker Unit, Executor Unit 구조를
+          그대로 프로젝트 구조로 옮겼습니다.
+        </p>
+      </section>
+
+      <section>
+        <p class="eyebrow">Demo Script</p>
+        <h2>기본 기능 실행 예시</h2>
+        <div class="two">
+          <pre><code>Func sum(n) {
+    var total = 0;
+
+    for (var i = 0; i <= n; i = i + 1) {
+        total = total + i;
+    }
+
+    return total;
+}
+
+print sum(5);</code></pre>
+          <pre class="terminal"><code><span class="prompt">CodeFab&gt;</span> print sum(5);
+15</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Class Demo</p>
+        <h2>클래스와 상속</h2>
+        <div class="two">
+          <pre><code>Class Robot {
+    move() {
+        print "robot";
+    }
+}
+
+Class SpeedRobot : Robot {
+    move() {
+        Super.move();
+        print "speed";
+    }
+}
+
+var r = SpeedRobot();
+r.move();</code></pre>
+          <div class="panel accent">
+            <h3>동작 흐름</h3>
+            <ul>
+              <li><code>Class</code>는 호출되면 instance를 만듭니다.</li>
+              <li><code>This</code>는 현재 instance를 가리킵니다.</li>
+              <li><code>Super</code>는 부모 클래스의 메서드를 찾습니다.</li>
+              <li>Checker는 잘못된 위치의 <code>Super</code>를 잡습니다.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Custom Language</p>
+        <h2>작지만 CodeFab다운 확장</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3><code>explain</code></h3>
+            <ul>
+              <li>입력 코드가 파이프라인을 어떻게 지나는지 보여줍니다.</li>
+              <li>Debug Mode와 다르게 실행을 멈추지 않습니다.</li>
+              <li>구조 설명을 실제 출력으로 보여줄 수 있습니다.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>한글 키워드 별칭</h3>
+            <ul>
+              <li>기존 문법을 새로 만들지 않습니다.</li>
+              <li>Tokenizer 단계에서 표준 Token으로 정규화합니다.</li>
+              <li>내부 AST, Checker, Executor는 그대로 유지합니다.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Explain</p>
+        <h2>구조를 보여주는 기능</h2>
+        <div class="two">
+          <pre><code>explain var x = 1 + 2 * 3;</code></pre>
+          <pre class="terminal"><code>[Tokens]
+VAR IDENTIFIER EQUAL NUMBER PLUS NUMBER STAR NUMBER SEMICOLON EOF
+
+[AST]
+VarStmt(x, BinaryExpr(1, +, BinaryExpr(2, *, 3)))
+
+[Checker]
+No errors
+
+[Result]
+x = 7</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Korean Alias</p>
+        <h2>한글 키워드는 기존 문법의 별칭입니다</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>기존</th>
+              <th>한글 alias</th>
+              <th>의미</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>var</code></td>
+              <td><code>값</code></td>
+              <td>값을 이름에 묶습니다.</td>
+            </tr>
+            <tr>
+              <td><code>Func</code>, <code>return</code></td>
+              <td><code>함수</code>, <code>반환</code></td>
+              <td>함수를 선언하고 결과를 돌려줍니다.</td>
+            </tr>
+            <tr>
+              <td><code>Class</code>, <code>init</code></td>
+              <td><code>클래스</code>, <code>초기화</code></td>
+              <td>객체의 형태와 생성 시 동작을 정의합니다.</td>
+            </tr>
+            <tr>
+              <td><code>This</code>, <code>Super</code></td>
+              <td><code>이것</code>, <code>부모</code></td>
+              <td>현재 instance와 부모 class를 가리킵니다.</td>
+            </tr>
+            <tr>
+              <td><code>true</code>, <code>false</code></td>
+              <td><code>참</code>, <code>거짓</code>, <code>ㅇㅇ</code>, <code>ㄴㄴ</code></td>
+              <td>Boolean literal입니다.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <p class="eyebrow">Korean Demo</p>
+        <h2>한글 alias 실행 예시</h2>
+        <pre><code>함수 합계(n) {
+    값 total = 0;
+
+    반복 (값 i = 0; i <= n; i = i + 1) {
+        total = total + i;
+    }
+
+    반환 total;
+}
+
+값 enabled = ㅇㅇ;
+값 result = 합계(5);
+
+만약 (enabled 그리고 result > 10) {
+    출력 "large";
+} 아니면 {
+    출력 "small";
+}</code></pre>
+      </section>
+
+      <section>
+        <p class="eyebrow">Design Pattern 1</p>
+        <h2>Composite Pattern: 코드를 트리로 다루기</h2>
+        <div class="two">
+          <div class="panel">
+            <h3>교안의 예시</h3>
+            <ul>
+              <li><code>3 + 2 * 7</code>을 계산 트리로 표현합니다.</li>
+              <li>숫자도 Expression, 연산도 Expression입니다.</li>
+              <li>부분과 전체를 같은 방식으로 다룹니다.</li>
+            </ul>
+          </div>
+          <div class="panel accent">
+            <h3>CodeFab의 적용</h3>
+            <ul>
+              <li><code>LiteralExpr</code>, <code>BinaryExpr</code>는 모두 <code>Expr</code>입니다.</li>
+              <li><code>PrintStmt</code>, <code>BlockStmt</code>는 모두 <code>Stmt</code>입니다.</li>
+              <li>Executor는 AST 트리를 내려가며 값을 계산합니다.</li>
+            </ul>
+          </div>
+        </div>
+        <pre><code>print 1 + 2 * 3;
+
+PrintStmt
+└── BinaryExpr(+)
+    ├── LiteralExpr(1)
+    └── BinaryExpr(*)
+        ├── LiteralExpr(2)
+        └── LiteralExpr(3)</code></pre>
+      </section>
+
+      <section>
+        <p class="eyebrow">Design Pattern 2</p>
+        <h2>Adapter Pattern: 다른 호출 대상을 같은 규칙으로</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>문제</h3>
+            <ul>
+              <li>내장 함수, 사용자 함수, 클래스 생성자는 내부 구현이 다릅니다.</li>
+              <li>하지만 언어 사용자에게는 모두 “호출”입니다.</li>
+            </ul>
+          </article>
+          <article class="panel accent">
+            <h3>해결</h3>
+            <ul>
+              <li><code>Callable</code>이라는 공통 호출 규칙을 둡니다.</li>
+              <li><code>NativeFunction</code>, <code>UserFunction</code>, <code>UserClass</code>가 <code>call()</code>을 제공합니다.</li>
+              <li>Executor는 세부 구현을 몰라도 됩니다.</li>
+            </ul>
+          </article>
+        </div>
+        <pre><code>add(1, 2);      // NativeFunction
+fact(5);        // UserFunction
+Robot("A");     // UserClass
+
+Executor -> callee.call(executor, arguments)</code></pre>
+      </section>
+
+      <section>
+        <p class="eyebrow">Design Pattern 3</p>
+        <h2>Factory-like: 생성 책임을 한 곳으로 모으기</h2>
+        <div class="two">
+          <div class="panel">
+            <h3>Tokenizer</h3>
+            <ul>
+              <li><code>"var"</code>를 <code>Token(VAR)</code>로 만듭니다.</li>
+              <li><code>"123"</code>을 <code>Token(NUMBER)</code>로 만듭니다.</li>
+              <li>한글 alias도 이 단계에서 정규화합니다.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Assembler</h3>
+            <ul>
+              <li><code>var x = 1;</code>을 <code>VarStmt</code>로 만듭니다.</li>
+              <li><code>x + 1</code>을 <code>BinaryExpr</code>로 만듭니다.</li>
+              <li>새 문법의 생성 지점을 찾기 쉽습니다.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="note">
+          정통 Factory Method라기보다는, 객체 생성 책임을 모은 Factory 스타일
+          구조로 설명하는 것이 정확합니다.
+        </p>
+      </section>
+
+      <section>
+        <p class="eyebrow">Design Pattern 4</p>
+        <h2>Command Pattern: Shell 리팩토링 후보</h2>
+        <div class="two">
+          <pre><code>Before
+
+if source == "exit":
+    ...
+if source == "ctrlc":
+    ...
+if source == "ctrlv":
+    ...
+else:
+    run_code(source)</code></pre>
+          <pre><code>리팩토링 후보
+
+ExitCommand
+CtrlCCommand
+CtrlVCommand
+ExplainCommand
+RunCodeCommand
+
+PromptShell -> command.execute()</code></pre>
+        </div>
+        <p class="note">
+          현재 shell은 충분히 동작합니다. 다만 <code>explain</code>처럼 명령이
+          늘어나면, Command Pattern으로 분리하기 좋은 구조입니다.
+        </p>
+      </section>
+
+      <section>
+        <p class="eyebrow">Design Choice</p>
+        <h2>Singleton은 일부러 쓰지 않았습니다</h2>
+        <div class="panel accent">
+          <ul>
+            <li>Prompt Shell은 세션 동안 상태를 유지해야 합니다.</li>
+            <li>하지만 테스트는 매번 깨끗한 실행 환경이 필요합니다.</li>
+            <li><code>Executor</code>는 각 인스턴스마다 <code>globals</code>, <code>environment</code>, <code>outputs</code>를 가집니다.</li>
+            <li>패턴은 무조건 적용하는 것이 아니라, 필요한 상황에만 선택했습니다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Review Culture</p>
+        <h2>리뷰로 기능을 완성했습니다</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>PR 방식</h3>
+            <ul>
+              <li>PR template 작성</li>
+              <li>최소 2명 approve</li>
+              <li>작성자가 직접 merge</li>
+              <li>작은 기능 단위 branch 사용</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>리뷰에서 잡은 문제</h3>
+            <ul>
+              <li>중첩 statement의 runtime error line</li>
+              <li><code>Super</code> 사용 위치 checker 누락</li>
+              <li>알 수 없는 statement가 조용히 무시되는 문제</li>
+              <li>class/array 정적 검사 보강</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>좋았던 점</h3>
+            <ul>
+              <li>기능 구현과 검증 기준을 PR에 함께 기록</li>
+              <li>댓글로 재현 예시를 남김</li>
+              <li>리뷰가 단순 승인보다 품질 개선으로 이어짐</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Automation</p>
+        <h2>Makefile과 GitHub Actions</h2>
+        <div class="two">
+          <div class="panel">
+            <h3>로컬 명령</h3>
+            <ul>
+              <li><code>make install</code>: 개발 의존성 설치</li>
+              <li><code>make lint</code>: black, isort, ruff 실행</li>
+              <li><code>make test</code>: pytest 전체 실행</li>
+              <li>로컬에서도 CI와 같은 기준을 사용합니다.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>CI</h3>
+            <ul>
+              <li>Lint workflow: formatting, import order, ruff</li>
+              <li>Unit Tests workflow: pytest와 coverage</li>
+              <li>Gist Acceptance workflow: 외부 예제 기반 수용 테스트</li>
+              <li>Codecov로 변경 범위의 테스트 공백 확인</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <div class="progress" aria-live="polite">1 / 16</div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll("section"));
+      const progress = document.querySelector(".progress");
+
+      function currentSlideIndex() {
+        const middle = window.scrollY + window.innerHeight / 2;
+        let index = 0;
+        slides.forEach((slide, i) => {
+          if (slide.offsetTop <= middle) {
+            index = i;
+          }
+        });
+        return index;
+      }
+
+      function updateProgress() {
+        progress.textContent = `${currentSlideIndex() + 1} / ${slides.length}`;
+      }
+
+      function go(delta) {
+        const index = Math.min(
+          Math.max(currentSlideIndex() + delta, 0),
+          slides.length - 1,
+        );
+        slides[index].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener("keydown", (event) => {
+        if (["ArrowDown", "ArrowRight", "PageDown", " "].includes(event.key)) {
+          event.preventDefault();
+          go(1);
+        }
+        if (["ArrowUp", "ArrowLeft", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          go(-1);
+        }
+        if (event.key === "Home") {
+          event.preventDefault();
+          slides[0].scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        if (event.key === "End") {
+          event.preventDefault();
+          slides[slides.length - 1].scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      });
+      updateProgress();
+    </script>
+  </body>
+</html>
