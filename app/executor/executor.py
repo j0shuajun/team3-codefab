@@ -40,6 +40,8 @@ from app.assembler.statement import (
     VarStmt,
 )
 from app.assembler.tokenizer import TokenType
+from app.custom_function.ctrl_c_function import register_custom_functions
+from app.custom_function.name_compatibility import calculate_name_compatibility
 from app.exceptions import CodeFabRuntimeError
 
 
@@ -54,6 +56,7 @@ class Executor:
 
         self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
         self.globals.define("Array", NativeFunction("Array", 1, self._make_array))
+        register_custom_functions(self)
 
     def _make_array(self, size):
         if not self.is_number(size):
@@ -249,14 +252,13 @@ class Executor:
             return value
 
         if isinstance(expr, ThisExpr):
-            return self.environment.get(expr.keyword)
+            # 소스에 쓰인 alias(예: 나야)와 무관하게 항상 고정 키 "This"로 바인딩되어 있음
+            return self.environment.get_by_name("This")
 
         if isinstance(expr, SuperExpr):
-            superclass = self.environment.get(expr.keyword)
-
-            this_token = type("TokenLike", (), {"origin": "This"})()
-
-            instance = self.environment.get(this_token)
+            # 소스에 쓰인 alias(예: 부모)와 무관하게 항상 고정 키 "Super"/"This"로 바인딩되어 있음
+            superclass = self.environment.get_by_name("Super")
+            instance = self.environment.get_by_name("This")
 
             method = superclass.find_method(expr.method.origin)
 
@@ -326,6 +328,9 @@ class Executor:
                 )
 
             return left.is_instance_of(right)
+
+        if expr.operator.type == TokenType.HEART:
+            return calculate_name_compatibility(left, right)
 
         raise CodeFabRuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 
