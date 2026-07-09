@@ -1,3 +1,4 @@
+import textwrap
 from app.assembler.runtime import NativeFunction
 
 TEAM_NAME = "Ctrl-C"
@@ -40,7 +41,12 @@ TEAM_MEMBERS = [
         "role": None,
         "hobby": "실내 클라이밍",
         "parts": ["tokenizer", "array", "custom language"],
-        "remark": None,
+        "remark": (
+            "생각했던 것 보다 더 유익한 Code Review Agent 과정이었습니다. "
+            "AI 시대에 맞게 나 자신도 발빠르게 변화해야 하는데, 이번 과정을 통해 그 흐름에 "
+            "잘 따라갈 수 있었습니다. 그리고 평소에는 뵈기 힘든 타 부서의 동료분들과 협업하면서 "
+            "많이 배우고 생각이 넓어질 수 있었습니다. 고생하셨습니다!"
+        ),
     },
     {
         "name": "이예진",
@@ -56,50 +62,80 @@ TEAM_MEMBERS = [
     },
 ]
 
-BOX_WIDTH = 56
-TOP_BORDER = "┏" + "━" * BOX_WIDTH + "┓"
-MID_BORDER = "┣" + "━" * BOX_WIDTH + "┫"
-BOTTOM_BORDER = "┗" + "━" * BOX_WIDTH + "┛"
+
+# 터미널 색상 및 스타일 정의 (ANSI Escape Code)
+class Style:
+    RESET = "\033[0m"
+    BOLD = "\033[1m"
+
+    CYAN = "\033[36m"
+    GREEN = "\033[32m"
+    YELLOW = "\033[33m"
+    MAGENTA = "\033[35m"
+    WHITE = "\033[37m"
+    GRAY = "\033[90m"
+
+
+BOX_WIDTH = 80
+TOP_BORDER = f"{Style.GRAY}┏" + "━" * BOX_WIDTH + f"┓{Style.RESET}"
+MID_BORDER = f"{Style.GRAY}┣" + "━" * BOX_WIDTH + f"┫{Style.RESET}"
+BOTTOM_BORDER = f"{Style.GRAY}┗" + "━" * BOX_WIDTH + f"┛{Style.RESET}"
 
 
 def member_label(member):
-    label = f"{member['name']}님"
+    label = f"{Style.BOLD}{member['name']}{Style.RESET}님"
     if member["role"]:
-        label += f"({member['role']})"
+        label += f"{Style.GRAY}({member['role']}){Style.RESET}"
     return label
 
 
 def build_ctrl_c_lines():
     lines = [
         TOP_BORDER,
-        f"┃ 🏷️  팀명: {TEAM_NAME}",
-        f"┃ 💡  의미: {TEAM_MEANING}",
+        f"  🏷️  {Style.CYAN}{Style.BOLD}팀명:{Style.RESET} {TEAM_NAME}",
+        f"  💡  {Style.CYAN}{Style.BOLD}의미:{Style.RESET} {TEAM_MEANING}",
         MID_BORDER,
-        "┃ 👥 팀원 & 취미",
+        f"  {Style.GREEN}{Style.BOLD}👥 팀원 & 취미{Style.RESET}",
     ]
 
     for member in TEAM_MEMBERS:
         hobby = member["hobby"] or "-"
-        lines.append(f"┃   🙋 {member_label(member)} — 취미: {hobby}")
+        lines.append(f"    🙋 {member_label(member)} — 취미: {Style.WHITE}{hobby}{Style.RESET}")
 
     lines.append(MID_BORDER)
-    lines.append("┃ 🛠️  담당 역할")
+    lines.append(f"  {Style.YELLOW}{Style.BOLD}🛠️  담당 역할{Style.RESET}")
 
     for member in TEAM_MEMBERS:
-        lines.append(f"┃   🔧 {member['name']}: {', '.join(member['parts'])}")
+        parts_str = f"{Style.GRAY}, {Style.RESET}".join([f"{Style.WHITE}{p}{Style.RESET}" for p in member['parts']])
+        lines.append(f"    🔧 {Style.BOLD}{member['name']}{Style.RESET}: {parts_str}")
 
     lines.append(MID_BORDER)
-    lines.append("┃ 💬 한 줄 소감")
+    lines.append(f"  {Style.MAGENTA}{Style.BOLD}💬 한 줄 소감{Style.RESET}")
 
     for member in TEAM_MEMBERS:
-        lines.append(f"┃   🗨️  {member['name']}")
-        if member["remark"]:
-            lines.append(f'┃      "{member["remark"]}"')
+        lines.append(f"    🗨️  {Style.BOLD}{member['name']}{Style.RESET}")
+
+        if "remark" in member and member["remark"]:
+            wrapped_remarks = textwrap.wrap(member["remark"], width=40)
+
+            for i, chunk in enumerate(wrapped_remarks):
+                if i == 0:
+                    lines.append(f'       {Style.GRAY}"{chunk}')
+                else:
+                    lines.append(f'        {chunk}')
+
+            # 마지막 줄 끝에 따옴표 닫기
+            lines[-1] = lines[-1] + f'"{Style.RESET}'
         else:
-            lines.append("┃      (작성한 소감이 없습니다)")
+            lines.append(f"       {Style.GRAY}(작성한 소감이 없습니다){Style.RESET}")
 
     lines.append(BOTTOM_BORDER)
     return lines
+
+
+# 출력 테스트
+for line in build_ctrl_c_lines():
+    print(line)
 
 
 def _make_ctrl_c(executor):
