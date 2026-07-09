@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from app.exceptions import CodeFabRuntimeError
 from app.assembler.import_manager import ImportManager
+from app.exceptions import CodeFabRuntimeError
 
 
 def write(tmp_path, name, content):

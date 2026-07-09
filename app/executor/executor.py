@@ -18,6 +18,7 @@ from app.assembler.expr import (
     UnaryExpr,
     VariableExpr,
 )
+from app.assembler.import_manager import ImportManager
 from app.assembler.runtime import (
     Callable,
     ImportedModule,
@@ -27,7 +28,6 @@ from app.assembler.runtime import (
     UserFunction,
     UserInstance,
 )
-from app.assembler.import_manager import ImportManager
 from app.assembler.statement import (
     BlockStmt,
     ClassStmt,

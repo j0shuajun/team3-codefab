@@ -47,9 +47,7 @@ def test_import_exposes_class_declaration(tmp_path):
     write(
         tmp_path,
         "shapes.txt",
-        "Class Point {\n"
-        "  init(x) { This.x = x; }\n"
-        "}\n",
+        "Class Point {\n" "  init(x) { This.x = x; }\n" "}\n",
     )
 
     executor = run(
