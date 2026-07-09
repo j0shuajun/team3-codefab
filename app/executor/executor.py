@@ -1,6 +1,5 @@
 import os
 
-from app.assembler.assembler import Assembler
 from app.assembler.environment import Environment
 from app.assembler.expr import (
     AssignExpr,
@@ -40,7 +39,7 @@ from app.assembler.statement import (
     ReturnStmt,
     VarStmt,
 )
-from app.assembler.tokenizer import Tokenizer, TokenType
+from app.assembler.tokenizer import TokenType
 from app.exceptions import CodeFabRuntimeError
 
 
@@ -156,12 +155,19 @@ class Executor:
         raise CodeFabRuntimeError(f"Unknown statement type: {type(stmt).__name__}")
 
     def execute_import(self, stmt):
+        from app.checker.checker import Checker
+
         path = stmt.path.value
         base_dir = self._import_dirs[-1]
 
         with self.import_manager.importing(path, base_dir=base_dir) as resolved:
-            source = self.import_manager.read(resolved)
-            statements = Assembler(Tokenizer().tokenize(source)).parse()
+            statements = self.import_manager.load(resolved)
+
+            errors = Checker().check(statements)
+            if errors:
+                raise CodeFabRuntimeError(
+                    f"Import '{path}' has errors: {'; '.join(errors)}"
+                )
 
             module_environment = Environment(self.globals)
             previous_environment = self.environment

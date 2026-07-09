@@ -59,6 +59,26 @@ class TestRead:
         assert manager.read("sum.txt") == first
 
 
+class TestLoad:
+    def test_load_returns_parsed_statements(self, tmp_path):
+        from app.assembler.statement import FunctionStmt
+
+        write(tmp_path, "sum.txt", "Func add(a, b) { return a + b; }")
+        manager = ImportManager(base_dir=str(tmp_path))
+
+        statements = manager.load("sum.txt")
+
+        assert len(statements) == 1
+        assert isinstance(statements[0], FunctionStmt)
+        assert statements[0].name.origin == "add"
+
+    def test_load_missing_file_raises(self, tmp_path):
+        manager = ImportManager(base_dir=str(tmp_path))
+
+        with pytest.raises(CodeFabRuntimeError):
+            manager.load("missing.txt")
+
+
 class TestImporting:
     def test_importing_yields_resolved_path(self, tmp_path):
         write(tmp_path, "sum.txt", "Func add(a, b) { return a + b; }")

@@ -71,3 +71,10 @@ def test_circular_import_raises(tmp_path):
 
     with pytest.raises(CodeFabRuntimeError):
         run(tmp_path, 'import "a.txt" alias a;\n')
+
+
+def test_import_with_checker_error_raises_before_executing(tmp_path):
+    write(tmp_path, "broken.txt", "var x = 1;\nvar x = 2;\n")
+
+    with pytest.raises(CodeFabRuntimeError):
+        run(tmp_path, 'import "broken.txt" alias broken;\n')
