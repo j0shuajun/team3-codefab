@@ -275,6 +275,20 @@ class StatementResolver(Resolver):
         self._resolve_function_body(statement, FunctionType.FUNCTION)
 
     def _resolve_function_body(self, statement, function_type):
+        # 함수/메서드 본문은 "선언되는 순간"이 아니라 나중에 호출될 때 실행된다.
+        # 그래서 본문을 resolve 하는 동안 바깥 스코프에 미치는 영향(읽기로 인한
+        # 오탐, 대입으로 인한 오염)을 전부 격리해야 한다:
+        #  1) 지금 보이는 모든 바깥 변수를 임시로 "초기화됨"으로 표시해서, 본문
+        #     안에서 바깥 변수를 읽을 때 "아직 초기화 안 됨" 오류가 잘못 나지
+        #     않게 한다 (호출 시점엔 이미 초기화돼 있을 수 있으므로 지금은 판단
+        #     할 수 없다).
+        #  2) 본문 resolve 가 끝나면 이전 스냅샷으로 완전히 되돌려서, 위 1)의
+        #     임시 표시와 본문 안에서 일어난 대입 효과를 모두 폐기한다 (함수가
+        #     실제로 몇 번 호출될지, 언제 호출될지 지금은 알 수 없으므로 바깥
+        #     스코프의 흐름 분석에 영향을 주면 안 된다).
+        before = self._scopes.snapshot()
+        self._scopes.mark_all_initialized()
+
         enclosing_function = self._current_function
         self._current_function = function_type
 
@@ -290,6 +304,7 @@ class StatementResolver(Resolver):
             self.resolve_all(statement.body)
 
         self._current_function = enclosing_function
+        self._scopes.restore(before)
 
     def _resolve_return_stmt(self, statement):
         if self._current_function == FunctionType.NONE:
