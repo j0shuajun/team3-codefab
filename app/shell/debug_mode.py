@@ -3,8 +3,7 @@ from dataclasses import dataclass
 from app.assembler.assembler import Assembler
 from app.assembler.environment import Environment
 from app.assembler.statement import BlockStmt, ForStmt, IfStmt
-from app.shell.shell import CodeFabRunner
-
+from app.shell.runner import CodeFabRunner
 
 @dataclass
 class DebugFrame:

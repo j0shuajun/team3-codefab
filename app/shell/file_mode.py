@@ -1,5 +1,5 @@
 from app.assembler.assembler import Assembler
-from app.shell.shell import CodeFabRunner
+from app.shell.runner import CodeFabRunner
 
 
 class FileMode:

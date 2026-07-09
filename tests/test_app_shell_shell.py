@@ -1,6 +1,6 @@
 from app.shell.file_mode import FileMode
-from app.shell.shell import CodeFabRunner, PromptShell
-
+from app.shell.shell import PromptShell
+from app.shell.runner import CodeFabRunner
 
 def make_shell():
     return PromptShell()
@@ -176,7 +176,7 @@ def test_runner_returns_outputs_before_runtime_error(mocker):
     runner.executor.outputs.append("before")
 
     mocker.patch.object(runner.tokenizer, "tokenize", return_value=[])
-    mocker.patch("app.shell.shell.Assembler").return_value.parse.return_value = []
+    mocker.patch("app.shell.runner.Assembler").return_value.parse.return_value = []
     mocker.patch.object(runner.checker, "check", return_value=[])
     mocker.patch.object(
         runner.executor,
