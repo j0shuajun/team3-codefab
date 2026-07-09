@@ -92,7 +92,6 @@ class Token:
 
 class Tokenizer:
     _TOKENS = {T.value: T for T in TokenType if isinstance(T.value, str)}
-    _MAX_TOKEN_LENGTH = max(len(k) for k in _TOKENS)
 
     def __init__(self):
         self._origin = ""
@@ -112,18 +111,16 @@ class Tokenizer:
                 self._idx += 1
             elif ch.isspace():
                 self._idx += 1
+            elif ch in self._TOKENS:
+                tokens.append(self._read_single_character())
             elif ch == '"':
                 tokens.append(self._read_string())
             elif ch.isdigit():
                 tokens.append(self._read_number())
+            elif ch.isalpha():
+                tokens.append(self._read_identifier())
             else:
-                token = self._read_token()
-                if token is not None:
-                    tokens.append(token)
-                elif ch.isalpha():
-                    tokens.append(self._read_generic_identifier())
-                else:
-                    raise ValueError(f"Unexpected character: {ch!r}")
+                raise ValueError(f"Unexpected character: {ch!r}")
 
         tokens.append(Token(TokenType.EOF, "", line=self._line))
         return tokens
@@ -140,24 +137,17 @@ class Tokenizer:
             self._idx += 1
         return self._origin[start : self._idx]
 
-    def _read_token(self) -> Token | None:
-        window = self._origin[self._idx : self._idx + self._MAX_TOKEN_LENGTH]
+    def _read_single_character(self) -> Token:
+        ch = self._peek()
+        self._idx += 1
 
-        for length in range(len(window), 0, -1):
-            candidate = window[:length]
+        if self._idx_in_range():
+            combined = ch + self._peek()
+            if combined in self._TOKENS:
+                self._idx += 1
+                return Token(self._TOKENS[combined], combined, line=self._line)
 
-            if candidate not in self._TOKENS:
-                continue
-
-            if candidate[-1].isalnum():
-                next_idx = self._idx + length
-                if next_idx < len(self._origin) and self._origin[next_idx].isalnum():
-                    continue
-
-            self._idx += length
-            return Token(self._TOKENS[candidate], candidate, line=self._line)
-
-        return None
+        return Token(self._TOKENS[ch], ch, line=self._line)
 
     def _read_string(self) -> Token:
         start = self._idx
@@ -182,6 +172,8 @@ class Tokenizer:
             characters += self._read_multiple_characters(str.isdigit)
         return Token(TokenType.NUMBER, characters, float(characters), line=self._line)
 
-    def _read_generic_identifier(self) -> Token:
+    def _read_identifier(self) -> Token:
         origin = self._read_multiple_characters(str.isalnum)
-        return Token(TokenType.IDENTIFIER, origin, line=self._line)
+        return Token(
+            self._TOKENS.get(origin, TokenType.IDENTIFIER), origin, line=self._line
+        )
