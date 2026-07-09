@@ -1,5 +1,7 @@
 class CodeFabRuntimeError(RuntimeError):
-    """Executor 가 프로그램을 실행하는 중에 발생하는 런타임 오류."""
+    def __init__(self, message, line=None):
+        super().__init__(message)
+        self.line = line
 
 
 class CodeFabTypeError(TypeError):

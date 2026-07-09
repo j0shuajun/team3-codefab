@@ -61,6 +61,14 @@ class Executor:
             self.execute_stmt(statement)
 
     def execute_stmt(self, stmt):
+        try:
+            self._execute_stmt(stmt)
+        except CodeFabRuntimeError as error:
+            if getattr(error, "line", None) is None:
+                error.line = getattr(stmt, "line", None)
+            raise
+
+    def _execute_stmt(self, stmt):
         if isinstance(stmt, PrintStmt):
             value = self.evaluate(stmt.expression)
             self.outputs.append(self.stringify(value))
