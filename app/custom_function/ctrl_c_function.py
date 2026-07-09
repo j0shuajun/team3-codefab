@@ -1,4 +1,5 @@
 import textwrap
+
 from app.assembler.runtime import NativeFunction
 
 TEAM_NAME = "Ctrl-C"
@@ -100,13 +101,17 @@ def build_ctrl_c_lines():
 
     for member in TEAM_MEMBERS:
         hobby = member["hobby"] or "-"
-        lines.append(f"    🙋 {member_label(member)} — 취미: {Style.WHITE}{hobby}{Style.RESET}")
+        lines.append(
+            f"    🙋 {member_label(member)} — 취미: {Style.WHITE}{hobby}{Style.RESET}"
+        )
 
     lines.append(MID_BORDER)
     lines.append(f"  {Style.YELLOW}{Style.BOLD}🛠️  담당 역할{Style.RESET}")
 
     for member in TEAM_MEMBERS:
-        parts_str = f"{Style.GRAY}, {Style.RESET}".join([f"{Style.WHITE}{p}{Style.RESET}" for p in member['parts']])
+        parts_str = f"{Style.GRAY}, {Style.RESET}".join(
+            [f"{Style.WHITE}{p}{Style.RESET}" for p in member["parts"]]
+        )
         lines.append(f"    🔧 {Style.BOLD}{member['name']}{Style.RESET}: {parts_str}")
 
     lines.append(MID_BORDER)
@@ -122,7 +127,7 @@ def build_ctrl_c_lines():
                 if i == 0:
                     lines.append(f'       {Style.GRAY}"{chunk}')
                 else:
-                    lines.append(f'        {chunk}')
+                    lines.append(f"        {chunk}")
 
             # 마지막 줄 끝에 따옴표 닫기
             lines[-1] = lines[-1] + f'"{Style.RESET}'
@@ -153,4 +158,6 @@ CUSTOM_FUNCTIONS = [
 
 def register_custom_functions(executor):
     for name, arity, make_function in CUSTOM_FUNCTIONS:
-        executor.globals.define(name, NativeFunction(name, arity, make_function(executor)))
+        executor.globals.define(
+            name, NativeFunction(name, arity, make_function(executor))
+        )

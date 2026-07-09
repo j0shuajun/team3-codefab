@@ -174,9 +174,7 @@ class Tokenizer:
         return Token(TokenType.NUMBER, characters, float(characters), line=self._line)
 
     def _read_identifier(self) -> Token:
-        origin = self._read_multiple_characters(
-            lambda ch: ch.isalnum() or ch == "_"
-        )
+        origin = self._read_multiple_characters(lambda ch: ch.isalnum() or ch == "_")
         return Token(
             self._TOKENS.get(origin, TokenType.IDENTIFIER), origin, line=self._line
         )
