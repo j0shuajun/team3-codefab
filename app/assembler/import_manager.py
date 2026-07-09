@@ -2,8 +2,11 @@ import os
 from contextlib import contextmanager
 
 from app.assembler.assembler import Assembler
+from app.assembler.statement import ClassStmt, FunctionStmt, ImportStmt, VarStmt
 from app.assembler.tokenizer import Tokenizer
 from app.exceptions import CodeFabRuntimeError
+
+ALLOWED_IMPORT_STATEMENTS = (ImportStmt, FunctionStmt, ClassStmt, VarStmt)
 
 
 class ImportManager:
@@ -31,7 +34,16 @@ class ImportManager:
 
     def load(self, path, base_dir=None):
         source = self.read(path, base_dir)
-        return Assembler(Tokenizer().tokenize(source)).parse()
+        statements = Assembler(Tokenizer().tokenize(source)).parse()
+
+        for statement in statements:
+            if not isinstance(statement, ALLOWED_IMPORT_STATEMENTS):
+                raise CodeFabRuntimeError(
+                    f"Import target '{path}' may only contain import, "
+                    "Func, Class, or var declarations."
+                )
+
+        return statements
 
     @contextmanager
     def importing(self, path, base_dir=None):

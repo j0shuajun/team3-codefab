@@ -58,6 +58,10 @@ class Executor:
         self.globals.define("Array", NativeFunction("Array", 1, self._make_array))
         register_custom_functions(self)
 
+    def set_import_base_dir(self, base_dir):
+        self.import_manager.base_dir = base_dir
+        self._import_dirs = [base_dir]
+
     def _make_array(self, size):
         if not self.is_number(size):
             raise CodeFabRuntimeError("Array size must be a number.")
