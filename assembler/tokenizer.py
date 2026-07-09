@@ -156,6 +156,8 @@ class Tokenizer:
             raise ValueError("Unterminated string")
         self._idx += 1
         origin = self._origin[start : self._idx]
+        if "\\" in origin:
+            raise ValueError("Backslash is not allowed")
         return Token(TokenType.STRING, origin, value=origin[1:-1], line=self._line)
 
     def _read_number(self) -> Token:

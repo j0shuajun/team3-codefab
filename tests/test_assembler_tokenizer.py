@@ -739,3 +739,8 @@ var b = 2;"""
     lines = [token.line for token in tokens]
 
     assert lines == [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
+
+
+def test_backslash_in_string_not_allowed(tokenizer):
+    with pytest.raises(ValueError, match="Backslash is not allowed"):
+        tokenizer.tokenize(r'var a = "hi\n world"')
