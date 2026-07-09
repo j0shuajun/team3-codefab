@@ -1,14 +1,14 @@
 from collections import Counter
+
 from app.shell.explain_mode import ExplainMode
 from app.shell.runner import CodeFabRunner
-
 
 
 class PromptShell:
     EXIT_COMMANDS = ("exit", "quit")
     EXPLAIN_COMMAND = "explain"
 
-    def  __init__(self, history_size=10):
+    def __init__(self, history_size=10):
         self.runner = CodeFabRunner()
         self.explainer = ExplainMode()
 

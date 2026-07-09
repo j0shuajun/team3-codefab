@@ -5,6 +5,7 @@ from app.assembler.environment import Environment
 from app.assembler.statement import BlockStmt, ForStmt, IfStmt
 from app.shell.runner import CodeFabRunner
 
+
 @dataclass
 class DebugFrame:
     statements: list
@@ -36,9 +37,11 @@ class VariableStoreReader:
 
 
 class DebugSession:
-    def __init__(self, runner, statements):
+    def __init__(self, runner, statements, source_lines=None):
         self.runner = runner
         self.frames = [DebugFrame(statements)]
+        self.source_lines = source_lines or []
+
         self.breakpoints = set()
         self.watch_names = []
         self.is_finished = False
@@ -57,20 +60,17 @@ class DebugSession:
 
         if command_name in ("exit", "quit"):
             self.is_finished = True
-            return ["Debug finished."]
+            return ["[DEBUG] 디버그 모드 종료"]
 
         if command_name == "step":
             self.last_break_stop_key = None
-            return (
-                self.execute_current_statement(enter_block=True) + self.format_watches()
-            )
+            execution_outputs = self.execute_current_statement(enter_block=True)
+            return self.format_after_execution(execution_outputs)
 
         if command_name == "next":
             self.last_break_stop_key = None
-            return (
-                self.execute_current_statement(enter_block=False)
-                + self.format_watches()
-            )
+            execution_outputs = self.execute_current_statement(enter_block=False)
+            return self.format_after_execution(execution_outputs)
 
         if command_name == "continue":
             return self.continue_until_breakpoint()
@@ -96,7 +96,7 @@ class DebugSession:
         if command_name == "inspect":
             return self.inspect_current_scope()
 
-        return [f"Unknown debug command: {command}"]
+        return [f"[DEBUG] 알 수 없는 명령어: {command}"]
 
     def execute_current_statement(self, enter_block):
         before_output_count = len(self.runner.executor.outputs)
@@ -106,7 +106,7 @@ class DebugSession:
             self.normalize_frames()
 
             if self.is_finished:
-                return ["Program finished."]
+                return ["[DEBUG] 프로그램 종료"]
 
             statement = self.current_statement()
             statement_line = getattr(statement, "line", None)
@@ -141,6 +141,21 @@ class DebugSession:
                 return outputs + [f"Error: {error}"]
 
             return outputs + [f"Error at line {line}: {error}"]
+
+    def format_after_execution(self, execution_outputs):
+        outputs = list(execution_outputs)
+
+        has_error = any(output.startswith("Error") for output in outputs)
+
+        if self.is_finished:
+            if not has_error:
+                outputs.append("[DEBUG] 프로그램 종료")
+                outputs.extend(self.format_watches())
+            return outputs
+
+        outputs.extend(self.format_current_location())
+        outputs.extend(self.format_watches())
+        return outputs
 
     def enter_block(self, block_stmt):
         current_frame = self.current_frame()
@@ -235,14 +250,20 @@ class DebugSession:
                 and self.last_break_stop_key != current_key
             ):
                 self.last_break_stop_key = current_key
-                return (
-                    outputs
-                    + [f"Stopped at breakpoint line {current_line}."]
-                    + self.format_watches()
-                )
+                outputs.extend(self.format_current_location(reason="breakpoint"))
+                outputs.extend(self.format_watches())
+                return outputs
 
             self.last_break_stop_key = None
-            outputs.extend(self.execute_current_statement(enter_block=True))
+            execution_outputs = self.execute_current_statement(enter_block=True)
+            outputs.extend(execution_outputs)
+
+            has_error = any(output.startswith("Error") for output in execution_outputs)
+            if has_error:
+                return outputs
+
+        if self.is_finished:
+            outputs.append("[DEBUG] 프로그램 종료")
 
         return outputs
 
@@ -253,7 +274,7 @@ class DebugSession:
             return ["Usage: break <line_number>"]
 
         self.breakpoints.add(line_number)
-        return [f"Breakpoint added at line {line_number}."]
+        return [f"[DEBUG] {line_number}번째 줄에 breakpoint 설정"]
 
     def remove_breakpoint(self, command):
         line_number = self.parse_line_number(command)
@@ -262,13 +283,14 @@ class DebugSession:
             return ["Usage: remove <line_number>"]
 
         self.breakpoints.discard(line_number)
-        return [f"Breakpoint removed at line {line_number}."]
+        return [f"[DEBUG] {line_number}번째 줄 breakpoint 해제"]
 
     def show_breakpoints(self):
         if not self.breakpoints:
-            return ["No breakpoints."]
+            return ["[DEBUG] 설정된 breakpoint가 없습니다."]
 
-        return [f"Breakpoints: {sorted(self.breakpoints)}"]
+        line_numbers = ", ".join(str(line) for line in sorted(self.breakpoints))
+        return [f"[DEBUG] breakpoint 목록: {line_numbers}"]
 
     def add_watch(self, command):
         parts = command.split(maxsplit=1)
@@ -281,7 +303,7 @@ class DebugSession:
         if variable_name not in self.watch_names:
             self.watch_names.append(variable_name)
 
-        return [f"Watch added: {variable_name}"]
+        return [f"[WATCH] '{variable_name}' 감시 등록"]
 
     def remove_watch(self, command):
         parts = command.split(maxsplit=1)
@@ -294,20 +316,22 @@ class DebugSession:
         if variable_name in self.watch_names:
             self.watch_names.remove(variable_name)
 
-        return [f"Watch removed: {variable_name}"]
+        return [f"[WATCH] '{variable_name}' 감시 해제"]
 
     def format_watches(self, show_empty=False):
         if not self.watch_names:
-            return ["No watches."] if show_empty else []
+            return ["[WATCH] 감시 중인 변수가 없습니다."] if show_empty else []
 
         outputs = []
 
         for name in self.watch_names:
             try:
                 value = self.variable_reader.lookup(name)
-                outputs.append(f"{name} = {self.runner.executor.stringify(value)}")
+                outputs.append(
+                    f"[WATCH] {name} = {self.runner.executor.stringify(value)}"
+                )
             except KeyError:
-                outputs.append(f"{name} = <undefined>")
+                outputs.append(f"[WATCH] {name} = <undefined>")
 
         return outputs
 
@@ -315,12 +339,12 @@ class DebugSession:
         values = self.variable_reader.inspect_current_scope()
 
         if not values:
-            return ["Current scope is empty."]
+            return ["[DEBUG] 현재 scope에 변수가 없습니다."]
 
-        outputs = []
+        outputs = ["[DEBUG] 현재 scope 변수"]
 
         for name, value in values.items():
-            outputs.append(f"{name} = {self.runner.executor.stringify(value)}")
+            outputs.append(f"- {name} = {self.runner.executor.stringify(value)}")
 
         return outputs
 
@@ -431,6 +455,60 @@ class DebugSession:
 
         return (len(self.frames), self.current_frame().index, id(statement))
 
+    def format_current_location(self, reason=None):
+        if self.is_finished:
+            return ["[DEBUG] 프로그램 종료"]
+
+        statement = self.current_statement()
+        line = self.current_line()
+
+        if line is None:
+            return ["[DEBUG] 현재 위치를 확인할 수 없습니다."]
+
+        source_preview = self.source_preview(line, statement)
+
+        if reason == "breakpoint":
+            return [f"[DEBUG] {line}번째 줄에서 정지 (breakpoint) -> {source_preview}"]
+
+        return [f"[DEBUG] {line}번째 줄에서 정지 -> {source_preview}"]
+
+    def source_preview(self, line, statement):
+        if 1 <= line <= len(self.source_lines):
+            source_line = self.source_lines[line - 1].strip()
+
+            if source_line:
+                return source_line
+
+        return self.summarize_statement(statement)
+
+    def summarize_statement(self, statement):
+        class_name = statement.__class__.__name__
+
+        if class_name == "ClassStmt":
+            name = getattr(statement, "name", None)
+            class_name_token = getattr(name, "origin", None)
+            if class_name_token is not None:
+                return f"Class {class_name_token} 선언"
+            return "Class 선언"
+
+        if class_name == "FunctionStmt":
+            name = getattr(statement, "name", None)
+            function_name = getattr(name, "origin", None)
+            if function_name is not None:
+                return f"Func {function_name} 선언"
+            return "Func 선언"
+
+        if class_name == "ForStmt":
+            return "for 문"
+
+        if class_name == "IfStmt":
+            return "if 문"
+
+        if class_name == "BlockStmt":
+            return "block 문"
+
+        return class_name
+
     def parse_line_number(self, command):
         parts = command.split(maxsplit=1)
 
@@ -456,9 +534,9 @@ class DebugMode:
         except FileNotFoundError:
             return [f"Error: file not found: {file_path}"]
 
-        return self.run_source(source)
+        return self.run_source(source, file_path=file_path)
 
-    def run_source(self, source):
+    def run_source(self, source, file_path=None):
         try:
             tokens = self.runner.tokenizer.tokenize(source)
             statements = Assembler(tokens).parse()
@@ -467,31 +545,33 @@ class DebugMode:
             if errors:
                 return errors
 
-            session = DebugSession(self.runner, statements)
-            self.run_session(session)
+            session = DebugSession(
+                self.runner,
+                statements,
+                source_lines=source.splitlines(),
+            )
+            self.run_session(session, file_path=file_path)
 
             return []
 
         except Exception as error:
             return [f"Error: {error}"]
 
-    def run_session(self, session):
+    def run_session(self, session, file_path=None):
         print("CodeFab Debug Mode")
         print(
             "Commands: step, next, continue, break <line>, breakpoints, remove <line>"
         )
         print("Commands: watch <name>, unwatch <name>, watches, inspect, exit")
 
+        if file_path is not None:
+            print(f"[DEBUG] 소스코드 로딩: {file_path}")
+
+        for output in session.format_current_location():
+            print(output)
+
         while not session.is_finished:
-            line = session.current_line()
-            statement = session.current_statement()
-
-            if line is not None:
-                print(f"(line {line}) {statement}")
-            else:
-                print(f"{statement}")
-
-            command = input("(debug) ")
+            command = input("> ")
             outputs = session.process_command(command)
 
             for output in outputs:

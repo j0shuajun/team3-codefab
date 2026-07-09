@@ -1,6 +1,7 @@
 from app.shell.file_mode import FileMode
-from app.shell.shell import PromptShell
 from app.shell.runner import CodeFabRunner
+from app.shell.shell import PromptShell
+
 
 def make_shell():
     return PromptShell()
