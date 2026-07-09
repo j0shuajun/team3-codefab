@@ -746,3 +746,36 @@ class TestImportAliasConflict:
         ]
 
         assert check(statements) == []
+
+
+class TestDuplicateImport:
+    def test_same_path_imported_twice_is_error(self):
+        statements = [
+            import_stmt("sum.txt", "sum"),
+            import_stmt("sum.txt", "sum2"),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "sum.txt" in errors[0]
+
+    def test_different_paths_produce_no_error(self):
+        statements = [
+            import_stmt("sum.txt", "sum"),
+            import_stmt("avg.txt", "avg"),
+        ]
+
+        assert check(statements) == []
+
+    def test_same_path_imported_again_in_nested_block_is_allowed(self):
+        statements = [
+            import_stmt("sum.txt", "sum"),
+            BlockStmt(
+                [
+                    import_stmt("sum.txt", "sum2"),
+                ]
+            ),
+        ]
+
+        assert check(statements) == []
