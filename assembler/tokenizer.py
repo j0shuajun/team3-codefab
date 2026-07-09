@@ -91,7 +91,35 @@ class Token:
 
 
 class Tokenizer:
-    _TOKENS = {T.value: T for T in TokenType if isinstance(T.value, str)}
+    _ALIASES = {
+        "값": TokenType.VAR,
+        "출력": TokenType.PRINT,
+        "보여줘": TokenType.PRINT,
+        "함수": TokenType.FUNC,
+        "반환": TokenType.RETURN,
+        "돌려줘": TokenType.RETURN,
+        "클래스": TokenType.CLASS,
+        # "초기화": TokenType에 없음
+        "이것": TokenType.THIS,
+        "부모": TokenType.SUPER,
+        "만약": TokenType.IF,
+        "아니면": TokenType.ELSE,
+        "반복": TokenType.FOR,
+        "참": TokenType.TRUE,
+        "ㅇㅇ": TokenType.TRUE,
+        "거짓": TokenType.FALSE,
+        "ㄴㄴ": TokenType.FALSE,
+        "그리고": TokenType.AND,
+        "또는": TokenType.OR,
+        "크다": TokenType.GREATER,
+        "작다": TokenType.LESS,
+        "같다": TokenType.EQUAL_EQUAL,
+        "다르다": TokenType.BANG_EQUAL,
+        "크거나같다": TokenType.GREATER_EQUAL,
+        "작거나같다": TokenType.LESS_EQUAL,
+    }
+    _TOKENS = {T.value: T for T in TokenType if isinstance(T.value, str)} | _ALIASES
+    _TOKEN_PREFIXES = {key[:i] for key in _TOKENS for i in range(1, len(key) + 1)}
 
     def __init__(self):
         self._origin = ""
