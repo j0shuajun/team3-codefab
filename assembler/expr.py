@@ -116,6 +116,17 @@ class ThisExpr(Expr):
         return "ThisExpr()"
 
 
+class SuperExpr(Expr):
+    """Super.method 표현식"""
+
+    def __init__(self, keyword: Token, method: Token):
+        self.keyword = keyword  # Token: Super
+        self.method = method  # Token: method name
+
+    def __repr__(self):
+        return f"SuperExpr({self.method.origin})"
+
+
 class IndexGetExpr(Expr):
     """array[index] 형태의 배열 읽기 노드"""
 

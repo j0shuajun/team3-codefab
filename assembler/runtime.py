@@ -61,12 +61,19 @@ class UserFunction(Callable):
 
 
 class UserClass(Callable):
-    def __init__(self, name, methods: dict[str, UserFunction]):
+    def __init__(self, name, methods, superclass=None):
         self.name = name
         self.methods = methods
+        self.superclass = superclass
 
     def find_method(self, name):
-        return self.methods.get(name)
+        if name in self.methods:
+            return self.methods[name]
+
+        if self.superclass is not None:
+            return self.superclass.find_method(name)
+
+        return None
 
     def arity(self):
         initializer = self.find_method("init")
@@ -106,6 +113,16 @@ class UserInstance:
 
     def set(self, name_token, value):
         self.fields[name_token.origin] = value
+
+    def is_instance_of(self, klass):
+        current = self.klass
+
+        while current is not None:
+            if current is klass:
+                return True
+            current = current.superclass
+
+        return False
 
     def __repr__(self):
         return f"<{self.klass.name} instance>"

@@ -131,3 +131,20 @@ def test_runtime_error_get_unknown_property():
                 ),
             ]
         )
+
+
+def test_runtime_error_superclass_must_be_class():
+    with pytest.raises(RuntimeError):
+        run(
+            [
+                VarStmt(
+                    token(TokenType.IDENTIFIER, "NotClass"),
+                    LiteralExpr(10),
+                ),
+                ClassStmt(
+                    token(TokenType.IDENTIFIER, "Robot"),
+                    [],
+                    VariableExpr(token(TokenType.IDENTIFIER, "NotClass")),
+                ),
+            ]
+        )
