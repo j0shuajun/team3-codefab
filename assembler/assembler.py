@@ -9,6 +9,7 @@ from .expr import (
     LiteralExpr,
     LogicalExpr,
     SetExpr,
+    SuperExpr,
     ThisExpr,
     UnaryExpr,
     VariableExpr,
@@ -194,6 +195,7 @@ class Assembler:
             TokenType.GREATER_EQUAL,
             TokenType.LESS,
             TokenType.LESS_EQUAL,
+            TokenType.INSTANCEOF,
         ):
             operator = self.previous()
             right = self.term()
@@ -221,6 +223,14 @@ class Assembler:
 
         if self.match(TokenType.THIS):
             return ThisExpr(self.previous())
+
+        if self.match(TokenType.SUPER):
+            keyword = self.previous()
+            self.consume(TokenType.DOT, "Expected '.' after Super.")
+            method = self.consume(
+                TokenType.IDENTIFIER, "Expected superclass method name."
+            )
+            return SuperExpr(keyword, method)
 
         raise AssemblerError("Expected expression.")
 
@@ -373,6 +383,13 @@ class Assembler:
     def class_declaration(self):
         name = self.consume(TokenType.IDENTIFIER, "Expected class name.")
 
+        superclass = None
+        if self.match(TokenType.COLON):
+            superclass_name = self.consume(
+                TokenType.IDENTIFIER, "Expected superclass name after ':'."
+            )
+            superclass = VariableExpr(superclass_name)
+
         self.consume(TokenType.LEFT_BRACE, "Expected '{' before class body.")
 
         methods = []
@@ -381,7 +398,7 @@ class Assembler:
 
         self.consume(TokenType.RIGHT_BRACE, "Expected '}' after class body.")
 
-        return ClassStmt(name, methods)
+        return ClassStmt(name, methods, superclass)
 
     def method_declaration(self):
         name = self.consume(TokenType.IDENTIFIER, "Expected method name.")

@@ -10,6 +10,7 @@ from assembler.expr import (
     LiteralExpr,
     LogicalExpr,
     SetExpr,
+    SuperExpr,
     ThisExpr,
     UnaryExpr,
     VariableExpr,
@@ -104,14 +105,30 @@ class Executor:
             raise ReturnSignal(value)
 
         if isinstance(stmt, ClassStmt):
+            superclass = None
+
+            if stmt.superclass is not None:
+                superclass = self.evaluate(stmt.superclass)
+
+                if not isinstance(superclass, UserClass):
+                    raise CodeFabRuntimeError("Superclass must be a class.")
+
             self.environment.define(stmt.name.origin, None)
+
+            if superclass is not None:
+                self.environment = Environment(self.environment)
+                self.environment.define("Super", superclass)
 
             methods = {}
             for method in stmt.methods:
                 function = UserFunction(method, self.environment)
                 methods[method.name.origin] = function
 
-            klass = UserClass(stmt.name.origin, methods)
+            klass = UserClass(stmt.name.origin, methods, superclass)
+
+            if superclass is not None:
+                self.environment = self.environment.enclosing
+
             self.environment.assign(stmt.name, klass)
             return
 
@@ -185,6 +202,20 @@ class Executor:
         if isinstance(expr, ThisExpr):
             return self.environment.get(expr.keyword)
 
+        if isinstance(expr, SuperExpr):
+            superclass = self.environment.get(expr.keyword)
+
+            this_token = type("TokenLike", (), {"origin": "This"})()
+
+            instance = self.environment.get(this_token)
+
+            method = superclass.find_method(expr.method.origin)
+
+            if method is None:
+                raise CodeFabRuntimeError(f"Undefined property '{expr.method.origin}'.")
+
+            return method.bind(instance)
+
         raise CodeFabRuntimeError(f"Unknown expression type: {type(expr).__name__}")
 
     def evaluate_binary(self, expr):
@@ -235,6 +266,17 @@ class Executor:
 
         if expr.operator.type == TokenType.BANG_EQUAL:
             return left != right
+
+        if expr.operator.type == TokenType.INSTANCEOF:
+            if not isinstance(left, UserInstance):
+                return False
+
+            if not isinstance(right, UserClass):
+                raise CodeFabRuntimeError(
+                    "Right operand of instanceof must be a class."
+                )
+
+            return left.is_instance_of(right)
 
         raise CodeFabRuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 
