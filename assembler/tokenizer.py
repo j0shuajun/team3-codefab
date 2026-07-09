@@ -72,6 +72,7 @@ class Token:
         self.type = token_type
         self.origin = origin
         self.line = line
+
         if value is not None:
             self.value = value
 
@@ -99,6 +100,8 @@ class Tokenizer:
 
     def tokenize(self, string: str) -> list[Token]:
         self._origin = string
+        self._idx = 0
+        self._line = 1
         tokens: list[Token] = []
 
         while self._idx_in_range():
