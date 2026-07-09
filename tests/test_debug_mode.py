@@ -78,17 +78,16 @@ def test_debug_step_reports_if_condition_error_line():
 
     assert outputs == ["Error at line 1: Division by zero."]
 
+
 def test_debug_continue_stops_at_breakpoint_inside_for_loop():
-    session = make_debug_session(
-        """
+    session = make_debug_session("""
 var total = 0;
 for (var i = 0; i < 3; i = i + 1) {
   total = total + i;
   print total;
 }
 print "done";
-"""
-    )
+""")
 
     session.process_command("break 4")
     outputs = session.process_command("continue")
