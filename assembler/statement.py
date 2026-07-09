@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from assembler.expr import Expr
+from assembler.expr import Expr, VariableExpr
 from assembler.tokenizer import Token
 
 
@@ -115,11 +115,23 @@ class ReturnStmt(Stmt):
 
 
 class ClassStmt(Stmt):
-    """Class Name { methods... } 클래스 선언문"""
+    """Class Name (: SuperClass)? { methods... } 클래스 선언문"""
 
-    def __init__(self, name: Token, methods: list[FunctionStmt]):
+    def __init__(
+        self, name: Token, methods: list[FunctionStmt], superclass: VariableExpr = None
+    ):
         self.name = name
         self.methods = methods
+        self.superclass = superclass
 
     def __repr__(self):
-        return f"ClassStmt({self.name.origin}, methods={self.methods})"
+        superclass_name = None
+        if self.superclass is not None:
+            superclass_name = self.superclass.name.origin
+
+        return (
+            f"ClassStmt("
+            f"{self.name.origin}, "
+            f"superclass={superclass_name}, "
+            f"methods={self.methods})"
+        )
