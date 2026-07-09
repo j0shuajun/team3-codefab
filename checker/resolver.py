@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
 from enum import Enum, auto
 
 from assembler.expr import (
@@ -181,6 +182,24 @@ class StatementResolver(Resolver):
         self._current_function = FunctionType.NONE
         self._class_context.reset()
 
+    @contextmanager
+    def _function_scope(self, function_type):
+        enclosing_function = self._current_function
+        self._current_function = function_type
+        try:
+            yield
+        finally:
+            self._current_function = enclosing_function
+
+    @contextmanager
+    def _class_scope(self, class_type):
+        enclosing_class = self._class_context.current
+        self._class_context.current = class_type
+        try:
+            yield
+        finally:
+            self._class_context.current = enclosing_class
+
     def resolve_all(self, statements):
         for statement in statements:
             self.resolve(statement)
@@ -289,22 +308,19 @@ class StatementResolver(Resolver):
         before = self._scopes.snapshot()
         self._scopes.mark_all_initialized()
 
-        enclosing_function = self._current_function
-        self._current_function = function_type
+        try:
+            with self._function_scope(function_type), self._scopes.new_scope():
+                for param in statement.params:
+                    param_name = param.origin
+                    if not self._scopes.declare(param_name):
+                        self._error_reporter.report(
+                            f"Duplicate parameter name '{param_name}' in this function."
+                        )
+                    self._scopes.initialize(param_name)
 
-        with self._scopes.new_scope():
-            for param in statement.params:
-                param_name = param.origin
-                if not self._scopes.declare(param_name):
-                    self._error_reporter.report(
-                        f"Duplicate parameter name '{param_name}' in this function."
-                    )
-                self._scopes.initialize(param_name)
-
-            self.resolve_all(statement.body)
-
-        self._current_function = enclosing_function
-        self._scopes.restore(before)
+                self.resolve_all(statement.body)
+        finally:
+            self._scopes.restore(before)
 
     def _resolve_return_stmt(self, statement):
         if self._current_function == FunctionType.NONE:
@@ -330,19 +346,20 @@ class StatementResolver(Resolver):
         ):
             self._error_reporter.report("A class can't inherit from itself.")
 
-        enclosing_class = self._class_context.current
-        self._class_context.current = ClassType.CLASS
+        class_type = (
+            ClassType.SUBCLASS
+            if statement.superclass is not None
+            else ClassType.CLASS
+        )
 
-        if statement.superclass is not None:
-            self._class_context.current = ClassType.SUBCLASS
-            self._expression_resolver.resolve(statement.superclass)
+        with self._class_scope(class_type):
+            if statement.superclass is not None:
+                self._expression_resolver.resolve(statement.superclass)
 
-        for method in statement.methods:
-            function_type = (
-                FunctionType.INITIALIZER
-                if method.name.origin == "init"
-                else FunctionType.METHOD
-            )
-            self._resolve_function_body(method, function_type)
-
-        self._class_context.current = enclosing_class
+            for method in statement.methods:
+                function_type = (
+                    FunctionType.INITIALIZER
+                    if method.name.origin == "init"
+                    else FunctionType.METHOD
+                )
+                self._resolve_function_body(method, function_type)
