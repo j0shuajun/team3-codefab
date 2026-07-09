@@ -13,14 +13,14 @@
 - Commit message는 다음 [양식](https://wikidocs.net/332862)을 준수한다. 
 - Branch 이름은 `feature/`, `refactor/`, `chore/` 등의 형식을 따른다.
 - 테스트파일은 `tests/` 디렉토리 하위에 테스트 대상 파일이름을 경로에 담아 작성한다.
-  - ex) `tests/test_assembler_tokenizer.py`
+  - ex) `tests/test_app_assembler_tokenizer.py`
 
 ### CI / Lint
 
 ```bash
 make install   # requirements-dev.txt 설치
 make lint      # black / isort / ruff --fix 실행
-make test      # PYTHONPATH=. pytest -q 실행
+make test      # pytest 실행
 make run       # 프롬프트 쉘 실행
 make run <file>    # 파일 실행
 make debug <file>  # 디버그 모드 실행
