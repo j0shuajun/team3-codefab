@@ -1,7 +1,7 @@
 import pytest
 
-from assembler.tokenizer import Token, Tokenizer
-from assembler.tokenizer import TokenType as T
+from app.assembler.tokenizer import Token, Tokenizer
+from app.assembler.tokenizer import TokenType as T
 
 
 @pytest.fixture
