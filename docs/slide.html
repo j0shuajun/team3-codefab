@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CodeFab 발표 자료</title>
+    <style>
+      :root {
+        --ink: #17202a;
+        --muted: #687486;
+        --paper: #fbfaf7;
+        --panel: rgba(255, 255, 255, 0.82);
+        --mint: #dff3ea;
+        --teal: #00756f;
+        --amber: #f4c867;
+        --rose: #ef8b85;
+        --blue: #6d86f7;
+        --code: #101820;
+        --code-text: #e7f2ee;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(90deg, rgba(0, 117, 111, 0.08) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(0, 117, 111, 0.08) 1px, transparent 1px),
+          var(--paper);
+        background-size: 28px 28px;
+        font-family:
+          Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        overflow-x: hidden;
+      }
+
+      main {
+        scroll-snap-type: y mandatory;
+      }
+
+      section {
+        min-height: 100vh;
+        padding: 56px min(6vw, 76px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 24px;
+        scroll-snap-align: start;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 980px;
+        font-size: 86px;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        max-width: 1080px;
+        font-size: 48px;
+        line-height: 1.1;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        font-size: 24px;
+        line-height: 1.25;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: 21px;
+        line-height: 1.48;
+      }
+
+      .eyebrow {
+        color: var(--teal);
+        font-size: 15px;
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .lead {
+        max-width: 850px;
+        color: var(--muted);
+        font-size: 28px;
+        line-height: 1.42;
+      }
+
+      .note {
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.45;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .panel {
+        min-width: 0;
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 22px;
+      }
+
+      .panel.accent {
+        background: var(--mint);
+      }
+
+      .panel h3 {
+        margin-bottom: 12px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.1em;
+      }
+
+      li + li {
+        margin-top: 6px;
+      }
+
+      code {
+        padding: 0.04em 0.22em;
+        border-radius: 4px;
+        background: rgba(16, 24, 32, 0.08);
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      pre {
+        margin: 0;
+        border-radius: 8px;
+        padding: 18px;
+        background: var(--code);
+        color: var(--code-text);
+        font-size: 17px;
+        line-height: 1.48;
+        white-space: pre-wrap;
+        overflow: hidden;
+      }
+
+      pre code {
+        padding: 0;
+        background: transparent;
+        color: inherit;
+        font-size: inherit;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--panel);
+      }
+
+      th,
+      td {
+        padding: 13px 16px;
+        text-align: left;
+        border-bottom: 1px solid rgba(23, 32, 42, 0.08);
+      }
+
+      th {
+        color: var(--teal);
+        background: rgba(0, 117, 111, 0.08);
+        font-weight: 900;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        border-radius: 999px;
+        padding: 6px 13px;
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--ink);
+        font-weight: 800;
+        font-size: 16px;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .flow-step {
+        min-height: 160px;
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .flow-step strong {
+        font-size: 24px;
+      }
+
+      .flow-step span {
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.42;
+      }
+
+      .feature {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 22px;
+        align-items: stretch;
+      }
+
+      .feature-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .mini-title {
+        color: var(--teal);
+        font-weight: 900;
+        font-size: 15px;
+        text-transform: uppercase;
+      }
+
+      .code-pair {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .terminal {
+        background: #0e151b;
+        color: #d9f7e8;
+      }
+
+      .terminal .prompt {
+        color: #8fe1c4;
+      }
+
+      .shot-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+        gap: 22px;
+        align-items: stretch;
+      }
+
+      .media-slot {
+        min-height: 360px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.66);
+      }
+
+      .label-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .label-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        border-radius: 999px;
+        padding: 7px 14px;
+        color: #17202a;
+        font-weight: 900;
+      }
+
+      .feature-label {
+        background: #dddfc8;
+      }
+
+      .bug-label {
+        background: #f3a1ab;
+      }
+
+      .test-label {
+        background: #eee56a;
+      }
+
+      .refactor-label {
+        background: #7df8c9;
+      }
+
+      .docs-label {
+        background: #8dc5f0;
+      }
+
+      .chore-label {
+        background: #b2bad8;
+      }
+
+      .progress {
+        position: fixed;
+        right: 18px;
+        bottom: 14px;
+        z-index: 5;
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--muted);
+        font-size: 14px;
+        backdrop-filter: blur(8px);
+      }
+
+      @media screen and (max-width: 900px) {
+        section {
+          padding: 42px 22px;
+        }
+
+        h1 {
+          font-size: 58px;
+        }
+
+        h2 {
+          font-size: 36px;
+        }
+
+        .grid,
+        .grid.two,
+        .grid.four,
+        .flow,
+        .feature,
+        .code-pair,
+        .shot-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        @page {
+          size: 13.333333in 7.5in;
+          margin: 0;
+        }
+
+        html,
+        body {
+          width: 13.333333in;
+          margin: 0;
+          overflow: hidden;
+        }
+
+        main {
+          display: block;
+        }
+
+        section {
+          width: 13.333333in;
+          height: 7.5in;
+          min-height: 7.5in;
+          padding: 0.52in 0.68in;
+          page-break-after: always;
+          break-after: page;
+          overflow: hidden;
+        }
+
+        h1 {
+          font-size: 78px;
+        }
+
+        h2 {
+          font-size: 42px;
+        }
+
+        h3 {
+          font-size: 22px;
+        }
+
+        p,
+        li,
+        td,
+        th {
+          font-size: 19px;
+        }
+
+        pre {
+          font-size: 15px;
+        }
+
+        .lead {
+          font-size: 25px;
+        }
+
+        .panel,
+        .flow-step,
+        .media-slot,
+        .badge,
+        table,
+        pre {
+          border: 0;
+          box-shadow: none;
+        }
+
+        .progress {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section>
+        <p class="eyebrow">CRA Team 3 · Ctrl-C</p>
+        <h1>CodeFab</h1>
+        <p class="lead">
+          Custom Language를 읽고, 검사하고, 실행하는 Interpreter Factory입니다.
+        </p>
+        <div class="badge-row">
+          <span class="badge">Interpreter Pipeline</span>
+          <span class="badge">Custom Language</span>
+          <span class="badge">Design Patterns</span>
+          <span class="badge">Code Review</span>
+          <span class="badge">GitHub Actions</span>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Agenda</p>
+        <h2>발표 흐름</h2>
+        <div class="flow">
+          <div class="flow-step">
+            <strong>1. 팀</strong>
+            <span>조원 역할과 개발 분담</span>
+          </div>
+          <div class="flow-step">
+            <strong>2. 기능</strong>
+            <span>교안 기준 핵심 기능 요약</span>
+          </div>
+          <div class="flow-step">
+            <strong>3. BP</strong>
+            <span>Code Review, TDD, Refactoring 사례</span>
+          </div>
+          <div class="flow-step">
+            <strong>4. Demo</strong>
+            <span>파일 실행, import, debug, custom 기능 시연</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Team</p>
+        <h2>조원 소개와 역할</h2>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>김명준(팀장)</strong></td>
+              <td>architecture, infra, CI, coverage, document</td>
+            </tr>
+            <tr>
+              <td><strong>권소영</strong></td>
+              <td>assembler, executor, function, class, import</td>
+            </tr>
+            <tr>
+              <td><strong>김민준</strong></td>
+              <td>expression, statement, shell, file/debug mode</td>
+            </tr>
+            <tr>
+              <td><strong>박진우</strong></td>
+              <td>tokenizer, array, custom language</td>
+            </tr>
+            <tr>
+              <td><strong>이예진</strong></td>
+              <td>checker, optimizer, custom function</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <p class="eyebrow">Goal</p>
+        <h2>CodeFab은 작은 Interpreter Factory입니다</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>입력</h3>
+            <p>사용자가 작성한 `.ctrlc` 소스 코드를 받습니다.</p>
+          </article>
+          <article class="panel">
+            <h3>검사</h3>
+            <p>문법 트리를 만들고 실행 전에 오류 가능성을 확인합니다.</p>
+          </article>
+          <article class="panel">
+            <h3>실행</h3>
+            <p>검사를 통과한 트리를 순회하며 실제 결과를 출력합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Architecture</p>
+        <h2>전체 구조</h2>
+        <div class="flow">
+          <div class="flow-step">
+            <strong>Tokenizer</strong>
+            <span>문자열을 Token 목록으로 분해</span>
+          </div>
+          <div class="flow-step">
+            <strong>Assembler</strong>
+            <span>Token을 Expr/Stmt 트리로 조립</span>
+          </div>
+          <div class="flow-step">
+            <strong>Checker</strong>
+            <span>scope, 호출, 타입 검사</span>
+          </div>
+          <div class="flow-step">
+            <strong>Executor</strong>
+            <span>AST 순회, 출력, 상태 변경</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature Scope</p>
+        <h2>교안 기준 구현 범위</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>영역</th>
+              <th>대표 기능</th>
+              <th>발표 초점</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>기본 문법</td>
+              <td>변수, 출력, 연산, 조건문, 반복문</td>
+              <td>언어가 실행되는 최소 흐름</td>
+            </tr>
+            <tr>
+              <td>구조화</td>
+              <td>Func, Class, This, Super, instanceof</td>
+              <td>함수와 객체 모델</td>
+            </tr>
+            <tr>
+              <td>자료 구조</td>
+              <td>Array(size), index get/set</td>
+              <td>런타임 오류와 checker 연결</td>
+            </tr>
+            <tr>
+              <td>확장</td>
+              <td>import, alias, custom function</td>
+              <td>언어 확장 방식</td>
+            </tr>
+            <tr>
+              <td>운용</td>
+              <td>prompt, file, debug shell</td>
+              <td>Interpreter Factory 제어</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature · Basic Syntax</p>
+        <h2>기본 문법</h2>
+        <div class="feature">
+          <div class="feature-summary">
+            <div class="panel">
+              <p class="mini-title">기능 요약</p>
+              <p>변수, 출력, 연산, 조건, 반복으로 프로그램의 기본 흐름을 표현합니다.</p>
+            </div>
+            <div class="panel">
+              <p class="mini-title">구현 방법</p>
+              <p>Token을 statement/expression으로 조립하고 Executor가 순서대로 평가합니다.</p>
+            </div>
+          </div>
+          <pre><code>var total = 0;
+
+for (var i = 0; i < 3; i = i + 1) {
+    total = total + i;
+}
+
+if (total > 2) {
+    print total;
+}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature · Function</p>
+        <h2>함수</h2>
+        <div class="feature">
+          <div class="feature-summary">
+            <div class="panel">
+              <p class="mini-title">기능 요약</p>
+              <p><code>Func</code>로 코드를 묶고, parameter와 return으로 값을 주고받습니다.</p>
+            </div>
+            <div class="panel">
+              <p class="mini-title">구현 방법</p>
+              <p>함수 선언을 환경에 저장하고 호출 시 새 scope에서 body를 실행합니다.</p>
+            </div>
+          </div>
+          <pre><code>Func add(a, b) {
+    return a + b;
+}
+
+print add(2, 3);</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature · Class</p>
+        <h2>클래스와 상속</h2>
+        <div class="feature">
+          <div class="feature-summary">
+            <div class="panel">
+              <p class="mini-title">기능 요약</p>
+              <p>instance 생성, method 호출, <code>This</code>, <code>Super</code>, <code>instanceof</code>를 지원합니다.</p>
+            </div>
+            <div class="panel accent">
+              <p class="mini-title">패턴 포인트</p>
+              <p>Class 생성도 함수 호출처럼 다뤄 Adapter/Callable 구조와 연결됩니다.</p>
+            </div>
+          </div>
+          <pre><code>Class Robot {
+    move() { print "move"; }
+}
+
+Class SpeedRobot : Robot {
+    move() {
+        Super.move();
+        print "speed";
+    }
+}
+
+print SpeedRobot() instanceof Robot;</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature · Array</p>
+        <h2>정적 배열</h2>
+        <div class="feature">
+          <div class="feature-summary">
+            <div class="panel">
+              <p class="mini-title">기능 요약</p>
+              <p><code>Array(size)</code>로 고정 크기 배열을 만들고 index로 읽고 씁니다.</p>
+            </div>
+            <div class="panel">
+              <p class="mini-title">구현 방법</p>
+              <p>Executor는 index 범위와 타입을 검사하고, 잘못된 접근은 runtime error로 보고합니다.</p>
+            </div>
+          </div>
+          <pre><code>var arr = Array(3);
+arr[0] = 10;
+arr[1] = 20;
+
+print arr[0];
+print arr[1];</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature · Import</p>
+        <h2>Library Import</h2>
+        <div class="feature">
+          <div class="feature-summary">
+            <div class="panel">
+              <p class="mini-title">기능 요약</p>
+              <p>다른 `.ctrlc` 파일의 선언을 alias namespace로 가져옵니다.</p>
+            </div>
+            <div class="panel">
+              <p class="mini-title">구현 방법</p>
+              <p>import 대상은 선언 중심으로 읽고, alias 충돌과 순환 import를 검사합니다.</p>
+            </div>
+          </div>
+          <div class="code-pair">
+            <pre><code>// main.ctrlc
+import "sum.ctrlc" alias sum;
+
+print sum.add(1, 2);</code></pre>
+            <pre><code>// sum.ctrlc
+Func add(a, b) {
+    return a + b;
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature · Checker</p>
+        <h2>실행 전 오류 검증</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>Scope</h3>
+            <p>중복 선언, 미초기화 변수, alias 충돌을 실행 전에 잡습니다.</p>
+          </article>
+          <article class="panel">
+            <h3>Function/Class</h3>
+            <p>잘못된 return, This/Super 위치, 자기 상속 같은 오류를 검사합니다.</p>
+          </article>
+          <article class="panel">
+            <h3>Import</h3>
+            <p>반복문 내부 import, 같은 scope 중복 import, 순환 import를 막습니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature · Optimization</p>
+        <h2>정적 바인딩과 실행 전 최적화</h2>
+        <div class="feature">
+          <div class="feature-summary">
+            <div class="panel">
+              <p class="mini-title">기능 요약</p>
+              <p>Checker가 변수까지의 scope distance를 미리 계산해 Executor lookup을 줄입니다.</p>
+            </div>
+            <div class="panel">
+              <p class="mini-title">구현 방법</p>
+              <p>실행 전에 binding 정보를 저장하고, literal-only expression은 미리 접습니다.</p>
+            </div>
+          </div>
+          <pre><code>{
+    var a = 10;
+    {
+        print a;
+    }
+}
+
+// before: parent scope를 순차 탐색
+// after: 미리 계산한 distance로 접근</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Feature · Shell</p>
+        <h2>Interpreter Factory 제어</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>Prompt</h3>
+            <p>한 줄 입력마다 pipeline을 실행합니다.</p>
+          </article>
+          <article class="panel">
+            <h3>File</h3>
+            <p><code>make run sample.ctrlc</code>로 파일 전체를 실행합니다.</p>
+          </article>
+          <article class="panel">
+            <h3>Debug</h3>
+            <p>breakpoint, step, watch로 실행 상태를 관찰합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Custom Extension</p>
+        <h2>팀 색깔을 담은 확장 기능</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>한글 alias</h3>
+            <p>영어 키워드와 같은 의미를 한글 표현으로도 작성합니다.</p>
+          </article>
+          <article class="panel">
+            <h3><code>ctrl_c()</code></h3>
+            <p>CodeFab 코드 안에서 팀명, 의미, 역할을 소개하는 custom function입니다.</p>
+          </article>
+          <article class="panel">
+            <h3><code>♡</code> 연산</h3>
+            <p>두 문자열 이름의 궁합 점수를 계산하는 발표용 custom 연산입니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Design Pattern Map</p>
+        <h2>좋은 패턴이 보이는 지점</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>패턴</th>
+              <th>적용 지점</th>
+              <th>효과</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Composite</td>
+              <td>Expr/Stmt AST</td>
+              <td>부분 expression과 전체 statement를 같은 방식으로 순회</td>
+            </tr>
+            <tr>
+              <td>Adapter</td>
+              <td>Callable 호출 규칙</td>
+              <td>내장 함수, 사용자 함수, class 생성을 같은 call 흐름으로 처리</td>
+            </tr>
+            <tr>
+              <td>Factory-like</td>
+              <td>Tokenizer/Assembler</td>
+              <td>token과 AST node 생성 책임을 한 곳에 모음</td>
+            </tr>
+            <tr>
+              <td>Command</td>
+              <td>Shell command</td>
+              <td>shell 명령을 독립 실행 단위로 분리해 적용</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <p class="eyebrow">Pattern · Composite</p>
+        <h2>AST를 트리로 다루기</h2>
+        <div class="feature">
+          <div class="feature-summary">
+            <div class="panel">
+              <p class="mini-title">문제</p>
+              <p>표현식과 문장은 중첩될 수 있어 단순 list만으로 실행하기 어렵습니다.</p>
+            </div>
+            <div class="panel accent">
+              <p class="mini-title">해결</p>
+              <p><code>LiteralExpr</code>, <code>BinaryExpr</code>, <code>PrintStmt</code> 같은 node를 공통 트리로 구성합니다.</p>
+            </div>
+          </div>
+          <pre><code>print 1 + 2 * 3;
+
+PrintStmt
+└── BinaryExpr(+)
+    ├── LiteralExpr(1)
+    └── BinaryExpr(*)
+        ├── LiteralExpr(2)
+        └── LiteralExpr(3)</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Pattern · Adapter</p>
+        <h2>서로 다른 호출 대상을 같은 규칙으로</h2>
+        <div class="feature">
+          <div class="feature-summary">
+            <div class="panel">
+              <p class="mini-title">문제</p>
+              <p>내장 함수, 사용자 함수, class 생성자는 내부 구현이 서로 다릅니다.</p>
+            </div>
+            <div class="panel accent">
+              <p class="mini-title">해결</p>
+              <p>공통 <code>call()</code> 규칙을 두어 Executor가 호출 대상의 세부 구현을 몰라도 됩니다.</p>
+            </div>
+          </div>
+          <pre><code>clock();        // NativeFunction
+add(1, 2);     // UserFunction
+Robot("A");    // UserClass
+
+Executor -> callee.call(arguments)</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Pattern · Command</p>
+        <h2>Shell 명령에 Command Pattern 적용</h2>
+        <div class="code-pair">
+          <pre><code>Before
+
+if source == "ctrlc":
+    recommend_command()
+if source == "ctrlv":
+    run_recommended_command()
+if source.startswith("explain "):
+    explain_source(code)</code></pre>
+          <pre><code>After
+
+RecommendCommand.execute(shell)
+RerunCommand.execute(shell)
+ExplainCommand.execute(shell)
+RunCodeCommand.execute(shell)
+
+ShellCommandFactory.create(source)
+PromptShell -> command.execute(shell)</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">BP Case 1 · Code Review</p>
+        <h2>Code Review 사례</h2>
+        <div class="shot-layout">
+          <div class="panel">
+            <h3>발표 포인트</h3>
+            <ul>
+              <li>PR template로 변경 의도와 검증 범위를 먼저 공유했습니다.</li>
+              <li>최소 2명 approve 기준으로 merge 전 관점을 늘렸습니다.</li>
+              <li>리뷰를 통해 debug 출력, import 경로, checker 누락을 보강했습니다.</li>
+            </ul>
+          </div>
+          <div class="media-slot"></div>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">BP Case 2 · TDD</p>
+        <h2>TDD와 회귀 테스트 사례</h2>
+        <div class="shot-layout">
+          <div class="panel">
+            <h3>발표 포인트</h3>
+            <ul>
+              <li>기능 구현 전에 실패 케이스를 테스트로 고정했습니다.</li>
+              <li>import, debug, checker 오류를 반복 가능한 테스트로 남겼습니다.</li>
+              <li>GitHub Actions가 PR마다 같은 기준으로 검증했습니다.</li>
+            </ul>
+          </div>
+          <div class="media-slot"></div>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">BP Case 3 · Refactoring</p>
+        <h2>Refactoring 사례</h2>
+        <div class="shot-layout">
+          <div class="panel">
+            <h3>발표 포인트</h3>
+            <ul>
+              <li>Shell command를 Command Pattern으로 분리했습니다.</li>
+              <li>기능 추가 위치가 명확해지고 테스트 단위가 작아졌습니다.</li>
+              <li>기존 패턴 적용 사례와 함께 설계 개선 흐름을 설명합니다.</li>
+            </ul>
+          </div>
+          <div class="media-slot"></div>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">GitHub Collaboration</p>
+        <h2>협업 규칙</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>PR Rule</h3>
+            <ul>
+              <li>PR template 작성</li>
+              <li>최소 2명 approve</li>
+              <li>작성자가 직접 merge</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Actions</h3>
+            <ul>
+              <li>Lint</li>
+              <li>Unit Tests</li>
+              <li>Gist Acceptance</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Protection</h3>
+            <ul>
+              <li>main 직접 반영 방지</li>
+              <li>리뷰 후 merge</li>
+              <li>check 통과 확인</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Labels</p>
+        <h2>PR 성격을 label로 구분했습니다</h2>
+        <div class="label-list">
+          <span class="label-chip feature-label">feature</span>
+          <span class="label-chip bug-label">bug</span>
+          <span class="label-chip test-label">test</span>
+          <span class="label-chip refactor-label">refactor</span>
+          <span class="label-chip docs-label">documentation</span>
+          <span class="label-chip chore-label">chore</span>
+        </div>
+        <div class="grid two">
+          <article class="panel">
+            <h3>효과</h3>
+            <p>리뷰어가 PR의 목적을 먼저 파악하고, 어떤 관점으로 봐야 하는지 빠르게 정할 수 있습니다.</p>
+          </article>
+          <article class="panel">
+            <h3>발표 연결</h3>
+            <p>기능, 버그 수정, 테스트, 리팩터링 사례를 label 기준으로 나누어 설명할 수 있습니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Demo</p>
+        <h2>시연 순서</h2>
+        <div class="flow">
+          <div class="flow-step">
+            <strong>1</strong>
+            <span><code>make run sample.ctrlc</code>로 기본 실행</span>
+          </div>
+          <div class="flow-step">
+            <strong>2</strong>
+            <span>import로 외부 선언 사용</span>
+          </div>
+          <div class="flow-step">
+            <strong>3</strong>
+            <span>debug mode에서 breakpoint와 watch 확인</span>
+          </div>
+          <div class="flow-step">
+            <strong>4</strong>
+            <span><code>ctrl_c()</code>와 custom 연산 시연</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">Retrospective</p>
+        <h2>소감</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>기능보다 구조</h3>
+            <p>기능이 늘어날수록 pipeline과 책임 분리가 중요해졌습니다.</p>
+          </article>
+          <article class="panel">
+            <h3>리뷰보다 대화</h3>
+            <p>리뷰는 승인 절차가 아니라 서로의 구현 의도를 맞추는 과정이었습니다.</p>
+          </article>
+          <article class="panel">
+            <h3>테스트보다 신뢰</h3>
+            <p>테스트가 남아 있어 다음 변경을 더 자신 있게 할 수 있었습니다.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div class="progress" aria-live="polite">1 / 26</div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll("section"));
+      const progress = document.querySelector(".progress");
+
+      function currentSlideIndex() {
+        const middle = window.scrollY + window.innerHeight / 2;
+        let index = 0;
+        slides.forEach((slide, i) => {
+          if (slide.offsetTop <= middle) {
+            index = i;
+          }
+        });
+        return index;
+      }
+
+      function updateProgress() {
+        progress.textContent = `${currentSlideIndex() + 1} / ${slides.length}`;
+      }
+
+      function go(delta) {
+        const index = Math.min(
+          Math.max(currentSlideIndex() + delta, 0),
+          slides.length - 1,
+        );
+        slides[index].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener("keydown", (event) => {
+        if (["ArrowDown", "ArrowRight", "PageDown", " "].includes(event.key)) {
+          event.preventDefault();
+          go(1);
+        }
+        if (["ArrowUp", "ArrowLeft", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          go(-1);
+        }
+        if (event.key === "Home") {
+          event.preventDefault();
+          slides[0].scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        if (event.key === "End") {
+          event.preventDefault();
+          slides[slides.length - 1].scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      });
+      updateProgress();
+    </script>
+  </body>
+</html>
