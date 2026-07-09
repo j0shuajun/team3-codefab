@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 
 from app.assembler.assembler import Assembler
@@ -525,28 +526,37 @@ class DebugSession:
 
 class DebugMode:
     def __init__(self, runner=None):
-        self.runner = runner or CodeFabRunner()
+        self.runner = runner
 
     def run_file(self, file_path):
+        absolute_path = os.path.abspath(file_path)
+        import_base_dir = os.path.dirname(absolute_path)
+
         try:
-            with open(file_path, "r", encoding="utf-8") as file:
+            with open(absolute_path, "r", encoding="utf-8") as file:
                 source = file.read()
         except FileNotFoundError:
             return [f"Error: file not found: {file_path}"]
 
-        return self.run_source(source, file_path=file_path)
+        return self.run_source(
+            source,
+            file_path=absolute_path,
+            import_base_dir=import_base_dir,
+        )
 
-    def run_source(self, source, file_path=None):
+    def run_source(self, source, file_path=None, import_base_dir="."):
+        runner = self.runner or CodeFabRunner(import_base_dir=import_base_dir)
+
         try:
-            tokens = self.runner.tokenizer.tokenize(source)
+            tokens = runner.tokenizer.tokenize(source)
             statements = Assembler(tokens).parse()
 
-            errors = self.runner.checker.check(statements)
+            errors = runner.checker.check(statements)
             if errors:
                 return errors
 
             session = DebugSession(
-                self.runner,
+                runner,
                 statements,
                 source_lines=source.splitlines(),
             )

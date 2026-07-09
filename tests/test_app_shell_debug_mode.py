@@ -1,5 +1,5 @@
 from app.assembler.assembler import Assembler
-from app.shell.debug_mode import DebugSession
+from app.shell.debug_mode import DebugMode, DebugSession
 from app.shell.runner import CodeFabRunner
 
 
@@ -157,3 +157,38 @@ def test_debug_class_statement_location_uses_source_line_not_ast_repr():
     assert outputs == ["[DEBUG] 1번째 줄에서 정지 -> Class Machine {"]
     assert "ClassStmt" not in outputs[0]
     assert "FunctionStmt" not in outputs[0]
+
+
+def test_debug_mode_resolves_import_relative_to_source_file(
+    tmp_path,
+    monkeypatch,
+    capsys,
+):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+
+    main_file = project_dir / "main.cfab"
+    sum_file = project_dir / "sum.txt"
+
+    main_file.write_text(
+        'import "sum.txt" alias sum;\n' "print sum.answer;\n",
+        encoding="utf-8",
+    )
+
+    sum_file.write_text(
+        "var answer = 42;\n",
+        encoding="utf-8",
+    )
+
+    other_dir = tmp_path / "other"
+    other_dir.mkdir()
+    monkeypatch.chdir(other_dir)
+
+    monkeypatch.setattr("builtins.input", lambda prompt: "continue")
+
+    outputs = DebugMode().run_file(str(main_file))
+    captured = capsys.readouterr().out
+
+    assert outputs == []
+    assert "42" in captured
+    assert "Import target not found" not in captured
