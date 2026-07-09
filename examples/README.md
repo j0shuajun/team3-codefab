@@ -254,6 +254,50 @@ make run examples/08_ctrl_c.ctrlc
 
 (`36`이 먼저 찍히고, 이어서 팀명/팀원/역할/한 줄 소감이 담긴 표가 출력됩니다. 콘솔이 cp949 등 non-UTF-8 인코딩이면 이모지 때문에 `UnicodeEncodeError`가 날 수 있으니, 그럴 땐 `PYTHONIOENCODING=utf-8 make run examples/08_ctrl_c.ctrlc`로 실행하세요.)
 
+## 09. import
+
+`09_import_lib.ctrlc` (불러올 모듈)
+
+```
+var pi = 3.14;
+
+Func add(a, b) {
+  return a + b;
+}
+```
+
+`09_import.ctrlc` (진입점 — repo 루트 기준 상대 경로로 import)
+
+```
+import "examples/09_import_lib.ctrlc" alias lib;
+
+print lib.pi;
+print lib.add(1, 2);
+```
+
+실행 결과:
+
+```
+3.14
+3
+```
+
+## 10. `♡` 이름 궁합 연산자
+
+`10_name_compatibility.ctrlc`
+
+```
+print "김철수" ♡ "이영희";
+```
+
+실행 결과:
+
+```
+57
+```
+
+두 문자열의 각 글자 초성/중성/종성 획수를 엇갈려 더해가며 두 자리 숫자로 줄이는 손가락 이름궁합 계산 방식입니다 (`app/custom_function/name_compatibility.py`).
+
 ## 부록. 디버그 모드
 
 `debug_test.ctrlc` — `make debug <file>`로 실행하면 줄 단위 실행/breakpoint/watch를 확인할 수 있습니다.
@@ -267,5 +311,45 @@ print a + b;
 실행 결과 (`make run`/`make debug` 공통):
 
 ```
+7
+```
+
+## 부록. prompt shell 전용 기능 (`ctrlc`/`ctrlv`, `explain`)
+
+이 두 기능은 `.ctrlc` 파일로 만들 수 없습니다 — 파일을 실행하는 게 아니라, `make run`으로 들어가는 prompt shell 안에서 직접 입력하는 명령이기 때문입니다.
+
+```
+make run
+> print 36;
+36
+> print 36;
+36
+> print 35;
+35
+> ctrlc
+Ctrl+C 추천 명령어: print 36;
+ctrlv 를 입력하면 추천 명령어를 다시 실행합니다.
+> ctrlv
+36
+```
+
+- `ctrlc`: 지금까지 입력한 명령 중 가장 많이 쓴 것(동률이면 가장 최근 것)을 추천만 하고, 바로 실행하지는 않습니다.
+- `ctrlv`: `ctrlc`가 추천한 명령을 그대로 실행합니다.
+- `explain <code>`: 코드 한 줄을 토큰 → AST → checker → 실행 결과 순서로 보여줍니다.
+
+```
+make run
+> explain print 1 + 2 * 3;
+[Tokens]
+PRINT NUMBER PLUS NUMBER STAR NUMBER SEMICOLON EOF
+
+[AST]
+PrintStmt(BinaryExpr(LiteralExpr(1.0), +, BinaryExpr(LiteralExpr(2.0), *, LiteralExpr(3.0))))
+
+[Checker]
+No errors
+
+[Result]
+[Output]
 7
 ```
