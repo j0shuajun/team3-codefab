@@ -58,7 +58,9 @@ def test_alias_print_1(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_print_1_no_space(tokenizer):
     # 원본: print a; (공백 없음)
     # alias: 출력a;
@@ -85,7 +87,9 @@ def test_alias_print_2(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_print_2_no_space(tokenizer):
     # 원본: print a; (공백 없음)
     # alias: 보여줘a;
@@ -118,7 +122,9 @@ def test_alias_func(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_func_no_space(tokenizer):
     # 원본: Func add() {} (공백 없음)
     # alias: 함수add() {}
@@ -151,7 +157,9 @@ def test_alias_return_1(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_return_1_no_space(tokenizer):
     # 원본: return a; (공백 없음)
     # alias: 반환a;
@@ -178,7 +186,9 @@ def test_alias_return_2(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_return_2_no_space(tokenizer):
     # 원본: return a; (공백 없음)
     # alias: 돌려줘a;
@@ -209,7 +219,9 @@ def test_alias_class(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_class_no_space(tokenizer):
     # 원본: Class Robot {} (공백 없음)
     # alias: 클래스Robot {}
@@ -526,7 +538,9 @@ def test_alias_and(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_and_no_space(tokenizer):
     # 원본: a and b; (공백 없음)
     # alias: a그리고b;
@@ -558,7 +572,9 @@ def test_alias_or(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_or_no_space(tokenizer):
     # 원본: a or b; (공백 없음)
     # alias: a또는b;
@@ -590,7 +606,9 @@ def test_alias_greater(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_greater_no_space(tokenizer):
     # 원본: a > 3; (공백 없음)
     # alias: a크다3;
@@ -622,7 +640,9 @@ def test_alias_less(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_less_no_space(tokenizer):
     # 원본: a < 3; (공백 없음)
     # alias: a작다3;
@@ -654,7 +674,9 @@ def test_alias_equal_equal(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_equal_equal_no_space(tokenizer):
     # 원본: a == 3; (공백 없음)
     # alias: a같다3;
@@ -686,7 +708,9 @@ def test_alias_bang_equal(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_bang_equal_no_space(tokenizer):
     # 원본: a != 3; (공백 없음)
     # alias: a다르다3;
@@ -718,7 +742,9 @@ def test_alias_greater_equal(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_greater_equal_no_space(tokenizer):
     # 원본: a >= 3; (공백 없음)
     # alias: a크거나같다3;
@@ -750,7 +776,9 @@ def test_alias_less_equal(tokenizer):
     ]
 
 
-@pytest.mark.xfail(reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음")
+@pytest.mark.xfail(
+    reason="한글 별칭이 영숫자로 인접하면 하나의 식별자로 합쳐져 구분되지 않음"
+)
 def test_alias_less_equal_no_space(tokenizer):
     # 원본: a <= 3; (공백 없음)
     # alias: a작거나같다3;
