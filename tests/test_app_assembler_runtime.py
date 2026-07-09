@@ -7,6 +7,7 @@ from app.assembler.expr import (
     LiteralExpr,
     VariableExpr,
 )
+from app.assembler.runtime import ImportedModule
 from app.assembler.statement import (
     ClassStmt,
     PrintStmt,
@@ -131,6 +132,37 @@ def test_runtime_error_get_unknown_property():
                 ),
             ]
         )
+
+
+def test_imported_module_get_returns_member():
+    module = ImportedModule("sum", {"add": "some-function"})
+
+    assert module.get(token(TokenType.IDENTIFIER, "add")) == "some-function"
+
+
+def test_imported_module_get_unknown_member_raises():
+    module = ImportedModule("sum", {"add": "some-function"})
+
+    with pytest.raises(CodeFabRuntimeError):
+        module.get(token(TokenType.IDENTIFIER, "missing"))
+
+
+def test_get_expr_reads_imported_module_member():
+    executor = Executor()
+    executor.globals.define("sum", ImportedModule("sum", {"answer": 42}))
+
+    executor.execute(
+        [
+            PrintStmt(
+                GetExpr(
+                    VariableExpr(token(TokenType.IDENTIFIER, "sum")),
+                    token(TokenType.IDENTIFIER, "answer"),
+                )
+            )
+        ]
+    )
+
+    assert executor.outputs == ["42"]
 
 
 def test_runtime_error_superclass_must_be_class():

@@ -17,6 +17,7 @@ from app.assembler.expr import (
 )
 from app.assembler.runtime import (
     Callable,
+    ImportedModule,
     NativeFunction,
     ReturnSignal,
     UserClass,
@@ -192,7 +193,7 @@ class Executor:
         if isinstance(expr, GetExpr):
             obj = self.evaluate(expr.object)
 
-            if isinstance(obj, UserInstance):
+            if isinstance(obj, (UserInstance, ImportedModule)):
                 return obj.get(expr.name)
 
             raise CodeFabRuntimeError("Only instances have properties.")
