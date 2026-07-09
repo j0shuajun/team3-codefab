@@ -35,6 +35,7 @@ class TokenType(Enum):
     MINUS = "-"
     STAR = "*"
     SLASH = "/"
+    HEART = "♡"
     # Logical
     BANG = "!"
     AND = "and"
@@ -157,7 +158,7 @@ class Tokenizer:
                 tokens.append(self._read_string())
             elif ch.isdigit():
                 tokens.append(self._read_number())
-            elif ch.isalpha():
+            elif ch.isalpha() or ch == "_":
                 tokens.append(self._read_identifier())
             else:
                 raise ValueError(f"Unexpected character: {ch!r}")
@@ -213,7 +214,7 @@ class Tokenizer:
         return Token(TokenType.NUMBER, characters, float(characters), line=self._line)
 
     def _read_identifier(self) -> Token:
-        origin = self._read_multiple_characters(str.isalnum)
+        origin = self._read_multiple_characters(lambda ch: ch.isalnum() or ch == "_")
         return Token(
             self._TOKENS.get(origin, TokenType.IDENTIFIER), origin, line=self._line
         )

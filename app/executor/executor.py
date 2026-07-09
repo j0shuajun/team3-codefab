@@ -40,6 +40,8 @@ from app.assembler.statement import (
     VarStmt,
 )
 from app.assembler.tokenizer import TokenType
+from app.custom_function.ctrl_c_function import register_custom_functions
+from app.custom_function.name_compatibility import calculate_name_compatibility
 from app.exceptions import CodeFabRuntimeError
 
 
@@ -54,6 +56,7 @@ class Executor:
 
         self.globals.define("add", NativeFunction("add", 2, lambda a, b: a + b))
         self.globals.define("Array", NativeFunction("Array", 1, self._make_array))
+        register_custom_functions(self)
 
     def _make_array(self, size):
         if not self.is_number(size):
@@ -326,6 +329,9 @@ class Executor:
                 )
 
             return left.is_instance_of(right)
+
+        if expr.operator.type == TokenType.HEART:
+            return calculate_name_compatibility(left, right)
 
         raise CodeFabRuntimeError(f"Unknown binary operator: {expr.operator.origin}")
 

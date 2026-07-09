@@ -38,7 +38,8 @@ class AssemblerError(Exception):
 # logic_or   -> logic_and ("or" logic_and)*
 # logic_and  -> equality ("and" equality)*
 # equality   -> comparison (("!=" | "==") comparison)*
-# comparison -> term ((">" | ">=" | "<" | "<=") term)*
+# comparison -> compatibility ((">" | ">=" | "<" | "<=") compatibility)*
+# compatibility -> term ("♡" term)*
 # term       -> factor (("+" | "-") factor)*
 # factor     -> unary (("*" | "/") unary)*
 # unary      -> ("!" | "-") unary | primary
@@ -217,7 +218,7 @@ class Assembler:
         return expression
 
     def comparison(self):
-        expression = self.term()
+        expression = self.compatibility()
 
         while self.match(
             TokenType.GREATER,
@@ -226,6 +227,16 @@ class Assembler:
             TokenType.LESS_EQUAL,
             TokenType.INSTANCEOF,
         ):
+            operator = self.previous()
+            right = self.compatibility()
+            expression = BinaryExpr(expression, operator, right)
+
+        return expression
+
+    def compatibility(self):
+        expression = self.term()
+
+        while self.match(TokenType.HEART):
             operator = self.previous()
             right = self.term()
             expression = BinaryExpr(expression, operator, right)
