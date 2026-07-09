@@ -85,9 +85,7 @@ class Token:
         )
 
     def __repr__(self):
-        return (
-            f"Token({self.type}, {self.origin!r}, {getattr(self, 'value', None)!r}, line={self.line})"
-        )
+        return f"Token({self.type}, {self.origin!r}, {getattr(self, 'value', None)!r}, line={self.line})"
 
 
 class Tokenizer:
@@ -172,4 +170,6 @@ class Tokenizer:
 
     def _read_identifier(self) -> Token:
         origin = self._read_multiple_characters(str.isalnum)
-        return Token(self._TOKENS.get(origin, TokenType.IDENTIFIER), origin, line=self._line)
+        return Token(
+            self._TOKENS.get(origin, TokenType.IDENTIFIER), origin, line=self._line
+        )

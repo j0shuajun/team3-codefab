@@ -714,13 +714,13 @@ def test_two_line_with_string(tokenizer):
     assert tokens[3].line == 1
     assert tokens[5].line == 2
 
+
 def test_multiple_new_line(tokenizer):
     tokens = tokenizer.tokenize("a;\n\nb;")
 
     lines = [token.line for token in tokens]
 
     assert lines == [1, 1, 3, 3, 3]
-
 
 
 def test_start_new_line(tokenizer):
@@ -730,11 +730,10 @@ def test_start_new_line(tokenizer):
 
     assert lines == [3, 3, 3, 3, 3]
 
+
 def test_new_line_implied(tokenizer):
-    tokens = tokenizer.tokenize(
-        """var a = 1;
-var b = 2;"""
-    )
+    tokens = tokenizer.tokenize("""var a = 1;
+var b = 2;""")
 
     lines = [token.line for token in tokens]
 
