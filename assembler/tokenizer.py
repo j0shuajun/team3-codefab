@@ -71,11 +71,12 @@ class Token:
     def __init__(self, token_type: TokenType, origin: str, value=None, line: int = 1):
         self.type = token_type
         self.origin = origin
-        self.line = line  # 참고용 부가 정보: __eq__ 비교 대상 아님
+        self.line = line
         if value is not None:
             self.value = value
 
     def __eq__(self, other):
+        # line은 비교하지 않습니다.
         if not isinstance(other, Token):
             return NotImplemented
         return (
