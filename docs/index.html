@@ -120,7 +120,6 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         padding: 22px;
-        box-shadow: 0 12px 30px rgba(24, 33, 43, 0.08);
       }
 
       .panel.accent {
@@ -350,7 +349,7 @@
               <li>변수, 조건문, 반복문, 함수</li>
               <li>클래스, 메서드, 생성자, 상속</li>
               <li>배열과 property 접근</li>
-              <li>한글 키워드와 도움 기능</li>
+              <li>한글 키워드와 팀 소개 기능</li>
             </ul>
           </article>
           <article class="panel">
@@ -459,9 +458,9 @@ r.move();</code></pre>
           <article class="panel">
             <h3><code>ctrl_c()</code></h3>
             <ul>
-              <li>코드 안에서 도움을 요청하는 함수입니다.</li>
-              <li>현재 흐름에서 이어서 볼 만한 행동을 제안합니다.</li>
-              <li>반복되는 작업 흐름을 더 빠르게 이어갑니다.</li>
+              <li>CodeFab 코드 안에서 호출하는 내장 함수입니다.</li>
+              <li>팀 Ctrl-C의 의미와 팀원들을 소개합니다.</li>
+              <li>shell 명령 <code>ctrlc</code>와는 별도 기능입니다.</li>
             </ul>
           </article>
           <article class="panel">
@@ -492,7 +491,8 @@ r.move();</code></pre>
     ctrl_c();
 }</code></pre>
           <pre class="terminal"><code>[Tokens]
-VAR IDENTIFIER EQUAL NUMBER PLUS NUMBER STAR NUMBER SEMICOLON
+VAR IDENTIFIER EQUAL NUMBER PLUS NUMBER
+STAR NUMBER SEMICOLON
 IDENTIFIER LEFT_PAREN RIGHT_PAREN SEMICOLON EOF
 
 [AST]
@@ -507,7 +507,8 @@ No errors
 [Result]
 x = 7
 [ctrl_c]
-next: try print x;</code></pre>
+Ctrl-C 팀을 소개합니다.
+김명준, 권소영, 김민준, 박진우, 이예진</code></pre>
         </div>
       </section>
 
@@ -672,19 +673,19 @@ Executor -> callee.call(executor, arguments)</code></pre>
 
       <section>
         <p class="eyebrow">Design Pattern 4</p>
-        <h2>Command Pattern: 기능별 행동을 분리하기</h2>
+        <h2>Command Pattern은 적용 후보입니다</h2>
         <div class="two">
-          <pre><code>Before
+          <pre><code>현재 흐름
 
 if name == "ctrl_c":
-    suggest()
+    team_intro()
 if keyword == "explain":
     print_pipeline()
 if keyword in korean_alias:
     normalize()</code></pre>
-          <pre><code>리팩토링 후보
+          <pre><code>늘어날 때의 후보
 
-CtrlCCommand
+TeamIntroCommand
 ExplainCommand
 AliasNormalizeCommand
 RunProgramCommand
@@ -692,21 +693,39 @@ RunProgramCommand
 Interpreter -> command.execute(context)</code></pre>
         </div>
         <p class="note">
-          언어 기능이 늘어날수록 조건문 하나에 모든 행동을 모으기보다,
-          역할별 객체로 나누는 편이 테스트와 설명에 유리합니다.
+          현재 구현에는 단순 분기도 충분하지만, custom 기능이 늘어나면 명령 객체로 분리하는 방식이
+          테스트와 설명에 유리합니다.
         </p>
       </section>
 
       <section>
-        <p class="eyebrow">Design Choice</p>
-        <h2>Singleton은 일부러 쓰지 않았습니다</h2>
-        <div class="panel accent">
-          <ul>
-            <li>Prompt Shell은 세션 동안 상태를 유지해야 합니다.</li>
-            <li>하지만 테스트는 매번 깨끗한 실행 환경이 필요합니다.</li>
-            <li><code>Executor</code>는 각 인스턴스마다 <code>globals</code>, <code>environment</code>, <code>outputs</code>를 가집니다.</li>
-            <li>패턴은 무조건 적용하는 것이 아니라, 필요한 상황에만 선택했습니다.</li>
-          </ul>
+        <p class="eyebrow">Branch Protection</p>
+        <h2>PR은 규칙을 통과해야 merge됩니다</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>Review Rule</h3>
+            <ul>
+              <li>최소 2명 approve 후 merge합니다.</li>
+              <li>PR template로 검증 범위를 남깁니다.</li>
+              <li>작성자가 직접 merge해 책임을 분명히 합니다.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Action Rule</h3>
+            <ul>
+              <li>lint와 unit test 결과를 확인합니다.</li>
+              <li>gist acceptance와 coverage를 함께 봅니다.</li>
+              <li>실패한 check는 수정 후 다시 통과시킵니다.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Main Protection</h3>
+            <ul>
+              <li>리뷰 전 merge를 막습니다.</li>
+              <li>깨진 workflow가 main에 들어가지 않게 합니다.</li>
+              <li>여러 보호 규칙으로 협업 기준을 고정합니다.</li>
+            </ul>
+          </article>
         </div>
       </section>
 
