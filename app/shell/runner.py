@@ -5,10 +5,10 @@ from app.executor.executor import Executor
 
 
 class CodeFabRunner:
-    def __init__(self):
+    def __init__(self, import_base_dir="."):
         self.tokenizer = Tokenizer()
         self.checker = Checker()
-        self.executor = Executor()
+        self.executor = Executor(import_base_dir=import_base_dir)
 
     def run_code(self, source):
         before_output_count = len(self.executor.outputs)
