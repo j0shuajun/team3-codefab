@@ -128,3 +128,26 @@ class UserInstance:
 
     def __repr__(self):
         return f"<{self.klass.name} instance>"
+
+
+class ImportedModule:
+    """import 로 가져온 파일의 var/Func/Class 선언을 이름으로 접근하게 해주는 객체.
+
+    alias.name 형태의 GetExpr 접근을 받기 위해 UserInstance 와 같은 get() 인터페이스를
+    제공한다. 필드 대입(alias.name = value)은 지원하지 않는다.
+    """
+
+    def __init__(self, name, members):
+        self.name = name
+        self.members = members
+
+    def get(self, name_token):
+        name = name_token.origin
+
+        if name in self.members:
+            return self.members[name]
+
+        raise CodeFabRuntimeError(f"Undefined property '{name}'.")
+
+    def __repr__(self):
+        return f"<module {self.name}>"

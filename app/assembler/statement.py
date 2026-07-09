@@ -125,6 +125,18 @@ class ReturnStmt(Stmt):
         return f"ReturnStmt({self.value})"
 
 
+class ImportStmt(Stmt):
+    """import "path" alias name; 임포트 선언문"""
+
+    def __init__(self, path: Token, alias: Token, line=None):
+        super().__init__(line if line is not None else getattr(path, "line", None))
+        self.path = path
+        self.alias = alias
+
+    def __repr__(self):
+        return f"ImportStmt({self.path.value!r}, alias={self.alias.origin})"
+
+
 class ClassStmt(Stmt):
     """Class Name (: SuperClass)? { methods... } 클래스 선언문"""
 
