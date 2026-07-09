@@ -2,6 +2,8 @@ from assembler.expr import (
     AssignExpr,
     BinaryExpr,
     GroupingExpr,
+    IndexGetExpr,
+    IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
@@ -14,6 +16,10 @@ from checker.checker import Checker
 
 def token(origin):
     return Token(TokenType.IDENTIFIER, origin)
+
+
+def bracket():
+    return Token(TokenType.RIGHT_BRACKET, "]")
 
 
 def check(statements):
@@ -532,3 +538,156 @@ class TestCheckPerformsConstantFolding:
 
         assert errors == []
         assert isinstance(statements[0].initializer, BinaryExpr)
+
+
+class TestIndexGetExprIsResolved:
+    def test_uninitialized_array_variable_is_error(self):
+        statements = [
+            VarStmt(token("arr")),
+            ExpressionStmt(
+                IndexGetExpr(VariableExpr(token("arr")), bracket(), LiteralExpr(0))
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "arr" in errors[0]
+
+    def test_uninitialized_index_variable_is_error(self):
+        statements = [
+            VarStmt(token("arr"), LiteralExpr(0)),
+            VarStmt(token("i")),
+            ExpressionStmt(
+                IndexGetExpr(
+                    VariableExpr(token("arr")), bracket(), VariableExpr(token("i"))
+                )
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "i" in errors[0]
+
+    def test_self_reference_through_index_get_in_initializer_is_error(self):
+        # var arr = arr[0];
+        statements = [
+            VarStmt(
+                token("arr"),
+                IndexGetExpr(VariableExpr(token("arr")), bracket(), LiteralExpr(0)),
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "arr" in errors[0]
+
+    def test_fully_initialized_index_get_produces_no_error(self):
+        statements = [
+            VarStmt(token("arr"), LiteralExpr(0)),
+            VarStmt(token("i"), LiteralExpr(0)),
+            ExpressionStmt(
+                IndexGetExpr(
+                    VariableExpr(token("arr")), bracket(), VariableExpr(token("i"))
+                )
+            ),
+        ]
+
+        assert check(statements) == []
+
+
+class TestIndexSetExprIsResolved:
+    def test_uninitialized_value_being_assigned_is_error(self):
+        # var arr = 0; var x; arr[0] = x;
+        statements = [
+            VarStmt(token("arr"), LiteralExpr(0)),
+            VarStmt(token("x")),
+            ExpressionStmt(
+                IndexSetExpr(
+                    VariableExpr(token("arr")),
+                    bracket(),
+                    LiteralExpr(0),
+                    VariableExpr(token("x")),
+                )
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "x" in errors[0]
+
+    def test_uninitialized_array_target_is_error(self):
+        statements = [
+            VarStmt(token("arr")),
+            ExpressionStmt(
+                IndexSetExpr(
+                    VariableExpr(token("arr")),
+                    bracket(),
+                    LiteralExpr(0),
+                    LiteralExpr(1),
+                )
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "arr" in errors[0]
+
+    def test_uninitialized_index_expression_is_error(self):
+        statements = [
+            VarStmt(token("arr"), LiteralExpr(0)),
+            VarStmt(token("i")),
+            ExpressionStmt(
+                IndexSetExpr(
+                    VariableExpr(token("arr")),
+                    bracket(),
+                    VariableExpr(token("i")),
+                    LiteralExpr(1),
+                )
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "i" in errors[0]
+
+    def test_self_reference_through_index_set_value_in_initializer_is_error(self):
+        # var arr = 0; var x = arr[0] = x;
+        statements = [
+            VarStmt(token("arr"), LiteralExpr(0)),
+            VarStmt(
+                token("x"),
+                IndexSetExpr(
+                    VariableExpr(token("arr")),
+                    bracket(),
+                    LiteralExpr(0),
+                    VariableExpr(token("x")),
+                ),
+            ),
+        ]
+
+        errors = check(statements)
+
+        assert len(errors) == 1
+        assert "x" in errors[0]
+
+    def test_fully_initialized_index_set_produces_no_error(self):
+        statements = [
+            VarStmt(token("arr"), LiteralExpr(0)),
+            VarStmt(token("i"), LiteralExpr(0)),
+            ExpressionStmt(
+                IndexSetExpr(
+                    VariableExpr(token("arr")),
+                    bracket(),
+                    VariableExpr(token("i")),
+                    LiteralExpr(1),
+                )
+            ),
+        ]
+
+        assert check(statements) == []

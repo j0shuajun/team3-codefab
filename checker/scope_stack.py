@@ -63,6 +63,21 @@ class ScopeStack:
                 return None if depth == global_depth else depth
         return None
 
+    def mark_all_initialized(self):
+        """지금 보이는 모든 스코프의 변수를 전부 초기화됨으로 표시한다.
+
+        함수/메서드 본문은 선언 시점이 아니라 나중에(호출될 때) 실행되므로,
+        본문을 resolve 하는 동안에는 바깥 스코프 변수의 "지금 이 순간" 초기화
+        상태를 기준으로 미초기화 오류를 낼 수 없다 (호출 시점엔 이미 초기화돼
+        있을 수도 있고, 그 반대일 수도 있어 정적으로 알 방법이 없다). 그래서
+        본문을 resolve 하기 전 이 메서드로 바깥 변수를 전부 안전하게 만들어두고,
+        끝나면 snapshot() 으로 떠둔 이전 상태로 restore() 해서 이 변화와 본문
+        안에서 일어난 대입 효과 모두를 폐기한다.
+        """
+        for scope in self._scopes:
+            for name in scope:
+                scope[name] = True
+
     def snapshot(self):
         """현재 스코프 스택 상태를 복사해서 반환한다."""
         return [dict(scope) for scope in self._scopes]
