@@ -27,7 +27,22 @@ def test_alias_var(tokenizer):
     ]
 
 
-# ===== 출력 / 보여줘 (print) =====
+def test_alias_var_2(tokenizer):
+    # 원본: var a = 3;
+    # alias: 만들게 a = 3;
+    tokens = tokenizer.tokenize("만들게 a = 3;")
+
+    assert tokens == [
+        Token(T.VAR, "만들게"),
+        Token(T.IDENTIFIER, "a"),
+        Token(T.EQUAL, "="),
+        Token(T.NUMBER, "3", value=3.0),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== 출력 / 보여줘 / 찍어줘 (print) =====
 
 
 def test_alias_print_1(tokenizer):
@@ -56,7 +71,20 @@ def test_alias_print_2(tokenizer):
     ]
 
 
-# ===== 함수 (Func) =====
+def test_alias_print_3(tokenizer):
+    # 원본: print a;
+    # alias: 찍어줘 a;
+    tokens = tokenizer.tokenize("찍어줘 a;")
+
+    assert tokens == [
+        Token(T.PRINT, "찍어줘"),
+        Token(T.IDENTIFIER, "a"),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== 함수 / 펑펑 (Func) =====
 
 
 def test_alias_func(tokenizer):
@@ -66,6 +94,22 @@ def test_alias_func(tokenizer):
 
     assert tokens == [
         Token(T.FUNC, "함수"),
+        Token(T.IDENTIFIER, "add"),
+        Token(T.LEFT_PAREN, "("),
+        Token(T.RIGHT_PAREN, ")"),
+        Token(T.LEFT_BRACE, "{"),
+        Token(T.RIGHT_BRACE, "}"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_alias_func_2(tokenizer):
+    # 원본: Func add() {}
+    # alias: 펑펑 add() {}
+    tokens = tokenizer.tokenize("펑펑 add() {}")
+
+    assert tokens == [
+        Token(T.FUNC, "펑펑"),
         Token(T.IDENTIFIER, "add"),
         Token(T.LEFT_PAREN, "("),
         Token(T.RIGHT_PAREN, ")"),
@@ -104,7 +148,7 @@ def test_alias_return_2(tokenizer):
     ]
 
 
-# ===== 클래스 (Class) =====
+# ===== 클래스 / 틀 / 붕어빵틀 (Class) =====
 
 
 def test_alias_class(tokenizer):
@@ -121,7 +165,35 @@ def test_alias_class(tokenizer):
     ]
 
 
-# ===== 이것 (This) =====
+def test_alias_class_2(tokenizer):
+    # 원본: Class Robot {}
+    # alias: 틀 Robot {}
+    tokens = tokenizer.tokenize("틀 Robot {}")
+
+    assert tokens == [
+        Token(T.CLASS, "틀"),
+        Token(T.IDENTIFIER, "Robot"),
+        Token(T.LEFT_BRACE, "{"),
+        Token(T.RIGHT_BRACE, "}"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_alias_class_3(tokenizer):
+    # 원본: Class Robot {}
+    # alias: 붕어빵틀 Robot {}
+    tokens = tokenizer.tokenize("붕어빵틀 Robot {}")
+
+    assert tokens == [
+        Token(T.CLASS, "붕어빵틀"),
+        Token(T.IDENTIFIER, "Robot"),
+        Token(T.LEFT_BRACE, "{"),
+        Token(T.RIGHT_BRACE, "}"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== 이것 / 나야 (This) =====
 
 
 def test_alias_this(tokenizer):
@@ -138,7 +210,21 @@ def test_alias_this(tokenizer):
     ]
 
 
-# ===== 부모 (Super) =====
+def test_alias_this_2(tokenizer):
+    # 원본: This.a;
+    # alias: 나야.a;
+    tokens = tokenizer.tokenize("나야.a;")
+
+    assert tokens == [
+        Token(T.THIS, "나야"),
+        Token(T.DOT, "."),
+        Token(T.IDENTIFIER, "a"),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== 부모 / 엄빠 (Super) =====
 
 
 def test_alias_super(tokenizer):
@@ -155,7 +241,21 @@ def test_alias_super(tokenizer):
     ]
 
 
-# ===== 만약 (if) =====
+def test_alias_super_2(tokenizer):
+    # 원본: Super.a;
+    # alias: 엄빠.a;
+    tokens = tokenizer.tokenize("엄빠.a;")
+
+    assert tokens == [
+        Token(T.SUPER, "엄빠"),
+        Token(T.DOT, "."),
+        Token(T.IDENTIFIER, "a"),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== 만약 / 혹시 (if) =====
 
 
 def test_alias_if(tokenizer):
@@ -165,6 +265,24 @@ def test_alias_if(tokenizer):
 
     assert tokens == [
         Token(T.IF, "만약"),
+        Token(T.LEFT_PAREN, "("),
+        Token(T.IDENTIFIER, "a"),
+        Token(T.GREATER, "크다"),
+        Token(T.NUMBER, "3", value=3.0),
+        Token(T.RIGHT_PAREN, ")"),
+        Token(T.LEFT_BRACE, "{"),
+        Token(T.RIGHT_BRACE, "}"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_alias_if_2(tokenizer):
+    # 원본: if (a > 3) {}
+    # alias: 혹시 (a 크다 3) {}
+    tokens = tokenizer.tokenize("혹시 (a 크다 3) {}")
+
+    assert tokens == [
+        Token(T.IF, "혹시"),
         Token(T.LEFT_PAREN, "("),
         Token(T.IDENTIFIER, "a"),
         Token(T.GREATER, "크다"),
@@ -200,7 +318,7 @@ def test_alias_else(tokenizer):
     ]
 
 
-# ===== 반복 (for) =====
+# ===== 반복 / 또또 (for) =====
 
 
 def test_alias_for(tokenizer):
@@ -210,6 +328,23 @@ def test_alias_for(tokenizer):
 
     assert tokens == [
         Token(T.FOR, "반복"),
+        Token(T.LEFT_PAREN, "("),
+        Token(T.SEMICOLON, ";"),
+        Token(T.SEMICOLON, ";"),
+        Token(T.RIGHT_PAREN, ")"),
+        Token(T.LEFT_BRACE, "{"),
+        Token(T.RIGHT_BRACE, "}"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_alias_for_2(tokenizer):
+    # 원본: for (;;) {}
+    # alias: 또또 (;;) {}
+    tokens = tokenizer.tokenize("또또 (;;) {}")
+
+    assert tokens == [
+        Token(T.FOR, "또또"),
         Token(T.LEFT_PAREN, "("),
         Token(T.SEMICOLON, ";"),
         Token(T.SEMICOLON, ";"),
@@ -274,7 +409,7 @@ def test_alias_false_2(tokenizer):
     ]
 
 
-# ===== 그리고 (and) =====
+# ===== 그리고 / 이랑 (and) =====
 
 
 def test_alias_and(tokenizer):
@@ -291,7 +426,21 @@ def test_alias_and(tokenizer):
     ]
 
 
-# ===== 또는 (or) =====
+def test_alias_and_2(tokenizer):
+    # 원본: a and b;
+    # alias: a 이랑 b;
+    tokens = tokenizer.tokenize("a 이랑 b;")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "a"),
+        Token(T.AND, "이랑"),
+        Token(T.IDENTIFIER, "b"),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== 또는 / 이나 (or) =====
 
 
 def test_alias_or(tokenizer):
@@ -302,6 +451,20 @@ def test_alias_or(tokenizer):
     assert tokens == [
         Token(T.IDENTIFIER, "a"),
         Token(T.OR, "또는"),
+        Token(T.IDENTIFIER, "b"),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_alias_or_2(tokenizer):
+    # 원본: a or b;
+    # alias: a 이나 b;
+    tokens = tokenizer.tokenize("a 이나 b;")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "a"),
+        Token(T.OR, "이나"),
         Token(T.IDENTIFIER, "b"),
         Token(T.SEMICOLON, ";"),
         Token(T.EOF, ""),
@@ -342,7 +505,7 @@ def test_alias_less(tokenizer):
     ]
 
 
-# ===== 같다 (==) =====
+# ===== 같다 / 똑같아 (==) =====
 
 
 def test_alias_equal_equal(tokenizer):
@@ -359,7 +522,21 @@ def test_alias_equal_equal(tokenizer):
     ]
 
 
-# ===== 다르다 (!=) =====
+def test_alias_equal_equal_2(tokenizer):
+    # 원본: a == 3;
+    # alias: a 똑같아 3;
+    tokens = tokenizer.tokenize("a 똑같아 3;")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "a"),
+        Token(T.EQUAL_EQUAL, "똑같아"),
+        Token(T.NUMBER, "3", value=3.0),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
+# ===== 다르다 / 달라 (!=) =====
 
 
 def test_alias_bang_equal(tokenizer):
@@ -370,6 +547,20 @@ def test_alias_bang_equal(tokenizer):
     assert tokens == [
         Token(T.IDENTIFIER, "a"),
         Token(T.BANG_EQUAL, "다르다"),
+        Token(T.NUMBER, "3", value=3.0),
+        Token(T.SEMICOLON, ";"),
+        Token(T.EOF, ""),
+    ]
+
+
+def test_alias_bang_equal_2(tokenizer):
+    # 원본: a != 3;
+    # alias: a 달라 3;
+    tokens = tokenizer.tokenize("a 달라 3;")
+
+    assert tokens == [
+        Token(T.IDENTIFIER, "a"),
+        Token(T.BANG_EQUAL, "달라"),
         Token(T.NUMBER, "3", value=3.0),
         Token(T.SEMICOLON, ";"),
         Token(T.EOF, ""),
