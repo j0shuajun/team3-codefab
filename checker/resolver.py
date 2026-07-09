@@ -6,6 +6,8 @@ from assembler.expr import (
     BinaryExpr,
     Expr,
     GroupingExpr,
+    IndexGetExpr,
+    IndexSetExpr,
     LiteralExpr,
     LogicalExpr,
     UnaryExpr,
@@ -48,6 +50,8 @@ class ExpressionResolver(Resolver):
             UnaryExpr: self._resolve_unary_expr,
             GroupingExpr: self._resolve_grouping_expr,
             LiteralExpr: self._resolve_literal_expr,
+            IndexGetExpr: self._resolve_index_get_expr,
+            IndexSetExpr: self._resolve_index_set_expr,
         }
 
     def resolve(self, expr):
@@ -85,6 +89,15 @@ class ExpressionResolver(Resolver):
 
     def _resolve_literal_expr(self, expr):
         pass
+
+    def _resolve_index_get_expr(self, expr):
+        self.resolve(expr.array)
+        self.resolve(expr.index)
+
+    def _resolve_index_set_expr(self, expr):
+        self.resolve(expr.array)
+        self.resolve(expr.index)
+        self.resolve(expr.value)
 
 
 class StatementResolver(Resolver):
