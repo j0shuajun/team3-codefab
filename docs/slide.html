@@ -1992,6 +1992,8 @@
         padding: 30px;
         background: #ffffff;
         border: 1px solid rgba(28, 96, 239, 0.18);
+        display: flex;
+        flex-direction: column;
       }
 
       .pipeline-strip {
@@ -1999,6 +2001,7 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 14px;
         align-items: stretch;
+        margin: auto 0;
       }
 
       .pipeline-unit {
@@ -2997,7 +3000,250 @@
       }
 
       .pattern-overview.three .pattern-overview-card {
-        min-height: 300px;
+        min-height: 250px;
+      }
+
+      .pattern-overview-card .pattern-meta {
+        display: grid;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .pattern-overview-card .pattern-meta span {
+        margin-top: 0;
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .pattern-case {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .pattern-case-card {
+        min-height: 260px;
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .pattern-case-card.primary {
+        background: #dbe8fe;
+        border: 2px solid var(--blue);
+      }
+
+      .pattern-case-card b {
+        color: var(--blue);
+        font-size: 16px;
+      }
+
+      .pattern-case-card strong {
+        display: block;
+        margin-top: 14px;
+        font-size: 25px;
+        line-height: 1.24;
+      }
+
+      .pattern-case-card p {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.38;
+        word-break: keep-all;
+      }
+
+      .pattern-case-card ul {
+        display: grid;
+        gap: 9px;
+        margin-top: 14px;
+        padding-left: 1em;
+      }
+
+      .pattern-case-card li {
+        color: var(--ink);
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.28;
+      }
+
+      .pattern-case-card li::before {
+        content: none;
+      }
+
+      .class-example pre {
+        font-size: 15px;
+        line-height: 1.36;
+      }
+
+      .refactor-compare {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px;
+        align-items: stretch;
+      }
+
+      .refactor-card {
+        border-radius: 18px;
+        padding: 22px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.2);
+      }
+
+      .refactor-card.after {
+        background: #eaf2ff;
+        border-color: rgba(28, 96, 239, 0.36);
+      }
+
+      .refactor-card h3 {
+        font-size: 28px;
+        margin-bottom: 14px;
+      }
+
+      .refactor-card.before h3 { color: #e11d48; }
+      .refactor-card.after h3 { color: #16a34a; }
+
+      .refactor-card .code-window {
+        width: 100%;
+        margin: 0;
+        min-height: 270px;
+      }
+
+      .refactor-card .code-window pre {
+        min-height: 220px;
+        padding: 24px 30px;
+        font-size: 14px;
+        line-height: 1.48;
+        overflow: hidden;
+      }
+
+      .refactor-card p {
+        margin-top: 14px;
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.36;
+        word-break: keep-all;
+      }
+
+      .collab-standard {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .standard-panel {
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .standard-panel h3 {
+        color: var(--blue);
+        font-size: 26px;
+        margin-bottom: 18px;
+      }
+
+      .make-table {
+        display: grid;
+        gap: 10px;
+      }
+
+      .make-row {
+        display: grid;
+        grid-template-columns: 145px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        border-radius: 12px;
+        padding: 14px 16px;
+        background: #ffffff;
+      }
+
+      .make-row code {
+        color: var(--blue);
+        font-size: 17px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .make-row span {
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.3;
+      }
+
+      .template-shot {
+        border-radius: 18px;
+        padding: 16px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        overflow: hidden;
+      }
+
+      .template-shot img {
+        width: 100%;
+        height: 410px;
+        object-fit: cover;
+        object-position: top;
+        border-radius: 12px;
+        display: block;
+      }
+
+      .actions-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .actions-shot {
+        border-radius: 18px;
+        padding: 18px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        display: flex;
+        align-items: center;
+      }
+
+      .actions-shot img {
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.12);
+      }
+
+      .actions-points {
+        display: grid;
+        gap: 14px;
+      }
+
+      .actions-point {
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+      }
+
+      .actions-point strong,
+      .actions-point span {
+        display: block;
+      }
+
+      .actions-point strong {
+        color: var(--blue);
+        font-size: 22px;
+      }
+
+      .actions-point span {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.35;
       }
 
       .command-relation {
@@ -3187,7 +3433,9 @@
 
       .executor-layout-new {
         display: grid;
-        gap: 20px;
+        gap: 34px;
+        min-height: 430px;
+        align-content: center;
       }
 
       .executor-core-row {
@@ -3232,14 +3480,19 @@
       .executor-capabilities {
         display: grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 12px;
+        gap: 14px;
+        padding: 22px;
+        border-radius: 18px;
+        background: #f6f9ff;
+        border: 1px solid rgba(28, 96, 239, 0.16);
       }
 
       .executor-capability {
-        min-height: 104px;
+        min-height: 112px;
         border-radius: 14px;
         padding: 16px 12px;
-        background: #eef4ff;
+        background: #ffffff;
+        border-top: 4px solid rgba(28, 96, 239, 0.7);
       }
 
       .executor-capability strong,
@@ -3253,7 +3506,28 @@
 
       .import-layout-new {
         display: grid;
-        gap: 18px;
+        gap: 20px;
+        min-height: 430px;
+        align-content: center;
+      }
+
+      .import-main-message {
+        border-radius: 18px;
+        padding: 22px 26px;
+        background: #eef4ff;
+        border-left: 8px solid var(--blue);
+      }
+
+      .import-main-message strong {
+        display: block;
+        color: var(--blue);
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .import-main-message p {
+        font-size: 24px;
+        line-height: 1.34;
       }
 
       .import-role-row {
@@ -3312,6 +3586,39 @@
 
       .import-flow-step strong { font-size: 17px; }
       .import-flow-step span { margin-top: 6px; color: var(--muted); font-size: 13px; }
+
+      .import-check-table {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .import-check-card {
+        min-height: 112px;
+        border-radius: 14px;
+        padding: 16px;
+        background: #f6f9ff;
+        border: 1px solid rgba(28, 96, 239, 0.16);
+      }
+
+      .import-check-card strong,
+      .import-check-card span {
+        display: block;
+      }
+
+      .import-check-card strong {
+        color: var(--blue);
+        font-size: 17px;
+        white-space: nowrap;
+      }
+
+      .import-check-card span {
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.35;
+        word-break: keep-all;
+      }
 
       .import-error-row {
         display: grid;
@@ -3807,7 +4114,7 @@
 
       .array-stage-new {
         display: grid;
-        grid-template-columns: 0.9fr 1.1fr;
+        grid-template-columns: 1.05fr 0.95fr;
         gap: 24px;
         align-items: stretch;
       }
@@ -3831,16 +4138,17 @@
 
       .array-points {
         display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
         margin-top: 20px;
       }
 
       .array-point {
         display: grid;
-        grid-template-columns: 38px minmax(0, 1fr);
-        gap: 12px;
+        grid-template-columns: 32px minmax(0, 1fr);
+        gap: 10px;
         border-radius: 14px;
-        padding: 14px 16px;
+        padding: 14px;
         background: #ffffff;
       }
 
@@ -3852,16 +4160,21 @@
       .array-point strong,
       .array-point span {
         display: block;
-        white-space: nowrap;
       }
 
-      .array-point strong { font-size: 20px; }
-      .array-point span { margin-top: 4px; color: var(--muted); font-size: 14px; }
+      .array-point strong { font-size: 18px; }
+      .array-point span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.32;
+        word-break: keep-all;
+      }
 
       .array-stage-new .code-window {
-        width: min(100%, 560px);
+        width: min(100%, 520px);
         margin: auto;
-        min-height: 390px;
+        min-height: 350px;
         display: flex;
         flex-direction: column;
       }
@@ -4381,15 +4694,8 @@
           <div class="part-number">01</div>
           <div>
             <p class="eyebrow">Feature Implementation</p>
-            <h2>기능 구현 범위</h2>
-            <p class="lead">각 기능은 입력, 내부 구조, 실행 결과 기준으로 설명합니다.</p>
-            <div class="feature-map">
-              <div class="feature-map-card"><b>Parse</b><strong>문법 해석</strong><span>Tokenizer · AST</span></div>
-              <div class="feature-map-card"><b>Runtime</b><strong>실행 컨텍스트</strong><span>Environment · Execute</span></div>
-              <div class="feature-map-card"><b>Object</b><strong>함수 / Class</strong><span>Callable · This · Super</span></div>
-              <div class="feature-map-card"><b>Module</b><strong>Array · Import</strong><span>데이터 · 파일 재사용</span></div>
-              <div class="feature-map-card"><b>Safety & Shell</b><strong>Checker · Shell</strong><span>검증 · 실행 모드</span></div>
-            </div>
+            <h2>기능 구현 설명</h2>
+            <p class="lead">입력 문자열이 Token, AST, 검증 단계를 지나 실제 실행 결과가 되기까지의 핵심 구현을 차례로 봅니다.</p>
           </div>
         </div>
       </section>
@@ -4556,9 +4862,15 @@
             </div>
             <span class="anchor-chip">app/assembler/runtime.py · app/executor/executor.py</span>
           </div>
-          <div class="code-window">
+          <div class="code-window class-example">
             <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">class.ctrlc</span></div>
-            <pre><code><span class="syn-keyword">Class</span> <span class="syn-identifier">SpeedRobot</span> : Robot {
+            <pre><code><span class="syn-keyword">Class</span> <span class="syn-identifier">Robot</span> {
+    <span class="syn-identifier">move</span>() {
+        <span class="syn-keyword">print</span> <span class="syn-string">"move"</span><span class="syn-punctuation">;</span>
+    }
+}
+
+<span class="syn-keyword">Class</span> <span class="syn-identifier">SpeedRobot</span> : <span class="syn-identifier">Robot</span> {
     <span class="syn-identifier">move</span>() {
         <span class="syn-keyword">Super</span>.<span class="syn-identifier">move</span>()<span class="syn-punctuation">;</span>
         <span class="syn-keyword">print</span> <span class="syn-string">"speed"</span><span class="syn-punctuation">;</span>
@@ -4601,12 +4913,16 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">Core Feature · Import</p>
-          <h2><span class="text-blue">ImportManager</span>가 Runtime Import를 다시 파싱합니다</h2>
+          <h2><span class="text-blue">Import</span>는 실행 중 새 파일을 다시 Pipeline에 태웁니다</h2>
         </div>
         <div class="stage import-layout-new">
+          <div class="import-main-message">
+            <strong>왜 ImportStmt를 별도로 두었나?</strong>
+            <p>Executor가 import를 감지하더라도, 대상 파일은 다시 Tokenize · Assemble · Check를 거친 뒤 module namespace로 등록되어야 합니다.</p>
+          </div>
           <div class="import-role-row">
-            <div class="import-role-card"><strong>Executor</strong><span>ImportStmt 감지 · Checker 실행 · alias namespace 등록</span></div>
-            <div class="import-role-card"><strong>ImportManager</strong><span>경로 해석 · cache · 순환 추적 · Tokenizer와 Assembler 호출</span></div>
+            <div class="import-role-card"><strong>Executor</strong><span>ImportStmt 실행 · module environment 연결</span></div>
+            <div class="import-role-card"><strong>ImportManager</strong><span>경로 해석 · cache · 순환 추적 · 재파싱 위임</span></div>
           </div>
           <div class="import-flow-row">
             <div class="import-flow-step"><strong>ImportStmt</strong><span>Executor가 감지</span></div>
@@ -4614,6 +4930,11 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
             <div class="import-flow-step"><strong>Tokenizer · Assembler</strong><span>source → AST</span></div>
             <div class="import-flow-step"><strong>Checker</strong><span>import 대상 검증</span></div>
             <div class="import-flow-step"><strong>Module Env</strong><span>alias namespace 등록</span></div>
+          </div>
+          <div class="import-check-table">
+            <div class="import-check-card"><strong>Checker가 확인</strong><span>import 대상 AST 내부의 scope, this/super, return 규칙을 기존 파일처럼 검증합니다.</span></div>
+            <div class="import-check-card"><strong>ImportManager가 확인</strong><span>파일 경로, cache hit, 순환 import 추적처럼 파일 단위 상태를 관리합니다.</span></div>
+            <div class="import-check-card"><strong>ImportStmt가 연결</strong><span>검증이 끝난 module environment를 alias 이름으로 현재 실행 환경에 등록합니다.</span></div>
           </div>
         </div>
       </section>
@@ -4759,23 +5080,32 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">Design Patterns</p>
-          <h2>패턴 적용 위치</h2>
+          <h2>디자인 패턴 적용 사례</h2>
         </div>
         <div class="stage pattern-overview three">
           <div class="pattern-overview-card">
-            <b>AST 구조</b>
-            <strong>Composite-style AST</strong>
-            <span>Stmt와 Expr node가 tree로 중첩되고 Checker와 Executor가 같은 구조를 순회합니다.</span>
+            <b>Composite</b>
+            <strong>AST node 구성</strong>
+            <div class="pattern-meta">
+              <span>구현: Stmt · Expr tree</span>
+              <span>효과: Checker와 Executor가 같은 구조 순회</span>
+            </div>
           </div>
           <div class="pattern-overview-card">
-            <b>호출 규칙</b>
-            <strong>Callable Adapter</strong>
-            <span>Native Function, User Function, Class 생성을 같은 call 계약으로 통일합니다.</span>
+            <b>Adapter</b>
+            <strong>Callable 호출 계약</strong>
+            <div class="pattern-meta">
+              <span>구현: Native · Function · Class call 통합</span>
+              <span>효과: Executor는 call()만 호출</span>
+            </div>
           </div>
           <div class="pattern-overview-card">
-            <b>Shell 명령</b>
-            <strong>Command Pattern</strong>
-            <span>prompt 입력별 동작과 history 정책을 독립 Command 객체에 둡니다.</span>
+            <b>Command</b>
+            <strong>Shell 명령 실행</strong>
+            <div class="pattern-meta">
+              <span>구현: Exit · Recommend · RunCode 분리</span>
+              <span>효과: PromptShell의 분기 축소</span>
+            </div>
           </div>
         </div>
       </section>
@@ -4783,20 +5113,29 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">Pattern · Composite</p>
-          <h2>Composite-style AST로 문법 구조와 실행 구조를 공유합니다</h2>
+          <h2>Composite는 중첩 문법을 하나의 AST tree로 표현합니다</h2>
         </div>
         <div class="stage pattern-detail-stage">
-          <div class="pattern-journey">
-            <div class="pattern-stage-node"><strong>입력 문법</strong><span><code>for (var i = 0; i &lt; 3; ...)</code></span><span>Assembler가 네 요소를 분리합니다.</span></div>
-            <div class="pattern-arrow">→</div>
-            <div class="pattern-stage-node primary"><strong>ForStmt</strong><div class="pattern-object-grid"><div>VarStmt</div><div>BinaryExpr</div><div>AssignExpr</div><div>BlockStmt</div></div></div>
-            <div class="pattern-arrow">→</div>
-            <div class="pattern-stage-node"><strong>같은 AST 사용</strong><div class="pattern-object-grid"><div>Checker</div><div>Executor</div></div><span>검증과 실행이 동일한 node tree를 순회합니다.</span></div>
-          </div>
-          <div class="pattern-outcomes">
-            <div class="pattern-outcome">Assembler가 AST를 한 번만 생성</div>
-            <div class="pattern-outcome">Checker와 Executor 구조 중복 제거</div>
-            <div class="pattern-outcome">문법 추가 시 node 단위로 확장</div>
+          <div class="pattern-case">
+            <div class="pattern-case-card">
+              <b>문제</b>
+              <strong>for, if, block이 서로 중첩됩니다</strong>
+              <p>문법마다 별도 실행 구조를 만들면 검증과 실행 코드가 쉽게 갈라집니다.</p>
+            </div>
+            <div class="pattern-case-card primary">
+              <b>패턴 적용</b>
+              <strong>Stmt와 Expr를 tree node로 조립</strong>
+              <ul>
+                <li>ForStmt 안에 VarStmt</li>
+                <li>조건은 BinaryExpr</li>
+                <li>본문은 BlockStmt</li>
+              </ul>
+            </div>
+            <div class="pattern-case-card">
+              <b>결과</b>
+              <strong>Checker와 Executor가 같은 AST를 순회</strong>
+              <p>문법이 추가되어도 node 단위로 확장하고, pipeline 전체 구조는 유지됩니다.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -4804,20 +5143,29 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">Pattern · Adapter</p>
-          <h2>Callable Adapter로 모든 호출을 하나의 계약에 맞춥니다</h2>
+          <h2>Callable Adapter는 서로 다른 호출 대상을 같은 방식으로 실행합니다</h2>
         </div>
         <div class="stage pattern-detail-stage">
-          <div class="pattern-journey compact">
-            <div class="pattern-stage-node"><strong>CallExpr</strong><span>callee와 arguments를 AST에 저장합니다.</span></div>
-            <div class="pattern-arrow">→</div>
-            <div class="pattern-stage-node primary"><strong>Executor.evaluate_call()</strong><span>arity 검증 후 <code>call()</code>만 호출합니다.</span></div>
-            <div class="pattern-arrow">→</div>
-            <div class="pattern-stage-node"><strong>Callable 계약</strong><div class="pattern-object-grid three"><div>NativeFunction</div><div>UserFunction</div><div>UserClass</div></div><span><code>arity()</code> · <code>call(executor, args)</code></span></div>
-          </div>
-          <div class="pattern-outcomes">
-            <div class="pattern-outcome">호출 검증 위치를 Executor 한 곳으로 통합</div>
-            <div class="pattern-outcome">Class 생성도 Function과 같은 call</div>
-            <div class="pattern-outcome">새 Callable 추가 시 Executor 유지</div>
+          <div class="pattern-case">
+            <div class="pattern-case-card">
+              <b>문제</b>
+              <strong>함수, Native, Class 생성은 내부 동작이 다릅니다</strong>
+              <p>Executor가 대상별 세부 구현을 모두 알면 호출 분기가 계속 늘어납니다.</p>
+            </div>
+            <div class="pattern-case-card primary">
+              <b>패턴 적용</b>
+              <strong>모두 Callable 계약으로 맞춤</strong>
+              <ul>
+                <li>arity()로 인자 개수 확인</li>
+                <li>call(executor, args)로 실행</li>
+                <li>UserClass 생성도 같은 call</li>
+              </ul>
+            </div>
+            <div class="pattern-case-card">
+              <b>결과</b>
+              <strong>Executor는 호출 규칙 하나만 유지</strong>
+              <p>새 호출 대상을 추가해도 Executor의 핵심 흐름을 크게 바꾸지 않습니다.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -4825,20 +5173,29 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">Pattern · Command</p>
-          <h2>Command Pattern은 Shell 명령을 독립 실행 단위로 분리합니다</h2>
+          <h2>Command Pattern은 Shell 입력 분기를 명령 객체로 분리합니다</h2>
         </div>
         <div class="stage pattern-detail-stage">
-          <div class="pattern-journey compact">
-            <div class="pattern-stage-node"><strong>PromptShell.run_line()</strong><span>source 입력을 받아 명령 선택만 요청합니다.</span></div>
-            <div class="pattern-arrow">→</div>
-            <div class="pattern-stage-node primary"><strong>ShellCommandFactory</strong><span><code>create(source)</code>로 Command 구현체를 선택합니다.</span></div>
-            <div class="pattern-arrow">→</div>
-            <div class="pattern-stage-node"><strong>ShellCommand</strong><div class="pattern-object-grid"><div>Exit</div><div>Recommend</div><div>Rerun</div><div>Explain</div><div>RunCode</div><div>execute(shell)</div></div></div>
-          </div>
-          <div class="pattern-outcomes">
-            <div class="pattern-outcome">PromptShell의 if 분기 제거</div>
-            <div class="pattern-outcome">history 정책을 Command에 캡슐화</div>
-            <div class="pattern-outcome">새 명령은 클래스 추가로 확장</div>
+          <div class="pattern-case">
+            <div class="pattern-case-card">
+              <b>문제</b>
+              <strong>PromptShell이 입력 종류와 실행을 함께 처리</strong>
+              <p>exit, ctrlc, ctrlv, explain 같은 명령이 늘수록 if 분기와 테스트 범위가 커졌습니다.</p>
+            </div>
+            <div class="pattern-case-card primary">
+              <b>패턴 적용</b>
+              <strong>Factory가 Command를 고르고 Command가 실행</strong>
+              <ul>
+                <li>ShellCommandFactory.create()</li>
+                <li>should_save_history()</li>
+                <li>execute(shell)</li>
+              </ul>
+            </div>
+            <div class="pattern-case-card">
+              <b>결과</b>
+              <strong>Shell은 선택과 위임에 집중</strong>
+              <p>새 명령은 Command 클래스로 추가하고, history 정책도 명령별로 캡슐화합니다.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -4910,24 +5267,38 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">BP Case 3 · Refactoring</p>
-          <h2>Shell Command Refactoring</h2>
+          <h2>Before/After로 보는 Shell 구조 개선</h2>
         </div>
-        <div class="stage two-lane">
-          <div class="lane">
+        <div class="stage refactor-compare">
+          <div class="refactor-card before">
             <h3>Before</h3>
-            <ul>
-              <li>PromptShell 안에서 명령 분기가 커짐</li>
-              <li>기능 추가 시 기존 흐름을 계속 건드림</li>
-              <li>명령별 테스트 범위가 넓어짐</li>
-            </ul>
+            <div class="code-window">
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">prompt_shell.py</span></div>
+              <pre><code><span class="syn-keyword">if</span> source <span class="syn-keyword">in</span> (<span class="syn-string">"exit"</span>, <span class="syn-string">"quit"</span>):
+    self.is_running = <span class="syn-keyword">False</span>
+    <span class="syn-keyword">return</span> [<span class="syn-string">"Bye!"</span>]
+
+<span class="syn-keyword">elif</span> source == <span class="syn-string">"ctrlc"</span>:
+    <span class="syn-keyword">return</span> self.recommend_command()
+
+<span class="syn-keyword">elif</span> source == <span class="syn-string">"ctrlv"</span>:
+    <span class="syn-keyword">return</span> self.run_recommended_command()</code></pre>
+            </div>
+            <p>문제: PromptShell이 명령 선택, 실행, history 정책까지 직접 처리해 분기가 커지고 명령별 테스트 범위가 넓어졌습니다.</p>
           </div>
-          <div class="lane primary">
+          <div class="refactor-card after">
             <h3>After</h3>
-            <ul>
-              <li>명령을 Command 객체로 분리</li>
-              <li>PromptShell은 command 선택과 실행만 담당</li>
-              <li>새 shell 기능을 독립 단위로 추가</li>
-            </ul>
+            <div class="code-window">
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">shell_command.py</span></div>
+              <pre><code>command = <span class="syn-identifier">ShellCommandFactory</span>.create(source)
+
+<span class="syn-keyword">if</span> command.should_save_history():
+    shell.save_history(command)
+
+outputs = command.execute(shell)
+<span class="syn-keyword">return</span> outputs</code></pre>
+            </div>
+            <p>효과: PromptShell은 command 선택과 실행 위임만 담당하고, 새 명령은 독립 Command 단위로 추가할 수 있게 되었습니다.</p>
           </div>
         </div>
       </section>
@@ -4935,43 +5306,44 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">GitHub Collaboration</p>
-          <h2>PR 작성과 검토 흐름</h2>
+          <h2>PR Template과 Makefile로 협업 절차를 표준화했습니다</h2>
         </div>
-        <div class="stage review-pipeline">
-          <div class="review-step"><b>01</b><strong>Branch</strong><span>기능 단위 branch</span></div>
-          <div class="review-step"><b>02</b><strong>PR Template</strong><span>요약 · 검증 · 리뷰</span></div>
-          <div class="review-step"><b>03</b><strong>Review</strong><span>예시와 테스트 확인</span></div>
-          <div class="review-step"><b>04</b><strong>Merge</strong><span>승인 · 검사 · 병합</span></div>
+        <div class="stage collab-standard">
+          <div class="template-shot">
+            <img src="assets/pr-template.png" alt="PR Template: 변경 요약, 참고 사항, 관련 링크, Self-Review Checklist" />
+          </div>
+          <div class="standard-panel">
+            <h3>Makefile 명령 표준화</h3>
+            <div class="make-table">
+              <div class="make-row"><code>make install</code><span>개발 의존성 설치 기준 통일</span></div>
+              <div class="make-row"><code>make lint</code><span>black · isort · ruff 실행 순서 통일</span></div>
+              <div class="make-row"><code>make test</code><span>pytest 실행 방법을 팀 공통 명령으로 고정</span></div>
+              <div class="make-row"><code>make run</code><span>file mode 실행 방식을 한 줄 명령으로 공유</span></div>
+              <div class="make-row"><code>make debug</code><span>debug mode 진입 방법을 동일하게 사용</span></div>
+            </div>
+          </div>
         </div>
       </section>
 
       <section>
         <div class="slide-title">
           <p class="eyebrow">GitHub Collaboration</p>
-          <h2>Actions와 Protection Rule</h2>
+          <h2>GitHub Actions로 Merge 전 품질 기준을 자동 확인했습니다</h2>
         </div>
-        <div class="stage quality-board">
-          <div class="quality-lane">
-            <h3>GitHub Actions</h3>
-            <ul>
-              <li>black, isort, ruff로 코드 스타일 검증</li>
-              <li>pytest와 coverage report 실행</li>
-              <li>gist acceptance로 대표 언어 흐름 확인</li>
-            </ul>
+        <div class="stage actions-layout">
+          <div class="actions-shot">
+            <img src="assets/github-actions-checks.png" alt="GitHub Actions checks passed: codecov, gist acceptance, lint, unit tests" />
           </div>
-          <div class="quality-lane primary">
-            <h3>Protection Rule</h3>
-            <ul>
-              <li>main 직접 반영 방지</li>
-              <li>approve 후 merge</li>
-              <li>required check 통과 후 반영</li>
-            </ul>
+          <div class="actions-points">
+            <div class="actions-point"><strong>Required Checks</strong><span>Lint, Unit Tests, Gist Acceptance를 PR 필수 통과 조건으로 둬 main 반영 전 기준을 맞췄습니다.</span></div>
+            <div class="actions-point"><strong>Coverage Signal</strong><span>Codecov patch 결과를 함께 확인해 변경 범위가 테스트 관점에서 안전한지 봅니다.</span></div>
+            <div class="actions-point"><strong>Review 전에 자동 검증</strong><span>사람 리뷰는 설계와 의도에 집중하고, 반복 검사는 Actions가 먼저 확인합니다.</span></div>
           </div>
         </div>
       </section>
     </main>
 
-    <div class="progress" aria-live="polite">1 / 29</div>
+    <div class="progress" aria-live="polite">1 / 30</div>
 
     <script>
       const slides = Array.from(document.querySelectorAll("section"));

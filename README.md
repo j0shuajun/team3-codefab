@@ -12,8 +12,8 @@ CRA/교안/CodeFab PDF에서 다룬 언어 기능을 기준으로 보면, `impor
 `ctrlc`/`ctrlv`는 prompt shell 기능이고, `ctrl_c()`는 custom language 안에서 팀 Ctrl-C를 소개하는 내장 함수로
 구분한다.
 
-| 상태 | 기능 | 현재 범위 |
-| --- | --- | --- |
+| 상태  | 기능 | 현재 범위 |
+|-----| --- | --- |
 | [x] | Tokenizer | 예약어, identifier, 숫자, 문자열, boolean, 단일/복합 연산자를 token으로 변환한다. |
 | [x] | Parser/Assembler | expression, statement, block, condition, loop, function, class, array 문법을 AST로 만든다. |
 | [x] | Checker | 중복 선언, 미초기화 변수, 잘못된 `This`/`Super`, 함수/class/array 사용 오류를 실행 전에 잡는다. |
@@ -25,7 +25,7 @@ CRA/교안/CodeFab PDF에서 다룬 언어 기능을 기준으로 보면, `impor
 | [x] | Shell `ctrlc`/`ctrlv` | prompt shell에서 이전 입력을 추천하고 추천 명령을 다시 실행한다. |
 | [x] | Custom `ctrl_c()` | CodeFab 코드 안에서 호출해 팀명, 팀 의미, 팀원을 소개하는 내장 함수로 정리했다. |
 | [x] | Custom `explain`/한글 키워드 | 발표용 custom language 기능으로 코드 해석 과정과 한글 alias 방향을 정리했다. |
-| [ ] | `import`/`alias` | token은 존재하지만, 외부 CodeFab 파일을 불러와 namespace로 연결하는 흐름은 아직 구현 대상이다. |
+| [x] | `import`/`alias` | token은 존재하지만, 외부 CodeFab 파일을 불러와 namespace로 연결하는 흐름은 아직 구현 대상이다. |
 
 ## Ground Rules
 
