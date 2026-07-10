@@ -3353,11 +3353,16 @@
       }
 
       .token-space {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 34px;
         height: 42px;
         border-radius: 9px;
         border: 1px dashed rgba(28, 96, 239, 0.45);
         background: #ffffff !important;
+        color: var(--muted);
+        font-size: 14px;
       }
 
       .token-scan-note {
@@ -3384,15 +3389,20 @@
       }
 
       .token-decision code {
-        display: grid;
-        place-items: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         min-height: 40px;
         border-radius: 10px;
         background: #eef4ff;
-        color: var(--blue);
+        color: var(--ink);
         font-size: 16px;
         font-weight: 800;
         white-space: nowrap;
+      }
+
+      .token-decision code .lead-char {
+        color: var(--blue);
       }
 
       .token-decision span {
@@ -4245,29 +4255,29 @@
       <section>
         <div class="slide-title">
           <p class="eyebrow">Basic Feature · Tokenizer</p>
-          <h2>문자열은 <span class="text-blue">Tokenizer</span>를 지나며 의미 단위로 쪼개집니다</h2>
+          <h2><span class="text-blue">Tokenizer</span>가 문자열을 의미있는 Token 단위로 분리합니다</h2>
         </div>
         <div class="stage tokenizer-stage exact">
           <div class="tokenizer-copy">
             <h3>Tokenizer</h3>
-            <p>소스 코드 문자열을 한 글자씩 훑으면서 예약어, 식별자, 연산자, 리터럴 단위의 token으로 분리합니다.</p>
+            <p>소스 코드 문자열을 한 글자씩 읽으면서 예약어, 식별자, 연산자, 리터럴 단위의 token으로 분리합니다.</p>
             <div class="tokenizer-points">
-              <div class="tokenizer-point"><b>01</b><div><strong>공백 스킵</strong><span>공백은 건너뛰고 개행마다 line을 +1합니다.</span></div></div>
-              <div class="tokenizer-point"><b>02</b><div><strong>예약어 · 식별자 구분</strong><span>예약어 표와 identifier 가능 여부를 확인합니다.</span></div></div>
-              <div class="tokenizer-point"><b>03</b><div><strong>Token 저장</strong><span>TokenType과 origin을 저장해 Assembler로 전달합니다.</span></div></div>
+              <div class="tokenizer-point"><b>01</b><div><strong>공백 스킵</strong><span>공백은 건너뛰고, 개행은 Token의 line 위치값을 증가합니다.</span></div></div>
+              <div class="tokenizer-point"><b>02</b><div><strong>예약어 · 식별자 구분</strong><span>예약어에 있는지, identifier로 정의 가능한 형태인지 등을 확인합니다.</span></div></div>
+              <div class="tokenizer-point"><b>03</b><div><strong>Token 저장</strong><span>TokenType과 실제 값(origin)을 담은 Token 리스트를 Assembler로 전달합니다.</span></div></div>
             </div>
           </div>
           <div class="tokenizer-visual">
             <div class="token-source exact-source">
-              <span>var</span><span class="token-space"></span><span>name</span><span class="token-space"></span><span>=</span><span class="token-space"></span><span class="source-string">"ctrlc"</span><span>;</span>
+              <span>var</span><span class="token-space">␣</span><span>name</span><span class="token-space">␣</span><span>=</span><span class="token-space">␣</span><span class="source-string">"ctrlc"</span><span>;</span>
             </div>
-            <div class="token-scan-note">↓ &nbsp;한 글자씩 확인하며 종류에 따라 분기</div>
+            <div class="token-scan-note">↓ &nbsp;한 글자씩 확인하며, 타입에 따라 분기</div>
             <div class="token-decisions">
-              <div class="token-decision"><code>var</code><span>문자로 시작 → 예약어 테이블 조회 → 일치</span></div>
-              <div class="token-decision"><code>name</code><span>문자로 시작 → 예약어 테이블 조회 → 없음</span></div>
-              <div class="token-decision"><code>=</code><span>기호로 시작 → 등록된 토큰값과 일치</span></div>
-              <div class="token-decision"><code>"ctrlc"</code><span>"로 시작 → 닫는 "가 나올 때까지 읽어 하나로 묶음</span></div>
-              <div class="token-decision"><code>;</code><span>기호로 시작 → 등록된 토큰값과 일치</span></div>
+              <div class="token-decision"><code><span class="lead-char">v</span>ar</code><span>문자로 시작 → 예약어 테이블 조회 → 일치</span></div>
+              <div class="token-decision"><code><span class="lead-char">n</span>ame</code><span>문자로 시작 → 예약어 테이블 조회 → 없음</span></div>
+              <div class="token-decision"><code><span class="lead-char">=</span></code><span>기호로 시작 → 등록된 토큰값과 일치</span></div>
+              <div class="token-decision"><code><span class="lead-char">"</span>ctrlc"</code><span>"로 시작 → 닫는 "가 나올 때까지 읽어 하나로 묶음</span></div>
+              <div class="token-decision"><code><span class="lead-char">;</span></code><span>기호로 시작 → 등록된 토큰값과 일치</span></div>
             </div>
             <div class="token-save-note">↓ &nbsp;Token(type, origin)으로 저장</div>
             <div class="token-result">
