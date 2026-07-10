@@ -1605,10 +1605,110 @@
         border: 1px dashed rgba(28, 96, 239, 0.35);
       }
 
+      .evidence-slot.has-images {
+        height: 420px;
+        min-height: 0;
+        border-style: solid;
+        background: rgba(255, 255, 255, 0.7);
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        overflow: hidden;
+      }
+
+      .evidence-slot.has-images img {
+        display: block;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        object-fit: contain;
+        border-radius: 12px;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
+        background: #fff;
+      }
+
       .point-stack {
         display: grid;
         grid-auto-rows: 1fr;
         gap: 14px;
+      }
+
+      .review-fail-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 18px;
+        height: 420px;
+      }
+
+      .review-fail-images {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        min-height: 0;
+        border-radius: 12px;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
+        background: #fff;
+        overflow: hidden;
+      }
+
+      .review-fail-images img {
+        display: block;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        object-fit: contain;
+        background: #fff;
+      }
+
+      .review-fail-text {
+        grid-column: 2;
+        grid-row: 1;
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+        overflow-y: auto;
+      }
+
+      .review-fail-text strong {
+        display: block;
+        color: var(--blue);
+        font-size: 19px;
+        margin-bottom: 10px;
+      }
+
+      .review-fail-text p {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+
+      .review-fail-text p + p {
+        margin-top: 10px;
+      }
+
+      .review-fail-image-bottom {
+        grid-column: 2;
+        grid-row: 2;
+        min-height: 0;
+      }
+
+      .review-fail-image-bottom img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        border-radius: 12px;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
+        background: #fff;
       }
 
       .point-card {
@@ -4665,14 +4765,35 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">BP Case 1 · Code Review</p>
-          <h2>Code Review 사례</h2>
+          <h2>Code Review 사례 – <span class="text-blue">Tokenizer 리팩토링 실패</span></h2>
+        </div>
+        <div class="stage review-fail-layout">
+          <div class="review-fail-images">
+            <img src="assets/code_review_image1.png" alt="PR #30 리뷰: j0shuajun의 approve 코멘트" />
+            <img src="assets/code_review_image1_2.png" alt="PR #30 리뷰: re-nos의 approve 코멘트" />
+          </div>
+          <div class="review-fail-text">
+            <strong>Code Review 후 Main 미반영</strong>
+            <p>TDD 기반 개발 후, TokenType에 따른 분기가 늘어나 자동 분류하도록 리팩토링 진행하였으나, 분류를 위한 암묵적인 규칙이 생기며 유지보수성이 떨어진다는 리뷰를 받아 close</p>
+          </div>
+          <div class="review-fail-image-bottom">
+            <img src="assets/code_review_image2.png" alt="PR #30 작성자(Jinops)의 close 사유 코멘트" />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">BP Case 1 · Code Review</p>
+          <h2>Code Review 사례 – <span class="text-blue">Tokenizer 리팩토링 재시도</span></h2>
         </div>
         <div class="stage shot-composition">
-          <div class="evidence-slot"></div>
+          <div class="evidence-slot has-images">
+            <img src="assets/code_review_image3.png" alt="PR #40 리뷰: j0shuajun, soyeongk의 approve 및 코멘트" />
+          </div>
           <div class="point-stack">
-            <div class="point-card"><strong>의도 공유</strong><p>변경 이유와 검증 범위 기록</p></div>
-            <div class="point-card"><strong>관점 확보</strong><p>최소 2명 approve</p></div>
-            <div class="point-card"><strong>수정 근거</strong><p>리뷰 의견으로 누락 보완</p></div>
+            <div class="point-card"><strong>Over-engineering 판단</strong><p>Token 기능개발 고도화 후, 이전 PR의 자동분류는 over engineering으로 판단</p></div>
+            <div class="point-card"><strong>최소 변경점으로 Main 반영</strong><p>필요한 개발 범위에 맞게 리팩토링 후 PR 및 merge 완료</p></div>
           </div>
         </div>
       </section>
