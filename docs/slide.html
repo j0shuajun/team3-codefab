@@ -1626,10 +1626,10 @@
         border-radius: 14px;
         background: #fff;
         box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
-        padding: 10px;
+        padding: 4px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 0;
         overflow: hidden;
       }
 
@@ -1651,7 +1651,7 @@
       .review-fail-layout {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-template-rows: auto 1fr;
         gap: 18px;
         aspect-ratio: 16 / 9;
         height: auto;
@@ -1660,6 +1660,7 @@
       .review-fail-images {
         grid-column: 1;
         grid-row: 1 / 3;
+        align-self: start;
         display: flex;
         flex-direction: column;
         gap: 0;
@@ -1673,10 +1674,9 @@
 
       .review-fail-images img {
         display: block;
-        flex: 1;
-        min-height: 0;
+        flex: none;
         width: 100%;
-        object-fit: contain;
+        height: auto;
         background: #fff;
       }
 
@@ -1710,15 +1710,14 @@
       .review-fail-image-bottom {
         grid-column: 2;
         grid-row: 2;
+        align-self: start;
         min-height: 0;
       }
 
       .review-fail-image-bottom img {
         display: block;
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: top;
+        height: auto;
         border-radius: 12px;
         border: 1px solid rgba(28, 96, 239, 0.18);
         box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
@@ -5223,7 +5222,7 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
           </div>
           <div class="review-fail-text">
             <strong>Code Review 후 Main 미반영</strong>
-            <p>TDD 기반 개발 후, TokenType에 따른 분기가 늘어나 자동 분류하도록 리팩토링 진행하였으나, 분류를 위한 암묵적인 규칙이 생기며 유지보수성이 떨어진다는 리뷰를 받아 close</p>
+            <p>TDD 기반 개발 후, TokenType에 따른 분기가 늘어나 자동 분류하도록 리팩토링 진행하였으나, 분류를 위한 암묵적인 규칙이 생기며 유지보수성이 떨어진다는 리뷰를 받아 close (Merge 불가)</p>
           </div>
           <div class="review-fail-image-bottom">
             <img src="assets/code_review_image2.png" alt="PR #30 작성자(Jinops)의 close 사유 코멘트" />
@@ -5241,8 +5240,7 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
             <img src="assets/code_review_image3.png" alt="PR #40 리뷰: j0shuajun, soyeongk의 approve 및 코멘트" />
           </div>
           <div class="point-stack">
-            <div class="point-card"><strong>Over-engineering 판단</strong><p>Token 기능개발 고도화 후, 이전 PR의 자동분류는 over engineering으로 판단</p></div>
-            <div class="point-card"><strong>최소 변경점으로 Main 반영</strong><p>필요한 개발 범위에 맞게 리팩토링 후 PR 및 merge 완료</p></div>
+            <div class="review-fail-text"><strong>최소 변경점으로 Main 반영</strong><p>Token 기능개발 고도화 후, 이전 PR의 자동분류는 over engineering으로 판단하여, 필요한 개발 범위에 맞게 리팩토링 후 PR 및 merge 완료</p></div>
           </div>
         </div>
       </section>
