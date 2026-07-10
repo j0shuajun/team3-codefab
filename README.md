@@ -8,7 +8,7 @@
 
 ## Custom Language
 
-- [CUSTOM_LANGUAGE](CodeFab/docs/CUSTOM_LANGUAGE.md) 가이드 문서
+- [CUSTOMLANGUAGE](docs/CUSTOMLANGUAGE.md) 가이드 문서
 
 ## CodeFab 구현 체크리스트
 
