@@ -251,6 +251,15 @@
             margin-right: 4px;
         }
 
+        @media print {
+            *,
+            *::before,
+            *::after {
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+        }
+
     </style>
 </head>
 <body>

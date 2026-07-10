@@ -565,6 +565,8 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        min-width: 0;
+        overflow: hidden;
       }
 
       .flow-step strong {
@@ -575,6 +577,8 @@
         color: var(--muted);
         font-size: 22px;
         line-height: 1.42;
+        overflow-wrap: anywhere;
+        word-break: keep-all;
       }
 
       .agenda-flow .flow-step {
@@ -2658,6 +2662,8 @@
         padding: 16px 18px;
         border-radius: 14px;
         background: #ffffff;
+        min-width: 0;
+        overflow: hidden;
       }
 
       .tokenizer-point b {
@@ -2668,7 +2674,7 @@
       .tokenizer-point strong,
       .tokenizer-point span {
         display: block;
-        white-space: nowrap;
+        min-width: 0;
       }
 
       .tokenizer-point strong {
@@ -2680,6 +2686,9 @@
         margin-top: 4px;
         color: var(--muted);
         font-size: 14px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+        word-break: keep-all;
       }
 
       .tokenizer-visual {
@@ -3256,6 +3265,43 @@
         color: var(--muted);
         font-size: 17px;
         line-height: 1.35;
+      }
+
+      .reflection-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        min-height: 430px;
+        align-items: stretch;
+      }
+
+      .reflection-card {
+        border-radius: 18px;
+        padding: 16px 22px;
+        background: #eef4ff;
+        border-left: 6px solid var(--blue);
+        display: grid;
+        grid-template-columns: 128px minmax(0, 1fr);
+        gap: 18px;
+        align-items: center;
+      }
+
+      .reflection-card strong,
+      .reflection-card span {
+        display: block;
+      }
+
+      .reflection-card strong {
+        color: var(--blue);
+        font-size: 21px;
+      }
+
+      .reflection-card span {
+        color: var(--ink);
+        font-size: 14.5px;
+        line-height: 1.36;
+        word-break: keep-all;
       }
 
       .command-relation {
@@ -4381,6 +4427,13 @@
           font-size: 16px;
         }
 
+        *,
+        *::before,
+        *::after {
+          box-shadow: none !important;
+          text-shadow: none !important;
+        }
+
         .lead {
           font-size: 21px;
         }
@@ -5021,7 +5074,7 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
           <div class="alias-compare-col">
             <p class="alias-compare-label">Alias 적용 후</p>
             <div class="code-window compact">
-              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">battle_game.cfab</span></div>
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">battle_game.ctrlc</span></div>
               <pre><code><span class="syn-keyword">또또</span> (
   <span class="syn-keyword">값</span> 라운드 <span class="syn-operator">=</span> <span class="syn-number">1</span>;
   히어로.생존여부() <span class="syn-keyword">이랑</span> 슬라임.생존여부();
@@ -5315,9 +5368,23 @@ outputs = command.execute(shell)
           </div>
         </div>
       </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Team 3 · Ctrl-C</p>
+          <h2>우리의 한 줄 소감</h2>
+        </div>
+        <div class="stage reflection-grid">
+          <div class="reflection-card"><strong>김명준</strong><span>직접 개발한 내용이 아닌 코드를 리뷰하는 것이 꽤나 노력이 필요하다는 것을 몸소 체감했어요. 디자인 패턴을 생각하면서 구현하는 것도 어려워 보이더라구요. 그래도 코드 리뷰와 평소 개발 습관이 얼마나 중요한 지 다시 생각해보는 좋은 계기가 되었습니다. 우리 팀원분들 고생하셨고 감사합니다!</span></div>
+          <div class="reflection-card"><strong>권소영</strong><span>개발하랴 리뷰하랴 바쁜 일정이었지만 모두들 한 마음 한 뜻으로 진행했던 터라 큰 이슈 없이 잘 마무리된 것 같습니다. 모두 고생 많으셨어요!!</span></div>
+          <div class="reflection-card"><strong>김민준</strong><span>여러명이서 개발을 한 경험이 거의 없었는데 이번 기회에 함께 개발하고 리뷰 하면서 많이 배울 수 있었습니다. 팀원분들 모두 고생 많으셨고 감사드립니다.</span></div>
+          <div class="reflection-card"><strong>박진우</strong><span>생각했던 것 보다 더 유익한 Code Review Agent 과정이었습니다. AI 시대에 맞게 나 자신도 발빠르게 변화해야 하는데, 이번 과정을 통해 그 흐름에 잘 따라갈 수 있었습니다. 그리고 평소에는 뵈기 힘든 타 부서의 동료분들과 협업하면서 많이 배우고 생각이 넓어질 수 있었습니다. 고생하셨습니다!</span></div>
+          <div class="reflection-card"><strong>이예진</strong><span>unit test를 계속 작성하고 관리하며 개발해 나가는 과정이 처음엔 번거로웠지만, 여러 사람과 협업하며 프로젝트를 진행할 때 기존 코드의 유효성을 위해 꼭 필요한 과정임을 알게 되었습니다. 리뷰를 주고 받는 과정에서 제가 생각지 못했던 여러 설계 관점을 배울 수 있었습니다. 모두 고생 많으셨습니다~</span></div>
+        </div>
+      </section>
     </main>
 
-    <div class="progress" aria-live="polite">1 / 31</div>
+    <div class="progress" aria-live="polite">1 / 32</div>
 
     <script>
       const slides = Array.from(document.querySelectorAll("section"));
