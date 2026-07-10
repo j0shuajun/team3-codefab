@@ -109,6 +109,18 @@
           linear-gradient(24deg, rgba(219, 232, 254, 0.5) 0%, #ffffff 48%, #ffffff 100%);
       }
 
+      section.embed-slide {
+        padding: 0;
+      }
+
+      .embed-frame {
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        border: 0;
+        display: block;
+      }
+
       h1,
       h2,
       h3,
@@ -4475,37 +4487,12 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
         </div>
       </section>
 
-      <section>
-        <div class="slide-title">
-          <p class="eyebrow">Safety Feature · Checker</p>
-          <h2>Checker 실행 전 검증</h2>
-        </div>
-        <div class="stage checker-board">
-          <div class="checker-flow">
-            <div class="checker-step"><strong>ConstantFolder</strong><span>계산 가능한 expression을 LiteralExpr로 치환</span></div>
-            <div class="checker-step"><strong>ScopeStack</strong><span>선언, 초기화, scope distance 추적</span></div>
-            <div class="checker-step"><strong>Resolver</strong><span>This, Super, return, import 규칙 확인</span></div>
-          </div>
-          <div class="rule-grid">
-            <div class="rule-card"><strong>Scope</strong><span>중복 선언 · 미초기화 변수</span></div>
-            <div class="rule-card"><strong>Class</strong><span>This/Super · 자기 상속</span></div>
-            <div class="rule-card"><strong>Import</strong><span>중복 import · 순환 import</span></div>
-            <div class="rule-card"><strong>Report</strong><span>source line 기준 오류</span></div>
-          </div>
-        </div>
+      <section class="embed-slide">
+        <iframe class="embed-frame" src="checker_modules.html" title="Checker Modules Architecture"></iframe>
       </section>
 
-      <section>
-        <div class="slide-title">
-          <p class="eyebrow">Safety Feature · Static Binding</p>
-          <h2>Static Binding</h2>
-        </div>
-        <div class="stage binding-horizontal">
-          <div class="binding-step"><b>01. 변수 사용</b><strong>VariableExpr(name)</strong><span>어떤 scope의 선언을 가리키는지 아직 결정되지 않은 상태입니다.</span></div>
-          <div class="binding-step"><b>02. Checker</b><strong>scope depth 계산</strong><span>ScopeStack에서 선언 위치를 찾아 distance를 계산합니다.</span></div>
-          <div class="binding-step"><b>03. AST 기록</b><strong>expr.distance = depth</strong><span>계산한 거리를 Expr에 저장해 실행 시 다시 탐색하지 않습니다.</span></div>
-          <div class="binding-step"><b>04. Executor</b><strong>get_at(distance)</strong><span>정해진 상위 Environment로 바로 이동해 값을 읽습니다.</span></div>
-        </div>
+      <section class="embed-slide">
+        <iframe class="embed-frame" src="checker_clean_code.html" title="Checker Architecture and Clean Code"></iframe>
       </section>
 
       <section>
