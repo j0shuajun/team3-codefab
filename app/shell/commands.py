@@ -13,10 +13,30 @@ class ShellCommand(ABC):
         return None
 
 
+# class ExitCommand(ShellCommand):
+#     def execute(self, shell):
+#         shell.is_running = False
+#         return ["Bye!"]
 class ExitCommand(ShellCommand):
     def execute(self, shell):
         shell.is_running = False
-        return ["Bye!"]
+        return self.goodbye_banner()
+
+    def goodbye_banner(self):
+        return [
+            "+--------------------------------------------------------------+",
+            "|   _____ _______ _____  _        _____                        |",
+            "|  / ____|__   __|  __ \\| |      / ____|                       |",
+            "| | |       | |  | |__) | |     | |                            |",
+            "| | |       | |  |  _  /| |     | |                            |",
+            "| | |____   | |  | | \\ \\| |____ | |____                        |",
+            "|  \\_____|  |_|  |_|  \\_\\______| \\_____|                       |",
+            "|                                                              |",
+            "|                    Made by Team CTRL+C                       |",
+            "|                  Thanks for using our shell!                 |",
+            "|                        Goodbye :)                            |",
+            "+--------------------------------------------------------------+",
+        ]
 
 
 class RecommendCommand(ShellCommand):

@@ -15,14 +15,26 @@ class PromptShell:
         self.recommended_command = None
         self.is_running = True
 
-    @property
-    def history(self):
-        return [command.history_key() for command in self.command_history]
+    def welcome_banner(self):
+        return [
+            "+--------------------------------------------------------------+",
+            "|                                                              |",
+            "|   C T R L   +   C        CodeFab Prompt Shell                |",
+            "|                                                              |",
+            "|   Type CodeFab source code and run it instantly.              |",
+            "|                                                              |",
+            "|   Commands                                                   |",
+            "|     exit / quit     : close shell                            |",
+            "|     ctrlc           : recommend frequent command             |",
+            "|     ctrlv           : rerun recommended command              |",
+            "|     explain <code>  : inspect CodeFab pipeline               |",
+            "|                                                              |",
+            "+--------------------------------------------------------------+",
+        ]
 
     def run(self):
-        print("CodeFab Prompt Shell")
-        print("Type exit or quit to quit, ctrlc to recommend, ctrlv to rerun.")
-        print("Type explain <code> to inspect the CodeFab pipeline.")
+        for line in self.welcome_banner():
+            print(line)
 
         while self.is_running:
             source = input("CodeFab> ")
@@ -30,6 +42,10 @@ class PromptShell:
 
             for output in outputs:
                 print(output)
+
+    @property
+    def history(self):
+        return [command.history_key() for command in self.command_history]
 
     def run_line(self, source):
         source = source.strip()

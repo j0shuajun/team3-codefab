@@ -98,13 +98,19 @@ def test_ctrlc_without_history_returns_message():
     assert outputs == ["추천할 명령어가 없습니다."]
 
 
+def assert_goodbye_banner(outputs):
+    assert any("Made by Team CTRL+C" in line for line in outputs)
+    assert any("Thanks for using our shell!" in line for line in outputs)
+    assert any("Goodbye :)" in line for line in outputs)
+
+
 def test_exit_stops_shell():
     shell = make_shell()
 
     outputs = shell.run_line("exit")
 
-    assert outputs == ["Bye!"]
     assert shell.is_running is False
+    assert_goodbye_banner(outputs)
 
 
 def test_quit_stops_shell():
@@ -112,8 +118,8 @@ def test_quit_stops_shell():
 
     outputs = shell.run_line("quit")
 
-    assert outputs == ["Bye!"]
     assert shell.is_running is False
+    assert_goodbye_banner(outputs)
 
 
 def test_empty_input_returns_empty_output():
