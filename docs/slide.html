@@ -1,0 +1,5441 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CodeFab 발표 자료</title>
+    <style>
+      :root {
+        --ink: #20242b;
+        --muted: #667085;
+        --paper: #ffffff;
+        --panel: rgba(255, 255, 255, 0.9);
+        --panel-strong: rgba(255, 255, 255, 0.96);
+        --mint: #dbe8fe;
+        --teal: #1c60ef;
+        --amber: #7aa7ff;
+        --rose: #9ec0ff;
+        --blue: #1c60ef;
+        --violet: #6f8ff7;
+        --line: #d9e3f7;
+        --soft-blue: #dbe8fe;
+        --soft-gray: #f3f6fb;
+        --code: #101828;
+        --code-text: #eef5ff;
+      }
+
+      @font-face {
+        font-family: "CodeFabTitle";
+        src:
+          local("KIMM_Light"),
+          local("한국기계연구원_Light"),
+          local("KIMMLight");
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: "CodeFabTitle";
+        src:
+          local("KIMM_Bold"),
+          local("한국기계연구원_Bold"),
+          local("KIMMBold");
+        font-weight: 700;
+      }
+
+      @font-face {
+        font-family: "CodeFabBody";
+        src:
+          local("A2Z"),
+          local("에이투지체"),
+          local("A2Z 4 Regular"),
+          local("에이투지체 4 Regular");
+        font-weight: 100 900;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family:
+          "CodeFabBody", "A2Z", "에이투지체", Pretendard, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        overflow-x: hidden;
+      }
+
+      main {
+        scroll-snap-type: y mandatory;
+      }
+
+      section {
+        position: relative;
+        isolation: isolate;
+        min-height: 100vh;
+        padding: 56px min(6vw, 76px);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 20px;
+        scroll-snap-align: start;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse at 14% 96%, rgba(219, 232, 254, 0.88) 0%, rgba(219, 232, 254, 0.34) 27%, transparent 56%),
+          linear-gradient(118deg, rgba(219, 232, 254, 0.52) 0%, rgba(255, 255, 255, 0) 42%),
+          #ffffff;
+      }
+
+      section:nth-child(3n + 1) {
+        background:
+          radial-gradient(ellipse at 82% 18%, rgba(219, 232, 254, 0.72) 0%, rgba(219, 232, 254, 0.24) 32%, transparent 60%),
+          linear-gradient(145deg, #ffffff 0%, #ffffff 52%, rgba(219, 232, 254, 0.62) 100%);
+      }
+
+      section:nth-child(3n + 2) {
+        background:
+          linear-gradient(164deg, rgba(219, 232, 254, 0.7) 0%, rgba(255, 255, 255, 0) 34%),
+          radial-gradient(ellipse at 88% 88%, rgba(219, 232, 254, 0.78) 0%, rgba(219, 232, 254, 0.24) 30%, transparent 58%),
+          #ffffff;
+      }
+
+      section:nth-child(3n) {
+        background:
+          radial-gradient(ellipse at 8% 24%, rgba(219, 232, 254, 0.66) 0%, rgba(219, 232, 254, 0.2) 28%, transparent 56%),
+          linear-gradient(24deg, rgba(219, 232, 254, 0.5) 0%, #ffffff 48%, #ffffff 100%);
+      }
+
+      section.embed-slide {
+        padding: 0;
+      }
+
+      .embed-frame {
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        border: 0;
+        display: block;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 980px;
+        font-size: 88px;
+        line-height: 0.98;
+        letter-spacing: 0;
+        font-weight: 800;
+        word-break: keep-all;
+        font-family:
+          "CodeFabTitle", "KIMM_Bold", "한국기계연구원_Bold", Pretendard, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      h2 {
+        max-width: 1240px;
+        font-size: 36px;
+        line-height: 1.1;
+        letter-spacing: 0;
+        font-weight: 800;
+        word-break: keep-all;
+        font-family:
+          "CodeFabTitle", "KIMM_Bold", "한국기계연구원_Bold", Pretendard, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      h3 {
+        font-size: 25px;
+        line-height: 1.25;
+        font-weight: 800;
+        word-break: keep-all;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: 21px;
+        line-height: 1.42;
+        word-break: keep-all;
+        overflow-wrap: normal;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--teal);
+        font-size: 17px;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 12px;
+        height: 12px;
+        background: var(--blue);
+      }
+
+      .text-blue {
+        color: var(--blue);
+      }
+
+      .lead {
+        max-width: 1040px;
+        color: var(--muted);
+        font-size: 21px;
+        line-height: 1.42;
+        word-break: keep-all;
+      }
+
+      .note {
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.45;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .panel {
+        min-width: 0;
+        border-radius: 12px;
+        background: var(--panel-strong);
+        padding: 24px;
+      }
+
+      .panel.accent {
+        background: var(--mint);
+      }
+
+      .panel h3 {
+        margin-bottom: 12px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.1em;
+      }
+
+      li + li {
+        margin-top: 6px;
+      }
+
+      code {
+        padding: 0.04em 0.22em;
+        border-radius: 4px;
+        background: rgba(16, 24, 32, 0.08);
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      pre {
+        margin: 0;
+        border-radius: 14px;
+        padding: 24px;
+        background: var(--code);
+        color: var(--code-text);
+        font-size: 20px;
+        line-height: 1.48;
+        white-space: pre-wrap;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+      }
+
+      pre code {
+        display: block;
+        width: 100%;
+        padding: 0;
+        background: transparent;
+        color: inherit;
+        font-size: inherit;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--panel);
+      }
+
+      th,
+      td {
+        padding: 13px 16px;
+        text-align: left;
+        border-bottom: 1px solid rgba(23, 32, 42, 0.08);
+      }
+
+      th {
+        color: var(--teal);
+        background: rgba(28, 96, 239, 0.08);
+        font-weight: 900;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        border-radius: 999px;
+        padding: 6px 13px;
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--ink);
+        font-weight: 800;
+        font-size: 16px;
+      }
+
+      .cover-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 70px;
+        align-items: center;
+        min-height: calc(100vh - 112px);
+      }
+
+      .cover-copy {
+        display: grid;
+        gap: 28px;
+      }
+
+      .cover-copy h1 {
+        font-size: 104px;
+      }
+
+      .cover-copy .lead {
+        max-width: none;
+        white-space: nowrap;
+      }
+
+      .network-visual {
+        position: relative;
+        height: 430px;
+        opacity: 0.95;
+      }
+
+      .network-visual svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .network-node {
+        position: absolute;
+        width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        background: var(--blue);
+        box-shadow: 0 0 0 12px rgba(28, 96, 239, 0.08);
+      }
+
+      .network-node.small {
+        width: 11px;
+        height: 11px;
+        background: rgba(28, 96, 239, 0.58);
+      }
+
+      .board {
+        border: 1px solid rgba(28, 96, 239, 0.12);
+        border-radius: 18px;
+        padding: 38px 42px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 40px rgba(28, 96, 239, 0.08);
+      }
+
+      .title-line {
+        max-width: 1260px;
+      }
+
+      .title-line h2 {
+        max-width: 1260px;
+      }
+
+      .title-line h2 code {
+        padding: 0;
+        background: transparent;
+        font-family: inherit;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 26px;
+        line-height: 1.4;
+      }
+
+      .agenda-board {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .agenda-card {
+        min-height: 168px;
+        border-radius: 12px;
+        padding: 24px;
+        background: #eef4ff;
+        display: grid;
+        grid-template-columns: 56px minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+        text-align: left;
+      }
+
+      .agenda-card .num {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #ffffff;
+        color: var(--blue);
+        font-size: 18px;
+        font-weight: 900;
+      }
+
+      .agenda-card .agenda-text {
+        min-width: 0;
+      }
+
+      .agenda-card strong {
+        display: block;
+        font-size: 28px;
+        line-height: 1.18;
+      }
+
+      .agenda-card span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.34;
+      }
+
+      .team-board {
+        display: grid;
+        grid-template-columns: 0.78fr 1.22fr;
+        gap: 42px;
+        align-items: stretch;
+      }
+
+      .board-side {
+        border-right: 2px solid rgba(32, 36, 43, 0.18);
+        padding-right: 42px;
+      }
+
+      .role-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .role-card {
+        border-radius: 8px;
+        padding: 18px;
+        background: #eef4ff;
+      }
+
+      .role-card strong {
+        display: block;
+        font-size: 23px;
+      }
+
+      .role-card span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.36;
+      }
+
+      .goal-board {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 26px;
+        align-items: center;
+      }
+
+      .goal-panel {
+        min-height: 320px;
+        border-radius: 8px;
+        padding: 28px;
+        background: #ffffff;
+      }
+
+      .goal-panel.solution {
+        border: 2px solid var(--blue);
+      }
+
+      .goal-arrow {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--blue);
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 900;
+      }
+
+      .check-list,
+      .plain-list {
+        display: grid;
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      .check-list div,
+      .plain-list div {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        color: var(--ink);
+        font-size: 20px;
+        font-weight: 800;
+      }
+
+      .check-list i,
+      .plain-list i {
+        display: grid;
+        place-items: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        color: #ffffff;
+        background: var(--blue);
+        font-style: normal;
+        font-size: 16px;
+      }
+
+      .plain-list i {
+        background: #d6dfef;
+        color: var(--muted);
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .agenda-flow {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .flow-step {
+        min-height: 160px;
+        border-radius: 8px;
+        background: var(--panel-strong);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .flow-step strong {
+        font-size: 30px;
+      }
+
+      .flow-step span {
+        color: var(--muted);
+        font-size: 22px;
+        line-height: 1.42;
+        overflow-wrap: anywhere;
+        word-break: keep-all;
+      }
+
+      .agenda-flow .flow-step {
+        min-height: 136px;
+      }
+
+      .section-card {
+        min-height: 430px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 24px;
+        padding: 48px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(219, 232, 254, 0.96), rgba(255, 255, 255, 0.88));
+        box-shadow: 0 18px 40px rgba(28, 96, 239, 0.08);
+      }
+
+      .section-card h2 {
+        font-size: 70px;
+      }
+
+      .section-card p {
+        max-width: 900px;
+        color: var(--muted);
+        font-size: 30px;
+      }
+
+      .architecture-board {
+        display: grid;
+        grid-template-columns: 0.88fr 1.12fr;
+        gap: 40px;
+        min-height: 500px;
+        border: 1px solid rgba(28, 96, 239, 0.12);
+        border-radius: 18px;
+        padding: 42px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 40px rgba(28, 96, 239, 0.08);
+      }
+
+      .architecture-col {
+        min-width: 0;
+      }
+
+      .architecture-col + .architecture-col {
+        border-left: 2px solid rgba(32, 36, 43, 0.18);
+        padding-left: 40px;
+      }
+
+      .blue-label {
+        position: relative;
+        margin-bottom: 18px;
+        padding-left: 16px;
+        color: var(--blue);
+        font-size: 17px;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .blue-label::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 2px;
+        width: 5px;
+        height: 24px;
+        border-radius: 1px;
+        background: var(--blue);
+      }
+
+      .architecture-title {
+        margin-bottom: 26px;
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 1.25;
+      }
+
+      .mode-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .mode-item {
+        border-radius: 12px;
+        padding: 18px 20px;
+        background: #eef4ff;
+        border-left: 6px solid var(--blue);
+      }
+
+      .mode-item strong {
+        display: block;
+        color: var(--ink);
+        font-size: 26px;
+      }
+
+      .mode-item span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.34;
+      }
+
+      .pipeline-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .pipeline-card {
+        position: relative;
+        min-height: 82px;
+        border-radius: 12px;
+        padding: 16px 18px;
+        background: #eef4ff;
+        display: grid;
+        grid-template-columns: 58px 170px minmax(0, 1fr);
+        gap: 16px;
+        align-items: center;
+        text-align: left;
+      }
+
+      .pipeline-card + .pipeline-card::before {
+        content: "→";
+        position: absolute;
+        left: 22px;
+        top: -20px;
+        transform: rotate(90deg);
+        color: var(--blue);
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .step-number {
+        color: var(--blue);
+        font-size: 18px;
+        font-weight: 900;
+        text-align: left;
+      }
+
+      .pipeline-card strong {
+        display: block;
+        font-size: 25px;
+        font-weight: 800;
+      }
+
+      .pipeline-card span {
+        display: block;
+        margin-top: 0;
+        color: var(--muted);
+        font-size: 19px;
+        line-height: 1.34;
+      }
+
+      .architecture-ribbon {
+        margin-top: 22px;
+        border-radius: 12px;
+        padding: 16px 20px;
+        background: rgba(28, 96, 239, 0.1);
+        color: var(--ink);
+        font-size: 21px;
+        font-weight: 800;
+      }
+
+      .architecture-ribbon code {
+        background: rgba(28, 96, 239, 0.12);
+        color: var(--ink);
+      }
+
+      .implementation-flow {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .implementation-flow span {
+        border-radius: 8px;
+        padding: 12px 14px;
+        background: rgba(28, 96, 239, 0.1);
+        color: var(--ink);
+        font-size: 18px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .feature-kicker {
+        color: var(--teal);
+        font-size: 17px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .category-label {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        border-radius: 999px;
+        padding: 8px 14px;
+        background: rgba(28, 96, 239, 0.12);
+        color: var(--teal);
+        font-size: 17px;
+        font-weight: 900;
+      }
+
+      .pattern-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+        gap: 28px;
+        align-items: stretch;
+        border: 1px solid rgba(28, 96, 239, 0.12);
+        border-radius: 18px;
+        padding: 34px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 40px rgba(28, 96, 239, 0.08);
+      }
+
+      .pattern-diagram {
+        border-radius: 14px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .pattern-diagram .node {
+        margin: 10px 0;
+        border-radius: 12px;
+        padding: 14px 16px;
+        background: #ffffff;
+        font-size: 23px;
+        font-weight: 800;
+      }
+
+      .pattern-diagram .subnode {
+        margin-left: 26px;
+        background: rgba(28, 96, 239, 0.1);
+      }
+
+      .collab-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        border: 1px solid rgba(28, 96, 239, 0.12);
+        border-radius: 18px;
+        padding: 34px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 40px rgba(28, 96, 239, 0.08);
+      }
+
+      .collab-card {
+        min-height: 210px;
+        border-radius: 12px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .collab-card h3 {
+        color: var(--teal);
+      }
+
+      .feature {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 28px;
+        align-items: stretch;
+        border: 1px solid rgba(28, 96, 239, 0.12);
+        border-radius: 18px;
+        padding: 34px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 40px rgba(28, 96, 239, 0.08);
+      }
+
+      .feature > .grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .feature > .grid .panel {
+        background: #eef4ff;
+        border-left: 6px solid var(--blue);
+      }
+
+      .feature-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .mini-title {
+        color: var(--teal);
+        font-weight: 900;
+        font-size: 16px;
+        text-transform: uppercase;
+      }
+
+      .code-pair {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .terminal {
+        background: #0e151b;
+        color: #d9f7e8;
+      }
+
+      .terminal .prompt {
+        color: #8fe1c4;
+      }
+
+      .shot-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+        gap: 28px;
+        align-items: stretch;
+        border: 1px solid rgba(28, 96, 239, 0.12);
+        border-radius: 18px;
+        padding: 34px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 40px rgba(28, 96, 239, 0.08);
+      }
+
+      .media-slot {
+        min-height: 360px;
+        border-radius: 14px;
+        background:
+          linear-gradient(135deg, rgba(219, 232, 254, 0.5), rgba(255, 255, 255, 0.82)),
+          rgba(255, 255, 255, 0.66);
+      }
+
+      .label-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .label-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        border-radius: 999px;
+        padding: 7px 14px;
+        color: #17202a;
+        font-weight: 900;
+      }
+
+      .feature-label {
+        background: #dddfc8;
+      }
+
+      .bug-label {
+        background: #f3a1ab;
+      }
+
+      .test-label {
+        background: #eee56a;
+      }
+
+      .refactor-label {
+        background: #7df8c9;
+      }
+
+      .docs-label {
+        background: #8dc5f0;
+      }
+
+      .chore-label {
+        background: #b2bad8;
+      }
+
+      .slide-title {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 2px;
+      }
+
+      .slide-title h2 {
+        max-width: 1180px;
+      }
+
+      .stage {
+        border: 1px solid rgba(28, 96, 239, 0.12);
+        border-radius: 22px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 22px 46px rgba(28, 96, 239, 0.08);
+      }
+
+      .roadmap {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 30px;
+        align-items: stretch;
+      }
+
+      .roadmap-main {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 430px;
+        border-radius: 18px;
+        padding: 34px;
+        background: #eef4ff;
+        color: var(--ink);
+        border-left: 8px solid var(--blue);
+      }
+
+      .roadmap-main strong {
+        font-size: 42px;
+        line-height: 1.18;
+      }
+
+      .roadmap-main span {
+        max-width: 500px;
+        font-size: 25px;
+        line-height: 1.36;
+        color: var(--muted);
+      }
+
+      .roadmap-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .road-item,
+      .equal-card {
+        min-width: 0;
+        min-height: 142px;
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+      }
+
+      .road-item b {
+        color: var(--blue);
+        font-size: 20px;
+      }
+
+      .road-item strong,
+      .equal-card strong {
+        display: block;
+        margin-top: 12px;
+        font-size: 27px;
+        line-height: 1.18;
+      }
+
+      .road-item span,
+      .equal-card span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.34;
+      }
+
+      .team-stage {
+        display: grid;
+        grid-template-columns: 0.86fr 1.14fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .team-even-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .team-even-card {
+        grid-column: span 2;
+        min-height: 198px;
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+        border-top: 6px solid rgba(28, 96, 239, 0.42);
+      }
+
+      .team-even-card:nth-child(4),
+      .team-even-card:nth-child(5) {
+        grid-column: span 3;
+      }
+
+      .team-even-card strong {
+        display: block;
+        font-size: 30px;
+      }
+
+      .team-even-card span {
+        display: block;
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.34;
+      }
+
+      .team-even-card .team-lead-mark {
+        display: inline-flex;
+        margin-top: 0;
+        color: var(--blue);
+        font-size: 15px;
+        line-height: 1;
+      }
+
+      .team-lead-mark {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 8px;
+        border-radius: 999px;
+        padding: 5px 9px;
+        background: rgba(28, 96, 239, 0.12);
+        color: var(--blue);
+        font-size: 15px;
+        font-weight: 900;
+        vertical-align: middle;
+      }
+
+      .leader-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 430px;
+        border-radius: 18px;
+        padding: 34px;
+        background: var(--blue);
+        color: #ffffff;
+      }
+
+      .leader-card .role-tag {
+        width: fit-content;
+        border-radius: 999px;
+        padding: 8px 14px;
+        background: rgba(255, 255, 255, 0.16);
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .leader-card strong {
+        display: block;
+        margin-top: 22px;
+        font-size: 45px;
+      }
+
+      .leader-card span {
+        display: block;
+        margin-top: 14px;
+        font-size: 23px;
+        line-height: 1.35;
+        opacity: 0.94;
+      }
+
+      .member-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .member-card {
+        border-radius: 16px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .member-card strong {
+        display: block;
+        font-size: 30px;
+      }
+
+      .member-card span {
+        display: block;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.34;
+      }
+
+      .two-lane,
+      .wide-split {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .lane {
+        border-radius: 18px;
+        padding: 30px;
+        background: #eef4ff;
+      }
+
+      .lane.primary {
+        background: #f6f9ff;
+        color: var(--ink);
+        border: 2px solid rgba(28, 96, 239, 0.36);
+      }
+
+      .lane h3 {
+        font-size: 34px;
+        margin-bottom: 22px;
+      }
+
+      .lane ul {
+        display: grid;
+        gap: 16px;
+        padding-left: 1.1em;
+        list-style: disc;
+      }
+
+      .lane li {
+        display: list-item;
+      }
+
+      .lane li::before {
+        content: none;
+      }
+
+      .system-map {
+        display: grid;
+        grid-template-columns: 0.95fr 1.05fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .shell-cluster {
+        border-radius: 20px;
+        padding: 28px;
+        background: #eef4ff;
+        color: var(--ink);
+        border-left: 8px solid var(--blue);
+      }
+
+      .mode-trio {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-auto-rows: 1fr;
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .mode-tile {
+        border-radius: 14px;
+        padding: 20px;
+        background: #ffffff;
+      }
+
+      .mode-tile strong,
+      .pipeline-step strong {
+        display: block;
+        font-size: 27px;
+      }
+
+      .mode-tile span,
+      .pipeline-step span {
+        display: block;
+        margin-top: 8px;
+        font-size: 20px;
+        line-height: 1.34;
+        opacity: 0.88;
+      }
+
+      .pipeline-lane {
+        border-radius: 20px;
+        padding: 28px;
+        background: #eef4ff;
+      }
+
+      .pipeline-track {
+        display: grid;
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .pipeline-step {
+        position: relative;
+        display: grid;
+        grid-template-columns: 58px minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+        min-height: 84px;
+        border-radius: 14px;
+        padding: 18px;
+        background: #ffffff;
+      }
+
+      .pipeline-step b {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: var(--blue);
+        color: #ffffff;
+        font-size: 18px;
+      }
+
+      .pipeline-step + .pipeline-step::before {
+        content: "";
+        position: absolute;
+        left: 41px;
+        top: -14px;
+        width: 4px;
+        height: 14px;
+        background: var(--blue);
+      }
+
+      .part-splash {
+        display: grid;
+        grid-template-columns: 116px minmax(0, 1fr);
+        gap: 34px;
+        align-items: center;
+        min-height: 456px;
+      }
+
+      .part-number {
+        display: grid;
+        place-items: center;
+        width: 94px;
+        height: 94px;
+        border-radius: 20px;
+        background: #eef4ff;
+        color: var(--blue);
+        border: 2px solid rgba(28, 96, 239, 0.24);
+        font-size: 34px;
+        font-weight: 800;
+      }
+
+      .feature-index {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 12px;
+        margin-top: 26px;
+      }
+
+      .feature-index-card {
+        min-height: 140px;
+        border-radius: 16px;
+        padding: 18px;
+        background: #eef4ff;
+      }
+
+      .feature-index-card b {
+        color: var(--blue);
+        font-size: 18px;
+      }
+
+      .feature-index-card strong {
+        display: block;
+        margin-top: 10px;
+        font-size: 23px;
+      }
+
+      .feature-index-card span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.3;
+      }
+
+      .feature-message {
+        border-radius: 18px;
+        padding: 28px;
+        background: #f6f9ff;
+        border-left: 8px solid var(--blue);
+      }
+
+      .feature-message strong {
+        display: block;
+        color: var(--blue);
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      .feature-message p {
+        font-size: 28px;
+        line-height: 1.34;
+      }
+
+      .feature-message + .mini-flow,
+      .feature-message + .call-stack,
+      .feature-message + .pattern-chain {
+        margin-top: 18px;
+      }
+
+      .feature-canvas {
+        display: grid;
+        grid-template-columns: 0.88fr 1.12fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .feature-canvas.reverse {
+        grid-template-columns: 1.12fr 0.88fr;
+      }
+
+      .explain-stack {
+        display: grid;
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .explain-card {
+        border-radius: 16px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .explain-card strong {
+        display: block;
+        color: var(--blue);
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      .explain-card p {
+        font-size: 24px;
+      }
+
+      .mini-flow {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .mini-flow span {
+        display: grid;
+        place-items: center;
+        min-height: 58px;
+        border-radius: 12px;
+        background: rgba(28, 96, 239, 0.12);
+        color: var(--ink);
+        font-size: 20px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .diagram-board {
+        border-radius: 18px;
+        padding: 26px;
+        background: #eef4ff;
+      }
+
+      .call-stack,
+      .pattern-chain {
+        display: grid;
+        gap: 12px;
+      }
+
+      .call-stack div,
+      .pattern-chain div {
+        border-radius: 14px;
+        padding: 18px 20px;
+        background: #ffffff;
+        font-size: 23px;
+        font-weight: 800;
+      }
+
+      .call-stack div + div,
+      .pattern-chain div + div {
+        margin-left: 34px;
+      }
+
+      .class-flow {
+        display: grid;
+        gap: 12px;
+      }
+
+      .class-step {
+        display: grid;
+        grid-template-columns: 46px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        border-radius: 14px;
+        padding: 16px;
+        background: #ffffff;
+      }
+
+      .class-step b {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(28, 96, 239, 0.12);
+        color: var(--blue);
+        font-size: 16px;
+      }
+
+      .class-step strong {
+        display: block;
+        font-size: 23px;
+      }
+
+      .class-step span {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.32;
+      }
+
+      .matrix {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .matrix.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .matrix-card {
+        min-height: 150px;
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+      }
+
+      .matrix-card strong {
+        display: block;
+        color: var(--blue);
+        font-size: 26px;
+      }
+
+      .matrix-card span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.34;
+      }
+
+      .shell-lab {
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .shell-modes {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .shell-mode {
+        min-height: 250px;
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+        border-top: 8px solid var(--blue);
+      }
+
+      .custom-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 16px;
+      }
+
+      .pattern-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 16px;
+      }
+
+      .pattern-card {
+        min-height: 190px;
+        border-radius: 18px;
+        padding: 26px;
+        background: #eef4ff;
+      }
+
+      .pattern-card strong {
+        display: block;
+        font-size: 31px;
+      }
+
+      .pattern-card span {
+        display: block;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 21px;
+        line-height: 1.34;
+      }
+
+      .pattern-flow {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .pattern-flow .flow-box {
+        min-height: 310px;
+        border-radius: 18px;
+        padding: 26px;
+        background: #eef4ff;
+      }
+
+      .pattern-flow .flow-box:nth-child(2) {
+        background: #f6f9ff;
+        color: var(--ink);
+        border: 2px solid rgba(28, 96, 239, 0.36);
+      }
+
+      .flow-box strong {
+        display: block;
+        font-size: 30px;
+        margin-bottom: 18px;
+      }
+
+      .flow-box p {
+        font-size: 23px;
+      }
+
+      .shot-composition {
+        display: grid;
+        grid-template-columns: 1.18fr 0.82fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .shot-composition.reverse {
+        grid-template-columns: 0.82fr 1.18fr;
+      }
+
+      .evidence-slot {
+        min-height: 420px;
+        border-radius: 18px;
+        background:
+          linear-gradient(135deg, rgba(28, 96, 239, 0.12), rgba(255, 255, 255, 0.86)),
+          rgba(255, 255, 255, 0.7);
+        border: 1px dashed rgba(28, 96, 239, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .evidence-slot img {
+        max-width: 70%;
+        max-height: 80%;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(28, 96, 239, 0.15);
+      }
+
+      .evidence-slot.has-images {
+        align-self: start;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        min-height: 0;
+        border-style: solid;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        overflow: hidden;
+      }
+
+      .evidence-slot.has-images img {
+        display: block;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        object-fit: contain;
+        background: #fff;
+      }
+
+      .point-stack {
+        display: grid;
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .review-fail-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr;
+        gap: 18px;
+        aspect-ratio: 16 / 9;
+        height: auto;
+      }
+
+      .review-fail-images {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        align-self: start;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        min-height: 0;
+        border-radius: 12px;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
+        background: #fff;
+        overflow: hidden;
+      }
+
+      .review-fail-images img {
+        display: block;
+        flex: none;
+        width: 100%;
+        height: auto;
+        background: #fff;
+      }
+
+      .review-fail-text {
+        grid-column: 2;
+        grid-row: 1;
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+        overflow-y: auto;
+      }
+
+      .review-fail-text strong {
+        display: block;
+        color: var(--blue);
+        font-size: 19px;
+        margin-bottom: 10px;
+      }
+
+      .review-fail-text p {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+
+      .review-fail-text p + p {
+        margin-top: 10px;
+      }
+
+      .review-fail-image-bottom {
+        grid-column: 2;
+        grid-row: 2;
+        align-self: start;
+        min-height: 0;
+      }
+
+      .review-fail-image-bottom img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
+        background: #fff;
+      }
+
+      .point-card {
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+      }
+
+      .point-card strong {
+        display: block;
+        color: var(--blue);
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .review-pipeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .review-step {
+        position: relative;
+        min-height: 230px;
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .review-step + .review-step::before {
+        content: "→";
+        position: absolute;
+        left: -22px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--blue);
+        font-size: 28px;
+        font-weight: 900;
+      }
+
+      .review-step b {
+        color: var(--blue);
+        font-size: 20px;
+      }
+
+      .review-step strong {
+        display: block;
+        margin-top: 18px;
+        font-size: 29px;
+      }
+
+      .review-step span {
+        display: block;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1.34;
+      }
+
+      .quality-board {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+
+      .quality-lane {
+        border-radius: 18px;
+        padding: 30px;
+        background: #eef4ff;
+      }
+
+      .quality-lane.primary {
+        background: #f6f9ff;
+        color: var(--ink);
+        border: 2px solid rgba(28, 96, 239, 0.36);
+      }
+
+      .quality-lane h3 {
+        font-size: 35px;
+        margin-bottom: 20px;
+      }
+
+      .quality-lane ul {
+        display: grid;
+        gap: 14px;
+        padding-left: 1em;
+      }
+
+      .clean-agenda {
+        display: grid;
+        grid-template-columns: 0.72fr 1.28fr;
+        gap: 34px;
+        align-items: stretch;
+      }
+
+      .agenda-summary {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 420px;
+        border-radius: 22px;
+        padding: 34px;
+        background: linear-gradient(145deg, #f6f9ff, #ffffff);
+        border: 1px solid rgba(28, 96, 239, 0.2);
+      }
+
+      .agenda-summary strong {
+        max-width: 420px;
+        font-size: 36px;
+        line-height: 1.12;
+        word-break: keep-all;
+      }
+
+      .agenda-summary span {
+        color: var(--muted);
+        font-size: 21px;
+        line-height: 1.38;
+        word-break: keep-all;
+      }
+
+      .agenda-steps {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 16px;
+      }
+
+      .agenda-step {
+        display: grid;
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+        min-height: 132px;
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .agenda-step b,
+      .small-index {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #ffffff;
+        color: var(--blue);
+        font-size: 17px;
+        font-weight: 900;
+      }
+
+      .agenda-step strong {
+        display: block;
+        font-size: 24px;
+        white-space: nowrap;
+      }
+
+      .agenda-step span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.34;
+      }
+
+      .goal-compare {
+        display: grid;
+        grid-template-columns: 0.86fr 70px 1.14fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .goal-card {
+        border-radius: 22px;
+        padding: 34px;
+        background: #eef4ff;
+      }
+
+      .goal-card.result {
+        background: #ffffff;
+        border: 2px solid rgba(28, 96, 239, 0.34);
+      }
+
+      .goal-card h3 {
+        color: var(--blue);
+        margin-bottom: 20px;
+      }
+
+      .goal-card ul {
+        display: grid;
+        gap: 16px;
+      }
+
+      .goal-card li {
+        font-size: 20px;
+        white-space: nowrap;
+      }
+
+      .goal-bridge {
+        display: grid;
+        place-items: center;
+      }
+
+      .goal-bridge span {
+        display: grid;
+        place-items: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--blue);
+        color: #ffffff;
+        font-size: 30px;
+        font-weight: 900;
+      }
+
+      .architecture-flow {
+        display: grid;
+        grid-template-columns: 0.74fr 1.26fr;
+        gap: 28px;
+        align-items: stretch;
+      }
+
+      .shell-box {
+        border-radius: 24px;
+        padding: 30px;
+        background: #eef4ff;
+      }
+
+      .shell-box h3,
+      .pipeline-box h3 {
+        color: var(--blue);
+        margin-bottom: 20px;
+      }
+
+      .mode-row {
+        display: grid;
+        gap: 14px;
+      }
+
+      .mode-card {
+        border-radius: 16px;
+        padding: 20px 22px;
+        background: #ffffff;
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 14px;
+        align-items: center;
+      }
+
+      .mode-card strong {
+        display: block;
+        font-size: 22px;
+        white-space: nowrap;
+      }
+
+      .mode-card span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 16px;
+        white-space: nowrap;
+      }
+
+      .pipeline-box {
+        border-radius: 24px;
+        padding: 30px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pipeline-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        align-items: stretch;
+        margin: auto 0;
+      }
+
+      .pipeline-unit {
+        position: relative;
+        min-height: 218px;
+        border-radius: 18px;
+        padding: 18px;
+        background: #eef4ff;
+      }
+
+      .pipeline-unit + .pipeline-unit::before {
+        content: "→";
+        position: absolute;
+        left: -23px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--blue);
+        font-size: 30px;
+        font-weight: 900;
+      }
+
+      .pipeline-unit b {
+        color: var(--blue);
+        font-size: 18px;
+      }
+
+      .pipeline-unit strong {
+        display: block;
+        margin-top: 18px;
+        font-size: 22px;
+        white-space: nowrap;
+      }
+
+      .pipeline-unit span {
+        display: block;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.32;
+        word-break: keep-all;
+      }
+
+      .feature-map {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+        margin-top: 28px;
+      }
+
+      .feature-map-card {
+        grid-column: span 2;
+        min-height: 132px;
+        border-radius: 18px;
+        padding: 22px;
+        background: #eef4ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .feature-map-card:nth-child(4),
+      .feature-map-card:nth-child(5) {
+        grid-column: span 3;
+      }
+
+      .feature-map-card b {
+        color: var(--blue);
+        font-size: 17px;
+      }
+
+      .feature-map-card strong {
+        display: block;
+        font-size: 24px;
+        line-height: 1.18;
+        word-break: keep-all;
+        white-space: nowrap;
+      }
+
+      .feature-map-card span {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.3;
+        word-break: keep-all;
+      }
+
+      .feature-detail {
+        display: grid;
+        grid-template-columns: 0.94fr 1.06fr;
+        gap: 22px;
+        align-items: center;
+      }
+
+      .feature-detail.reverse {
+        grid-template-columns: 1.06fr 0.94fr;
+      }
+
+      .explain-panel {
+        border-radius: 22px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .explain-panel h3 {
+        color: var(--blue);
+        margin-bottom: 16px;
+      }
+
+      .explain-panel p {
+        color: var(--muted);
+        font-size: 19px;
+      }
+
+      .structure-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .structure-row {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        border-radius: 16px;
+        padding: 13px 16px;
+        background: #ffffff;
+      }
+
+      .structure-row strong {
+        display: block;
+        font-size: 22px;
+        white-space: nowrap;
+      }
+
+      .structure-row span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.32;
+        word-break: keep-all;
+        white-space: nowrap;
+      }
+
+      .code-center {
+        justify-content: center;
+      }
+
+      .code-center code {
+        width: auto;
+        max-width: 100%;
+        margin: auto;
+        text-align: left;
+      }
+
+      .dual-feature {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .feature-column {
+        border-radius: 22px;
+        padding: 30px;
+        background: #eef4ff;
+      }
+
+      .feature-column h3 {
+        color: var(--blue);
+        margin-bottom: 18px;
+        white-space: nowrap;
+      }
+
+      .feature-column p,
+      .custom-main p,
+      .pattern-note p {
+        word-break: keep-all;
+      }
+
+      .mini-diagram {
+        display: grid;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .mini-diagram div {
+        border-radius: 14px;
+        padding: 16px;
+        background: #ffffff;
+        font-size: 21px;
+        font-weight: 800;
+      }
+
+      .mini-diagram div + div {
+        position: relative;
+        margin-left: 34px;
+      }
+
+      .checker-board {
+        display: grid;
+        grid-template-columns: 1fr 1.08fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .checker-flow {
+        display: grid;
+        gap: 14px;
+      }
+
+      .checker-step {
+        border-radius: 18px;
+        padding: 22px;
+        background: #eef4ff;
+      }
+
+      .checker-step strong {
+        display: block;
+        color: var(--blue);
+        font-size: 25px;
+      }
+
+      .checker-step span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.34;
+        word-break: keep-all;
+      }
+
+      .rule-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .rule-card {
+        min-height: 138px;
+        border-radius: 18px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.16);
+      }
+
+      .rule-card strong {
+        display: block;
+        font-size: 24px;
+      }
+
+      .rule-card span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.3;
+        word-break: keep-all;
+      }
+
+      .shell-detail {
+        display: grid;
+        grid-template-columns: 1fr 1.05fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .command-preview {
+        border-radius: 22px;
+        padding: 30px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+      }
+
+      .command-preview h3 {
+        color: var(--blue);
+        margin-bottom: 18px;
+      }
+
+      .command-flow {
+        display: grid;
+        gap: 12px;
+      }
+
+      .command-flow div {
+        border-radius: 16px;
+        padding: 18px;
+        background: #eef4ff;
+        font-size: 22px;
+        font-weight: 800;
+      }
+
+      .custom-board {
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .custom-main {
+        border-radius: 22px;
+        padding: 30px;
+        background: #eef4ff;
+      }
+
+      .custom-cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 14px;
+      }
+
+      .custom-card {
+        border-radius: 18px;
+        padding: 22px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.14);
+      }
+
+      .custom-card strong {
+        display: block;
+        font-size: 25px;
+      }
+
+      .custom-card span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.32;
+        white-space: nowrap;
+      }
+
+      .pattern-overview {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .pattern-overview-card {
+        min-height: 224px;
+        border-radius: 20px;
+        padding: 26px;
+        background: #eef4ff;
+      }
+
+      .pattern-overview-card b {
+        color: var(--blue);
+        font-size: 17px;
+      }
+
+      .pattern-overview-card strong {
+        display: block;
+        margin-top: 12px;
+        font-size: 28px;
+        white-space: nowrap;
+      }
+
+      .pattern-overview-card span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.32;
+        word-break: keep-all;
+      }
+
+      .anchor-chip {
+        display: inline-flex;
+        width: fit-content;
+        margin-top: 16px;
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: #ffffff;
+        color: var(--blue);
+        font-size: 15px;
+        font-weight: 900;
+      }
+
+      .pattern-explain {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .pattern-explain.reverse {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+
+      .pattern-note {
+        border-radius: 22px;
+        padding: 30px;
+        background: #eef4ff;
+      }
+
+      .pattern-note h3 {
+        color: var(--blue);
+        margin-bottom: 16px;
+      }
+
+      .pattern-note p {
+        color: var(--muted);
+        font-size: 20px;
+      }
+
+      .pseudo-board {
+        display: grid;
+        gap: 12px;
+        border-radius: 22px;
+        padding: 30px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+      }
+
+      .pseudo-node {
+        border-radius: 16px;
+        padding: 18px;
+        background: #eef4ff;
+        font-size: 20px;
+        font-weight: 800;
+        word-break: keep-all;
+      }
+
+      .pseudo-node.sub {
+        margin-left: 34px;
+        background: #f6f9ff;
+      }
+
+      .pseudo-node.callout {
+        border: 2px solid rgba(28, 96, 239, 0.3);
+        background: #ffffff;
+      }
+
+      .pattern-effect {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .pattern-effect div {
+        border-radius: 14px;
+        padding: 12px 16px;
+        background: #ffffff;
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.24;
+        word-break: keep-all;
+        white-space: nowrap;
+      }
+
+      .mode-card > .small-index,
+      .structure-row > .small-index {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        margin-top: 0;
+        border-radius: 50%;
+        background: #ffffff;
+        color: var(--blue);
+        font-size: 17px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .agenda-only .agenda-steps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .team-even-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .team-even-card,
+      .team-even-card:nth-child(4),
+      .team-even-card:nth-child(5) {
+        grid-column: auto;
+        min-height: 300px;
+        padding: 22px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .team-even-card strong {
+        font-size: 27px;
+        white-space: nowrap;
+      }
+
+      .team-even-card span {
+        font-size: 16px;
+        white-space: nowrap;
+      }
+
+      .goal-slide .goal-compare {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+
+      .feature-map {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .feature-map-card,
+      .feature-map-card:nth-child(4),
+      .feature-map-card:nth-child(5) {
+        grid-column: auto;
+        min-height: 176px;
+      }
+
+      .feature-map-card strong {
+        font-size: 22px;
+      }
+
+      .anchor-chip {
+        display: none !important;
+      }
+
+      .code-window {
+        width: min(100%, 560px);
+        margin: auto;
+        overflow: hidden;
+        border-radius: 18px;
+        background: #1d1f21;
+        box-shadow: 0 18px 34px rgba(16, 24, 40, 0.16);
+      }
+
+      .code-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        height: 50px;
+        padding: 0 18px;
+        background: #26282c;
+      }
+
+      .code-dot {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+      }
+
+      .code-dot.red { background: #ff5f57; }
+      .code-dot.yellow { background: #ffbd2e; }
+      .code-dot.green { background: #28c840; }
+
+      .code-tab {
+        margin-left: 12px;
+        padding: 7px 14px;
+        border-radius: 7px;
+        background: #3a3b3f;
+        color: #e5e7eb;
+        font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+        font-size: 15px;
+      }
+
+      .code-window pre {
+        display: block;
+        min-height: 0;
+        padding: 24px 30px 28px;
+        border-radius: 0;
+        background: transparent;
+        font-size: 18px;
+        line-height: 1.5;
+        white-space: pre;
+        overflow-x: auto;
+      }
+
+      .alias-compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+
+      .alias-compare-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .alias-compare-label {
+        margin: 0;
+        text-align: center;
+        font-weight: 800;
+        font-size: 15px;
+        letter-spacing: 0.04em;
+        color: var(--blue);
+      }
+
+      .code-window.compact {
+        width: 100%;
+        margin: 0;
+      }
+
+      .code-window.compact pre {
+        padding: 18px 16px 20px;
+        font-size: 14.5px;
+      }
+
+      .code-window pre code {
+        width: auto;
+        color: #f3f4f6;
+      }
+
+      .syn-keyword { color: #d78bd0; }
+      .syn-identifier { color: #83c7f5; }
+      .syn-operator { color: #f2d98d; }
+      .syn-string { color: #e8a27d; }
+      .syn-number { color: #a8cf8d; }
+      .syn-punctuation { color: #c6cbd3; }
+
+      .tokenizer-stage {
+        display: grid;
+        grid-template-columns: 0.88fr 1.12fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .tokenizer-copy {
+        border-radius: 22px;
+        padding: 28px;
+        background: #eef4ff;
+      }
+
+      .tokenizer-copy h3 {
+        color: var(--blue);
+        margin-bottom: 16px;
+      }
+
+      .tokenizer-points {
+        display: grid;
+        gap: 16px;
+        margin-top: 22px;
+      }
+
+      .tokenizer-point {
+        padding: 16px 18px;
+        border-radius: 14px;
+        background: #ffffff;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .tokenizer-point b {
+        color: var(--blue);
+        font-size: 16px;
+      }
+
+      .tokenizer-point strong,
+      .tokenizer-point span {
+        display: block;
+        min-width: 0;
+      }
+
+      .tokenizer-point strong {
+        margin-top: 5px;
+        font-size: 21px;
+      }
+
+      .tokenizer-point span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+        word-break: keep-all;
+      }
+
+      .tokenizer-visual {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 22px;
+        border-radius: 22px;
+        padding: 28px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+      }
+
+      .token-source,
+      .token-result {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .token-source span {
+        padding: 10px 12px;
+        border-radius: 9px;
+        background: var(--code);
+        font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .token-arrow {
+        color: var(--blue);
+        font-size: 20px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .token-result div {
+        min-width: 86px;
+        padding: 12px 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(28, 96, 239, 0.25);
+        background: #f8faff;
+        text-align: center;
+      }
+
+      .token-result strong,
+      .token-result span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .token-result strong {
+        font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+        font-size: 13px;
+      }
+
+      .token-result span {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .implementation-board {
+        display: grid;
+        grid-template-columns: 0.88fr 1.12fr;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .implementation-panel {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        border-radius: 22px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .implementation-cell {
+        min-height: 190px;
+        border-radius: 16px;
+        padding: 22px;
+        background: #ffffff;
+      }
+
+      .implementation-cell h3 {
+        color: var(--blue);
+        margin-bottom: 14px;
+      }
+
+      .implementation-cell p {
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.45;
+      }
+
+      .ast-inline {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .ast-inline div {
+        padding: 12px 8px;
+        border-radius: 10px;
+        background: #eef4ff;
+        font-size: 14px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .control-board {
+        display: grid;
+        gap: 22px;
+      }
+
+      .control-row {
+        display: grid;
+        grid-template-columns: 110px repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        align-items: center;
+      }
+
+      .control-row.for-row {
+        grid-template-columns: 110px repeat(5, minmax(0, 1fr));
+      }
+
+      .control-label {
+        color: var(--blue);
+        font-size: 27px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .control-step {
+        position: relative;
+        min-height: 98px;
+        border-radius: 14px;
+        padding: 16px 10px;
+        background: #eef4ff;
+        text-align: center;
+      }
+
+      .control-step + .control-step::before {
+        content: "→";
+        position: absolute;
+        left: -13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--blue);
+      }
+
+      .control-step strong,
+      .control-step span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .control-step strong { font-size: 17px; }
+      .control-step span { margin-top: 6px; color: var(--muted); font-size: 14px; }
+
+      .array-visual {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 26px;
+        border: 2px solid rgba(28, 96, 239, 0.38);
+      }
+
+      .array-visual span {
+        display: grid;
+        place-items: center;
+        min-height: 82px;
+        border-right: 1px solid rgba(28, 96, 239, 0.28);
+        font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+        font-size: 20px;
+      }
+
+      .array-visual span:last-child { border-right: 0; }
+
+      .feature-caption {
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 16px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .import-visual {
+        display: grid;
+        grid-template-columns: 1fr 50px 1fr;
+        gap: 12px;
+        align-items: center;
+        margin-top: 30px;
+      }
+
+      .import-visual div {
+        padding: 22px 12px;
+        border-radius: 14px;
+        background: #ffffff;
+        font-size: 18px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .import-visual b {
+        color: var(--blue);
+        font-size: 28px;
+        text-align: center;
+      }
+
+      .binding-horizontal {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+      }
+
+      .binding-step {
+        position: relative;
+        min-height: 250px;
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+        border-top: 6px solid var(--blue);
+      }
+
+      .binding-step + .binding-step::before {
+        content: "→";
+        position: absolute;
+        left: -21px;
+        top: 46%;
+        color: var(--blue);
+        font-size: 25px;
+        font-weight: 800;
+      }
+
+      .binding-step b {
+        color: var(--blue);
+        font-size: 16px;
+      }
+
+      .binding-step strong {
+        display: block;
+        margin-top: 20px;
+        font-size: 21px;
+        white-space: nowrap;
+      }
+
+      .binding-step span {
+        display: block;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.4;
+      }
+
+      .relation-flow {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .relation-diagram {
+        border-radius: 22px;
+        padding: 28px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+      }
+
+      .relation-center {
+        width: fit-content;
+        margin: 0 auto 24px;
+        border-radius: 12px;
+        padding: 14px 24px;
+        background: var(--blue);
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 800;
+      }
+
+      .relation-children {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        padding-top: 16px;
+      }
+
+      .relation-children::before {
+        content: "";
+        position: absolute;
+        left: 16.66%;
+        right: 16.66%;
+        top: 0;
+        height: 2px;
+        background: rgba(28, 96, 239, 0.5);
+      }
+
+      .relation-children.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .relation-children div {
+        position: relative;
+        min-height: 92px;
+        border-radius: 12px;
+        padding: 16px 8px;
+        background: #eef4ff;
+        font-size: 15px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .relation-children div::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: -16px;
+        width: 2px;
+        height: 16px;
+        background: rgba(28, 96, 239, 0.5);
+      }
+
+      .pattern-overview.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .pattern-overview.three .pattern-overview-card {
+        min-height: 250px;
+      }
+
+      .pattern-overview-card .pattern-meta {
+        display: grid;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .pattern-overview-card .pattern-meta span {
+        margin-top: 0;
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .pattern-case {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .pattern-case-card {
+        min-height: 260px;
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .pattern-case-card.primary {
+        background: #dbe8fe;
+        border: 2px solid var(--blue);
+      }
+
+      .pattern-case-card b {
+        color: var(--blue);
+        font-size: 16px;
+      }
+
+      .pattern-case-card strong {
+        display: block;
+        margin-top: 14px;
+        font-size: 25px;
+        line-height: 1.24;
+      }
+
+      .pattern-case-card p {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.38;
+        word-break: keep-all;
+      }
+
+      .pattern-case-card ul {
+        display: grid;
+        gap: 9px;
+        margin-top: 14px;
+        padding-left: 1em;
+      }
+
+      .pattern-case-card li {
+        color: var(--ink);
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.28;
+      }
+
+      .pattern-case-card li::before {
+        content: none;
+      }
+
+      .class-example pre {
+        font-size: 15px;
+        line-height: 1.36;
+      }
+
+      .refactor-compare {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px;
+        align-items: stretch;
+      }
+
+      .refactor-card {
+        border-radius: 18px;
+        padding: 22px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.2);
+      }
+
+      .refactor-card.after {
+        background: #eaf2ff;
+        border-color: rgba(28, 96, 239, 0.36);
+      }
+
+      .refactor-card h3 {
+        font-size: 28px;
+        margin-bottom: 14px;
+      }
+
+      .refactor-card.before h3 { color: #e11d48; }
+      .refactor-card.after h3 { color: #16a34a; }
+
+      .refactor-card .code-window {
+        width: 100%;
+        margin: 0;
+        min-height: 270px;
+      }
+
+      .refactor-card .code-window pre {
+        min-height: 220px;
+        padding: 24px 30px;
+        font-size: 14px;
+        line-height: 1.48;
+        overflow: hidden;
+      }
+
+      .refactor-card p {
+        margin-top: 14px;
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.36;
+        word-break: keep-all;
+      }
+
+      .collab-standard {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .standard-panel {
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .standard-panel h3 {
+        color: var(--blue);
+        font-size: 26px;
+        margin-bottom: 18px;
+      }
+
+      .make-table {
+        display: grid;
+        gap: 10px;
+      }
+
+      .make-row {
+        display: grid;
+        grid-template-columns: 145px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        border-radius: 12px;
+        padding: 14px 16px;
+        background: #ffffff;
+      }
+
+      .make-row code {
+        color: var(--blue);
+        font-size: 17px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .make-row span {
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.3;
+      }
+
+      .template-shot {
+        border-radius: 18px;
+        padding: 16px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        overflow: hidden;
+      }
+
+      .template-shot img {
+        width: 100%;
+        height: 410px;
+        object-fit: cover;
+        object-position: top;
+        border-radius: 12px;
+        display: block;
+      }
+
+      .actions-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .actions-shot {
+        border-radius: 18px;
+        padding: 18px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        display: flex;
+        align-items: center;
+      }
+
+      .actions-shot img {
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.12);
+      }
+
+      .actions-points {
+        display: grid;
+        gap: 14px;
+      }
+
+      .actions-point {
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+      }
+
+      .actions-point strong,
+      .actions-point span {
+        display: block;
+      }
+
+      .actions-point strong {
+        color: var(--blue);
+        font-size: 22px;
+      }
+
+      .actions-point span {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.35;
+      }
+
+      .reflection-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        min-height: 430px;
+        align-items: stretch;
+      }
+
+      .reflection-card {
+        border-radius: 18px;
+        padding: 16px 22px;
+        background: #eef4ff;
+        border-left: 6px solid var(--blue);
+        display: grid;
+        grid-template-columns: 128px minmax(0, 1fr);
+        gap: 18px;
+        align-items: center;
+      }
+
+      .reflection-card strong,
+      .reflection-card span {
+        display: block;
+      }
+
+      .reflection-card strong {
+        color: var(--blue);
+        font-size: 21px;
+      }
+
+      .reflection-card span {
+        color: var(--ink);
+        font-size: 14.5px;
+        line-height: 1.36;
+        word-break: keep-all;
+      }
+
+      .command-relation {
+        display: grid;
+        grid-template-columns: 160px 190px minmax(0, 1fr);
+        gap: 24px;
+        align-items: center;
+      }
+
+      .command-node {
+        position: relative;
+        min-height: 150px;
+        border-radius: 16px;
+        padding: 22px 14px;
+        background: #eef4ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .command-node + .command-node::before,
+      .command-list::before {
+        content: "→";
+        position: absolute;
+        left: -21px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--blue);
+        font-size: 25px;
+      }
+
+      .command-node strong,
+      .command-node span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .command-node strong { font-size: 20px; }
+      .command-node span { margin-top: 7px; color: var(--muted); font-size: 14px; }
+
+      .command-list {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .command-list div {
+        padding: 12px 8px;
+        border-radius: 10px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        font-size: 13px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      /* Final fit pass for one-line labels and presentation-scale proportions. */
+      .team-even-card,
+      .team-even-card:nth-child(4),
+      .team-even-card:nth-child(5) {
+        min-height: 182px;
+      }
+
+      .pipeline-unit {
+        min-height: 148px;
+      }
+
+      .pipeline-unit strong {
+        font-size: 20px;
+      }
+
+      .feature-map-card {
+        min-height: 148px;
+      }
+
+      .feature-map-card strong {
+        font-size: 19px;
+      }
+
+      .feature-map-card span {
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .tokenizer-stage.exact {
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 22px;
+        padding: 24px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-copy {
+        padding: 24px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-point {
+        grid-template-columns: 30px minmax(0, 1fr);
+        gap: 8px;
+        padding: 14px 15px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-point span {
+        font-size: 13px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-visual {
+        gap: 9px;
+        padding: 14px 18px;
+      }
+
+      .token-source.exact-source span:not(.token-space) {
+        min-width: 52px;
+        padding: 11px 14px;
+        font-size: 20px;
+      }
+
+      .token-source.exact-source .source-string {
+        min-width: 108px;
+      }
+
+      .token-space {
+        width: 40px;
+        height: 48px;
+      }
+
+      .token-scan-note,
+      .token-save-note {
+        font-size: 17px;
+      }
+
+      .token-decisions {
+        gap: 5px;
+      }
+
+      .token-decision {
+        grid-template-columns: 104px minmax(0, 1fr);
+      }
+
+      .token-decision code {
+        min-height: 42px;
+        font-size: 17px;
+      }
+
+      .token-decision span {
+        font-size: 15px;
+      }
+
+      .tokenizer-stage.exact .token-result div {
+        min-width: 96px;
+        padding: 11px 8px;
+      }
+
+      .tokenizer-stage.exact .token-result strong {
+        color: var(--blue);
+        font-size: 14px;
+      }
+
+      .token-summary {
+        font-size: 15px;
+      }
+
+      .ast-tree-card .note {
+        margin-top: 18px;
+        line-height: 1.45;
+      }
+
+      .node-kind-card span {
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .scope-chain-panel > .note {
+        margin-top: 20px;
+      }
+
+      .array-stage-new {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .array-stage-new .code-window {
+        width: min(100%, 560px);
+        min-height: 310px;
+        align-self: center;
+      }
+
+      .executor-layout-new {
+        display: grid;
+        gap: 34px;
+        min-height: 430px;
+        align-content: center;
+      }
+
+      .executor-core-row {
+        display: grid;
+        grid-template-columns: 0.8fr 56px 1fr 56px 1fr;
+        align-items: center;
+      }
+
+      .executor-core-node {
+        min-height: 118px;
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .executor-core-node.primary {
+        background: var(--blue);
+        color: #ffffff;
+      }
+
+      .executor-core-node strong,
+      .executor-core-node span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .executor-core-node strong { font-size: 25px; }
+      .executor-core-node span { margin-top: 8px; color: var(--muted); font-size: 15px; }
+      .executor-core-node.primary span { color: #ffffff; }
+
+      .executor-core-arrow {
+        color: var(--blue);
+        font-size: 30px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .executor-capabilities {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        padding: 22px;
+        border-radius: 18px;
+        background: #f6f9ff;
+        border: 1px solid rgba(28, 96, 239, 0.16);
+      }
+
+      .executor-capability {
+        min-height: 112px;
+        border-radius: 14px;
+        padding: 16px 12px;
+        background: #ffffff;
+        border-top: 4px solid rgba(28, 96, 239, 0.7);
+      }
+
+      .executor-capability strong,
+      .executor-capability span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .executor-capability strong { color: var(--blue); font-size: 18px; }
+      .executor-capability span { margin-top: 7px; color: var(--muted); font-size: 13px; }
+
+      .import-layout-new {
+        display: grid;
+        gap: 20px;
+        min-height: 430px;
+        align-content: center;
+      }
+
+      .import-main-message {
+        border-radius: 18px;
+        padding: 22px 26px;
+        background: #eef4ff;
+        border-left: 8px solid var(--blue);
+      }
+
+      .import-main-message strong {
+        display: block;
+        color: var(--blue);
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .import-main-message p {
+        font-size: 24px;
+        line-height: 1.34;
+      }
+
+      .import-role-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .import-role-card {
+        border-radius: 16px;
+        padding: 20px 24px;
+        background: #eef4ff;
+        border-left: 6px solid var(--blue);
+      }
+
+      .import-role-card strong,
+      .import-role-card span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .import-role-card strong { color: var(--blue); font-size: 22px; }
+      .import-role-card span { margin-top: 7px; font-size: 16px; }
+
+      .import-flow-row {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 22px;
+      }
+
+      .import-flow-step {
+        position: relative;
+        min-height: 100px;
+        border-radius: 14px;
+        padding: 17px 10px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+        text-align: center;
+      }
+
+      .import-flow-step + .import-flow-step::before {
+        content: "→";
+        position: absolute;
+        left: -17px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--blue);
+        font-size: 22px;
+      }
+
+      .import-flow-step strong,
+      .import-flow-step span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .import-flow-step strong { font-size: 17px; }
+      .import-flow-step span { margin-top: 6px; color: var(--muted); font-size: 13px; }
+
+      .import-check-table {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .import-check-card {
+        min-height: 112px;
+        border-radius: 14px;
+        padding: 16px;
+        background: #f6f9ff;
+        border: 1px solid rgba(28, 96, 239, 0.16);
+      }
+
+      .import-check-card strong,
+      .import-check-card span {
+        display: block;
+      }
+
+      .import-check-card strong {
+        color: var(--blue);
+        font-size: 17px;
+        white-space: nowrap;
+      }
+
+      .import-check-card span {
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.35;
+        word-break: keep-all;
+      }
+
+      .import-error-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .import-error-card {
+        border-radius: 14px;
+        padding: 16px 20px;
+        background: #f6f9ff;
+      }
+
+      .import-error-card strong,
+      .import-error-card span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .import-error-card strong { color: var(--blue); font-size: 17px; }
+      .import-error-card span { margin-top: 5px; font-size: 14px; }
+
+      .pattern-journey {
+        display: grid;
+        grid-template-columns: 0.72fr 50px 1.18fr 50px 0.9fr;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .pattern-journey.compact {
+        grid-template-columns: 0.7fr 42px 0.9fr 42px 1.3fr;
+      }
+
+      .pattern-stage-node {
+        min-height: 170px;
+        border-radius: 16px;
+        padding: 22px;
+        background: #eef4ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .pattern-stage-node.primary {
+        background: var(--blue);
+        color: #ffffff;
+      }
+
+      .pattern-stage-node strong,
+      .pattern-stage-node span {
+        display: block;
+      }
+
+      .pattern-stage-node strong { font-size: 23px; }
+      .pattern-stage-node span { margin-top: 9px; color: var(--muted); font-size: 15px; line-height: 1.4; }
+      .pattern-stage-node.primary span { color: #ffffff; }
+
+      .pattern-arrow {
+        color: var(--blue);
+        font-size: 29px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .pattern-object-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .pattern-object-grid div {
+        padding: 10px 7px;
+        border-radius: 9px;
+        background: #ffffff;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .pattern-object-grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .environment-items {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+
+      .environment-items div {
+        min-height: 43px;
+        display: grid;
+        grid-template-columns: 100px minmax(0, 1fr);
+        gap: 8px;
+        align-items: center;
+        padding: 9px 11px;
+      }
+
+      .environment-items strong {
+        font-size: 15px;
+      }
+
+      .environment-items span {
+        margin-top: 0;
+        font-size: 12px;
+      }
+
+      .pattern-outcomes {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .pattern-outcome {
+        border-radius: 12px;
+        padding: 14px;
+        background: #ffffff;
+        border-top: 4px solid var(--blue);
+        font-size: 15px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .tokenizer-stage.exact {
+        grid-template-columns: 0.94fr 1.06fr;
+        gap: 28px;
+        padding: 28px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-copy {
+        padding: 28px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-copy > p {
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      .tokenizer-stage.exact .tokenizer-points {
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-point {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        padding: 15px 18px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-point b {
+        padding-top: 3px;
+      }
+
+      .tokenizer-stage.exact .tokenizer-point strong {
+        margin-top: 0;
+      }
+
+      .tokenizer-stage.exact .tokenizer-visual {
+        gap: 12px;
+        padding: 18px 24px;
+        border: 0;
+      }
+
+      .token-source.exact-source {
+        gap: 7px;
+        align-items: center;
+      }
+
+      .token-source.exact-source span:not(.token-space) {
+        min-width: 46px;
+        padding: 9px 12px;
+        background: #eef4ff;
+        color: var(--ink);
+        text-align: center;
+      }
+
+      .token-source.exact-source .source-string {
+        min-width: 96px;
+      }
+
+      .token-space {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 42px;
+        border-radius: 9px;
+        border: 1px dashed rgba(28, 96, 239, 0.45);
+        background: #ffffff !important;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .token-scan-note {
+        color: var(--blue);
+        font-size: 16px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .token-decisions {
+        display: grid;
+        gap: 7px;
+        width: 100%;
+        max-width: 520px;
+        margin: 0 auto;
+      }
+
+      .token-decision {
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 14px;
+        align-items: center;
+      }
+
+      .token-decision code {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        border-radius: 10px;
+        background: #eef4ff;
+        color: var(--ink);
+        font-size: 16px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .token-decision code .lead-char {
+        color: var(--blue);
+      }
+
+      .token-decision span {
+        color: var(--muted);
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .token-save-note {
+        color: var(--blue);
+        font-size: 16px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .tokenizer-stage.exact .token-result {
+        gap: 8px;
+      }
+
+      .tokenizer-stage.exact .token-result div {
+        min-width: 90px;
+      }
+
+      .tokenizer-stage.exact .token-result strong {
+        color: var(--blue);
+      }
+
+      .token-summary {
+        color: var(--muted);
+        font-size: 14px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .token-summary strong {
+        color: var(--blue);
+      }
+
+      .assembler-stage {
+        display: grid;
+        grid-template-columns: 0.78fr 1.22fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .assembler-ast {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 18px;
+        border-radius: 22px;
+        padding: 24px;
+        background: #eef4ff;
+      }
+
+      .ast-tree-card,
+      .node-kind-card {
+        border-radius: 16px;
+        padding: 22px;
+        background: #ffffff;
+      }
+
+      .ast-tree-card h3,
+      .node-kind-card h3 {
+        color: var(--blue);
+        margin-bottom: 16px;
+      }
+
+      .ast-tree-lines {
+        font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+        font-size: 17px;
+        line-height: 1.65;
+        white-space: pre;
+      }
+
+      .node-kind-card + .node-kind-card {
+        margin-top: 12px;
+      }
+
+      .node-kind-card p {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.4;
+      }
+
+      .node-kind-card span {
+        display: block;
+        margin-top: 10px;
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .environment-stage {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 26px;
+        align-items: stretch;
+      }
+
+      .environment-store,
+      .scope-chain-panel {
+        border-radius: 22px;
+        padding: 28px;
+        background: #eef4ff;
+      }
+
+      .environment-store h3,
+      .scope-chain-panel h3 {
+        color: var(--blue);
+        margin-bottom: 20px;
+      }
+
+      .environment-items {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .environment-items div {
+        min-height: 80px;
+        border-radius: 14px;
+        padding: 16px;
+        background: #ffffff;
+      }
+
+      .environment-items strong,
+      .environment-items span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .environment-items strong { font-size: 18px; }
+      .environment-items span { margin-top: 6px; color: var(--muted); font-size: 14px; }
+
+      .scope-chain {
+        display: grid;
+        grid-template-columns: 1fr 76px 1fr;
+        gap: 14px;
+        align-items: center;
+        margin-top: 26px;
+      }
+
+      .scope-box {
+        min-height: 190px;
+        border-radius: 16px;
+        padding: 24px;
+        background: #ffffff;
+      }
+
+      .scope-box strong {
+        display: block;
+        color: var(--blue);
+        font-size: 22px;
+        white-space: nowrap;
+      }
+
+      .scope-box span {
+        display: block;
+        margin-top: 14px;
+        font-size: 17px;
+        line-height: 1.6;
+        white-space: nowrap;
+      }
+
+      .scope-parent {
+        color: var(--blue);
+        font-size: 18px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .executor-stage {
+        display: grid;
+        grid-template-columns: 190px 260px minmax(0, 1fr);
+        gap: 24px;
+        align-items: center;
+      }
+
+      .executor-main {
+        min-height: 220px;
+        border-radius: 18px;
+        padding: 28px;
+        background: var(--blue);
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .executor-main strong,
+      .executor-main span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .executor-main strong { font-size: 30px; }
+      .executor-main span { margin-top: 12px; font-size: 16px; }
+
+      .executor-input {
+        position: relative;
+        min-height: 180px;
+        border-radius: 18px;
+        padding: 24px;
+        background: #eef4ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .executor-input::after,
+      .executor-actions::before {
+        content: "→";
+        position: absolute;
+        right: -22px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--blue);
+        font-size: 28px;
+        font-weight: 800;
+      }
+
+      .executor-actions::before {
+        left: -22px;
+        right: auto;
+      }
+
+      .executor-input strong { font-size: 25px; }
+      .executor-input span { margin-top: 10px; color: var(--muted); font-size: 16px; }
+
+      .executor-actions {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .executor-actions div {
+        min-height: 88px;
+        border-radius: 14px;
+        padding: 16px;
+        background: #eef4ff;
+      }
+
+      .executor-actions strong,
+      .executor-actions span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .executor-actions strong { font-size: 18px; }
+      .executor-actions span { margin-top: 6px; color: var(--muted); font-size: 13px; }
+
+      .array-stage-new {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .array-copy {
+        border-radius: 22px;
+        padding: 28px;
+        background: #eef4ff;
+      }
+
+      .array-copy h3 {
+        color: var(--blue);
+        margin-bottom: 14px;
+      }
+
+      .array-copy > p {
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      .array-points {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .array-point {
+        display: grid;
+        grid-template-columns: 32px minmax(0, 1fr);
+        gap: 10px;
+        border-radius: 14px;
+        padding: 14px;
+        background: #ffffff;
+      }
+
+      .array-point b {
+        color: var(--blue);
+        font-size: 16px;
+      }
+
+      .array-point strong,
+      .array-point span {
+        display: block;
+      }
+
+      .array-point strong { font-size: 18px; }
+      .array-point span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.32;
+        word-break: keep-all;
+      }
+
+      .array-stage-new .code-window {
+        width: min(100%, 520px);
+        margin: auto;
+        min-height: 350px;
+        display: flex;
+        flex-direction: column;
+      }
+
+
+      .import-stage {
+        display: grid;
+        grid-template-columns: 0.78fr 1.22fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .import-ownership {
+        border-radius: 22px;
+        padding: 28px;
+        background: #eef4ff;
+      }
+
+      .import-ownership h3 {
+        color: var(--blue);
+        margin-bottom: 16px;
+      }
+
+      .ownership-card {
+        margin-top: 14px;
+        border-radius: 14px;
+        padding: 18px;
+        background: #ffffff;
+      }
+
+      .ownership-card strong,
+      .ownership-card span {
+        display: block;
+      }
+
+      .ownership-card strong { font-size: 20px; }
+      .ownership-card span { margin-top: 6px; color: var(--muted); font-size: 15px; line-height: 1.4; }
+
+      .import-runtime {
+        border-radius: 22px;
+        padding: 26px;
+        background: #ffffff;
+        border: 1px solid rgba(28, 96, 239, 0.18);
+      }
+
+      .import-runtime h3 {
+        color: var(--blue);
+        margin-bottom: 20px;
+      }
+
+      .import-pipeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .import-pipeline div {
+        position: relative;
+        min-height: 94px;
+        border-radius: 14px;
+        padding: 16px 10px;
+        background: #eef4ff;
+        text-align: center;
+      }
+
+      .import-pipeline div + div::before {
+        content: "→";
+        position: absolute;
+        left: -15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--blue);
+      }
+
+      .import-pipeline strong,
+      .import-pipeline span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .import-pipeline strong { font-size: 16px; }
+      .import-pipeline span { margin-top: 6px; color: var(--muted); font-size: 13px; }
+
+      .import-rules {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .import-rule {
+        border-radius: 12px;
+        padding: 14px;
+        background: #f6f9ff;
+      }
+
+      .import-rule strong,
+      .import-rule span {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .import-rule strong { color: var(--blue); font-size: 16px; }
+      .import-rule span { margin-top: 5px; color: var(--muted); font-size: 13px; }
+
+      .progress {
+        position: fixed;
+        right: 18px;
+        bottom: 14px;
+        z-index: 5;
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.86);
+        color: var(--muted);
+        font-size: 14px;
+        backdrop-filter: blur(8px);
+      }
+
+      @media screen and (max-width: 900px) {
+        section {
+          padding: 42px 22px;
+        }
+
+        h1 {
+          font-size: 58px;
+        }
+
+        h2 {
+          font-size: 36px;
+        }
+
+        .grid,
+        .grid.two,
+        .grid.four,
+        .flow,
+        .architecture-board,
+        .pipeline-cards,
+        .feature,
+        .code-pair,
+        .shot-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        @page {
+          size: 13.333333in 7.5in;
+          margin: 0;
+        }
+
+        html,
+        body {
+          width: 13.333333in;
+          margin: 0;
+          overflow: hidden;
+        }
+
+        main {
+          display: block;
+        }
+
+        section {
+          width: 13.333333in;
+          height: 7.5in;
+          min-height: 7.5in;
+          padding: 0.52in 0.68in;
+          page-break-after: always;
+          break-after: page;
+          overflow: hidden;
+        }
+
+        h1 {
+          font-size: 86px;
+        }
+
+        h2 {
+          font-size: 36px;
+        }
+
+        h3 {
+          font-size: 22px;
+        }
+
+        p,
+        li,
+        td,
+        th {
+          font-size: 18px;
+        }
+
+        pre {
+          font-size: 16px;
+        }
+
+        *,
+        *::before,
+        *::after {
+          box-shadow: none !important;
+          text-shadow: none !important;
+        }
+
+        .lead {
+          font-size: 21px;
+        }
+
+        .panel,
+        .stage,
+        .architecture-board,
+        .mode-item,
+        .pipeline-card,
+        .collab-card,
+        .pattern-diagram,
+        .flow-step,
+        .media-slot,
+        .badge,
+        table,
+        pre {
+          border: 0;
+          box-shadow: none;
+        }
+
+        .progress {
+          display: none;
+        }
+      }
+      /* Final visual QA overrides. Keep text inside every presentation element. */
+      .environment-stage {
+        grid-template-columns: 0.78fr 1.22fr;
+      }
+
+      .environment-store,
+      .scope-chain-panel {
+        padding: 24px;
+      }
+
+      .environment-items {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+
+      .environment-items div {
+        min-height: 36px;
+        display: grid;
+        grid-template-columns: 100px minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+        padding: 8px 11px;
+      }
+
+      .environment-items strong,
+      .environment-items span {
+        margin: 0;
+        white-space: nowrap;
+      }
+
+      .environment-items strong { font-size: 14px; }
+      .environment-items span { font-size: 12px; }
+
+      .scope-chain-panel > h3,
+      .environment-store > h3 {
+        margin-bottom: 14px;
+      }
+
+      .scope-chain {
+        margin-top: 0;
+      }
+
+      .scope-chain-panel > .note {
+        margin-top: 22px;
+        white-space: nowrap;
+      }
+
+      .pattern-stage-node.primary {
+        background: #dbe8fe;
+        color: var(--ink);
+        border: 2px solid var(--blue);
+      }
+
+      .pattern-stage-node.primary span {
+        color: var(--muted);
+      }
+
+      .pattern-stage-node strong,
+      .pattern-stage-node span,
+      .pattern-outcome {
+        overflow-wrap: normal;
+        word-break: keep-all;
+      }
+
+      .pattern-stage-node strong {
+        font-size: 21px;
+        white-space: nowrap;
+      }
+
+      .pattern-stage-node span {
+        font-size: 14px;
+      }
+
+      .pattern-outcome {
+        font-size: 14px;
+      }
+
+      .part-splash {
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 22px;
+      }
+
+      .part-number {
+        width: 72px;
+        height: 72px;
+        font-size: 28px;
+      }
+
+      .feature-map-card strong {
+        font-size: 18px;
+      }
+
+      .feature-map-card span {
+        font-size: 12px;
+      }
+
+      .import-flow-step strong {
+        font-size: 15px;
+      }
+
+      .binding-step strong {
+        font-size: 18px;
+      }
+
+      .environment-stage {
+        grid-template-columns: 0.9fr 1.1fr;
+      }
+
+      .environment-items {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+      }
+
+      .environment-items div {
+        min-height: 62px;
+        display: block;
+        padding: 12px;
+      }
+
+      .environment-items strong {
+        font-size: 13px;
+      }
+
+      .environment-items span {
+        margin-top: 5px;
+        font-size: 11px;
+      }
+
+      .pattern-detail-stage {
+        min-height: 345px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .pattern-detail-stage .pattern-stage-node {
+        min-height: 205px;
+        padding: 24px;
+      }
+
+      .pattern-detail-stage .pattern-stage-node strong {
+        font-size: 22px;
+      }
+
+      .pattern-detail-stage .pattern-stage-node span {
+        font-size: 15px;
+      }
+
+      .pattern-detail-stage .pattern-object-grid div {
+        font-size: 14px;
+      }
+
+      .pattern-detail-stage .pattern-outcome {
+        min-height: 50px;
+        display: grid;
+        place-items: center;
+        font-size: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section>
+        <div class="cover-layout">
+          <div class="cover-copy">
+            <p class="eyebrow">CRA Team 3 · Team Ctrl-C</p>
+            <h1>CodeFab</h1>
+            <p class="lead">
+              새로운 확장자 <code>.ctrlc</code>로 코드를 분석하고 실행하는 Interpreter
+            </p>
+          </div>
+          <div class="network-visual" aria-hidden="true">
+            <svg viewBox="0 0 640 430">
+              <path d="M70 314 L160 232 L248 282 L346 176 L458 216 L560 122" fill="none" stroke="#9ebcff" stroke-width="2" opacity="0.52"></path>
+              <path d="M126 114 L248 282 L392 84 L560 122" fill="none" stroke="#9ebcff" stroke-width="2" opacity="0.36"></path>
+              <path d="M160 232 L306 336 L458 216" fill="none" stroke="#9ebcff" stroke-width="2" opacity="0.42"></path>
+              <path d="M346 176 L392 84 L492 330 L306 336" fill="none" stroke="#9ebcff" stroke-width="2" opacity="0.3"></path>
+            </svg>
+            <span class="network-node" style="left: 8%; top: 70%"></span>
+            <span class="network-node small" style="left: 17%; top: 25%"></span>
+            <span class="network-node" style="left: 23%; top: 53%"></span>
+            <span class="network-node small" style="left: 38%; top: 65%"></span>
+            <span class="network-node" style="left: 53%; top: 38%"></span>
+            <span class="network-node small" style="left: 61%; top: 18%"></span>
+            <span class="network-node" style="left: 72%; top: 49%"></span>
+            <span class="network-node small" style="left: 78%; top: 76%"></span>
+            <span class="network-node" style="left: 88%; top: 28%"></span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Contents</p>
+          <h2>목차</h2>
+        </div>
+        <div class="stage agenda-only">
+          <div class="agenda-steps">
+            <div class="agenda-step"><b>01</b><div><strong>팀 소개</strong><span>역할과 구현 분담</span></div></div>
+            <div class="agenda-step"><b>02</b><div><strong>프로젝트 목표</strong><span>새로운 확장자 <code>.ctrlc</code></span></div></div>
+            <div class="agenda-step"><b>03</b><div><strong>전체 구조</strong><span>Shell과 interpreter pipeline</span></div></div>
+            <div class="agenda-step"><b>04</b><div><strong>주요 기능</strong><span>Tokenizer · AST · Runtime</span></div></div>
+            <div class="agenda-step"><b>05</b><div><strong>디자인 패턴</strong><span>AST · Callable · Command</span></div></div>
+            <div class="agenda-step"><b>06</b><div><strong>협업과 품질</strong><span>Review · TDD · Actions</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Team 3 · Ctrl-C</p>
+          <h2>팀 역할과 구현 분담</h2>
+        </div>
+        <div class="stage team-even-grid">
+          <div class="team-even-card">
+            <strong>김명준<span class="team-lead-mark">팀장</span></strong>
+            <span>architecture · CI</span>
+          </div>
+          <div class="team-even-card">
+            <strong>권소영</strong>
+            <span>assembler · executor</span>
+          </div>
+          <div class="team-even-card">
+            <strong>김민준</strong>
+            <span>expression · shell</span>
+          </div>
+          <div class="team-even-card">
+            <strong>박진우</strong>
+            <span>tokenizer · array</span>
+          </div>
+          <div class="team-even-card">
+            <strong>이예진</strong>
+            <span>checker · optimizer</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="goal-slide">
+        <div class="slide-title">
+          <p class="eyebrow">Project Goal</p>
+          <h2><code>.ctrlc</code> 실행 목표</h2>
+        </div>
+        <div class="stage goal-compare">
+          <div class="goal-card">
+            <h3>입력</h3>
+            <ul>
+              <li><code>.ctrlc</code> source</li>
+              <li>prompt 한 줄 입력</li>
+              <li>debug 실행 대상</li>
+            </ul>
+          </div>
+          <div class="goal-bridge"><span>→</span></div>
+          <div class="goal-card result">
+            <h3>결과</h3>
+            <ul>
+              <li>Token / Expr / Stmt 구조화</li>
+              <li>Checker 사전 검증</li>
+              <li>Executor 실행 결과 생성</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Architecture</p>
+          <h2>Shell과 Pipeline 구조</h2>
+        </div>
+        <div class="stage architecture-flow">
+          <div class="shell-box">
+            <h3>Shell Modes</h3>
+            <div class="mode-row">
+              <div class="mode-card"><span class="small-index">01</span><div><strong>Prompt Mode</strong><span>한 줄 입력을 즉시 실행</span></div></div>
+              <div class="mode-card"><span class="small-index">02</span><div><strong>File Mode</strong><span><code>.ctrlc</code> 파일 전체 실행</span></div></div>
+              <div class="mode-card"><span class="small-index">03</span><div><strong>Debug Mode</strong><span>Stmt 단위로 실행 상태 확인</span></div></div>
+            </div>
+          </div>
+          <div class="pipeline-box">
+            <h3>Interpreter Pipeline</h3>
+            <div class="pipeline-strip">
+              <div class="pipeline-unit"><b>01</b><strong>Tokenizer</strong><span>문자열 분리</span></div>
+              <div class="pipeline-unit"><b>02</b><strong>Assembler</strong><span>Token → AST</span></div>
+              <div class="pipeline-unit"><b>03</b><strong>Checker</strong><span>정적 검증</span></div>
+              <div class="pipeline-unit"><b>04</b><strong>Executor</strong><span>결과 생성</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="stage part-splash">
+          <div class="part-number">01</div>
+          <div>
+            <p class="eyebrow">Feature Implementation</p>
+            <h2>기능 구현 설명</h2>
+            <p class="lead">입력 문자열이 Token, AST, 검증 단계를 지나 실제 실행 결과가 되기까지의 핵심 구현을 차례로 봅니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Basic Feature · Tokenizer</p>
+          <h2><span class="text-blue">Tokenizer</span>가 문자열을 의미있는 Token 단위로 분리합니다</h2>
+        </div>
+        <div class="stage tokenizer-stage exact">
+          <div class="tokenizer-copy">
+            <h3>Tokenizer</h3>
+            <p>소스 코드 문자열을 한 글자씩 읽으면서 예약어, 식별자, 연산자, 리터럴 단위의 token으로 분리합니다.</p>
+            <div class="tokenizer-points">
+              <div class="tokenizer-point"><b>01</b><div><strong>공백 스킵</strong><span>공백은 건너뛰고, 개행은 Token의 line 위치값을 증가합니다.</span></div></div>
+              <div class="tokenizer-point"><b>02</b><div><strong>예약어 · 식별자 구분</strong><span>예약어에 있는지, identifier로 정의 가능한 형태인지 등을 확인합니다.</span></div></div>
+              <div class="tokenizer-point"><b>03</b><div><strong>Token 저장</strong><span>TokenType과 실제 값(origin)을 담은 Token 리스트를 Assembler로 전달합니다.</span></div></div>
+            </div>
+          </div>
+          <div class="tokenizer-visual">
+            <div class="token-source exact-source">
+              <span>var</span><span class="token-space">␣</span><span>name</span><span class="token-space">␣</span><span>=</span><span class="token-space">␣</span><span class="source-string">"ctrlc"</span><span>;</span>
+            </div>
+            <div class="token-scan-note">↓ &nbsp;한 글자씩 확인하며, 타입에 따라 분기</div>
+            <div class="token-decisions">
+              <div class="token-decision"><code><span class="lead-char">v</span>ar</code><span>문자로 시작 → 예약어 테이블 조회 → 일치</span></div>
+              <div class="token-decision"><code><span class="lead-char">n</span>ame</code><span>문자로 시작 → 예약어 테이블 조회 → 없음</span></div>
+              <div class="token-decision"><code><span class="lead-char">=</span></code><span>기호로 시작 → 등록된 토큰값과 일치</span></div>
+              <div class="token-decision"><code><span class="lead-char">"</span>ctrlc"</code><span>"로 시작 → 닫는 "가 나올 때까지 읽어 하나로 묶음</span></div>
+              <div class="token-decision"><code><span class="lead-char">;</span></code><span>기호로 시작 → 등록된 토큰값과 일치</span></div>
+            </div>
+            <div class="token-save-note">↓ &nbsp;Token(type, origin)으로 저장</div>
+            <div class="token-result">
+              <div><strong>VAR</strong><span>var</span></div>
+              <div><strong>IDENTIFIER</strong><span>name</span></div>
+              <div><strong>EQUAL</strong><span>=</span></div>
+              <div><strong>STRING</strong><span>"ctrlc"</span></div>
+              <div><strong>SEMICOLON</strong><span>;</span></div>
+            </div>
+            <div class="token-summary">이 문장에서 나온 Token은 5개 · 전체 TokenType은 총 <strong>44개</strong> 정의되어 있습니다.</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Interpreter Core · Assembler</p>
+          <h2><span class="text-blue">Assembler</span>는 Token을 실행 가능한 AST로 조립합니다</h2>
+        </div>
+        <div class="stage assembler-stage">
+          <div class="code-window">
+            <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">assembler.ctrlc</span></div>
+            <pre><code><span class="syn-keyword">var</span> a <span class="syn-operator">=</span> <span class="syn-number">1</span> <span class="syn-operator">+</span> <span class="syn-number">2</span><span class="syn-punctuation">;</span></code></pre>
+          </div>
+          <div class="assembler-ast">
+            <div class="ast-tree-card">
+              <h3>생성된 AST</h3>
+              <div class="ast-tree-lines">VarStmt
+└── BinaryExpr(+)
+    ├── LiteralExpr(1)
+    └── LiteralExpr(2)</div>
+              <p class="note">Assembler는 실행하지 않고 AST만 생성합니다.</p>
+            </div>
+            <div>
+              <div class="node-kind-card"><h3>Expression</h3><p>값을 계산하는 node</p><span>Literal · Binary · Variable · Call · Get</span></div>
+              <div class="node-kind-card"><h3>Statement</h3><p>실행 흐름을 표현하는 node</p><span>Var · Print · Block · If · For · Func · Class · Import</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Interpreter Core · Environment</p>
+          <h2><span class="text-blue">Environment</span>는 식별자와 Scope Chain을 관리합니다</h2>
+        </div>
+        <div class="stage environment-stage">
+          <div class="environment-store">
+            <h3>Global Environment</h3>
+            <div class="environment-items">
+              <div><strong>변수</strong><span>x = 10</span></div>
+              <div><strong>Native Function</strong><span>print · Array</span></div>
+              <div><strong>User Function</strong><span>closure</span></div>
+              <div><strong>Class</strong><span>method table</span></div>
+              <div><strong>Instance</strong><span>field · method</span></div>
+              <div><strong>Import</strong><span>alias · member</span></div>
+            </div>
+          </div>
+          <div class="scope-chain-panel">
+            <h3>Function 호출 시 Scope Chain</h3>
+            <div class="scope-chain">
+              <div class="scope-box"><strong>Function Environment</strong><span>a = 2<br />b = 3<br />local variables</span></div>
+              <div class="scope-parent">parent →</div>
+              <div class="scope-box"><strong>Global Environment</strong><span>functions<br />classes<br />imports</span></div>
+            </div>
+            <p class="note">현재 Scope에 이름이 없으면 parent를 따라 Global까지 탐색합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Interpreter Core · Executor</p>
+          <h2><span class="text-blue">Executor</span>는 AST를 순회하며 실제 프로그램을 실행합니다</h2>
+        </div>
+        <div class="stage executor-layout-new">
+          <div class="executor-core-row">
+            <div class="executor-core-node"><strong>Checked AST</strong><span>Stmt · Expr tree</span></div>
+            <div class="executor-core-arrow">→</div>
+            <div class="executor-core-node primary"><strong>Executor</strong><span>node 순회 · Environment 갱신</span></div>
+            <div class="executor-core-arrow">→</div>
+            <div class="executor-core-node"><strong>실행 결과</strong><span>Output · Runtime Error</span></div>
+          </div>
+          <div class="executor-capabilities">
+            <div class="executor-capability"><strong>Expression</strong><span>하위 node부터 계산</span></div>
+            <div class="executor-capability"><strong>If / For</strong><span>분기 · 반복 실행</span></div>
+            <div class="executor-capability"><strong>Function</strong><span>Scope · parameter binding</span></div>
+            <div class="executor-capability"><strong>Class</strong><span>instance · This · Super</span></div>
+            <div class="executor-capability"><strong>Import</strong><span>ImportManager에 위임</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Core Feature · Function</p>
+          <h2>Function은 새 Environment에서 body를 실행합니다</h2>
+        </div>
+        <div class="stage feature-detail reverse">
+          <div class="code-window">
+            <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">function.ctrlc</span></div>
+            <pre><code><span class="syn-keyword">Func</span> <span class="syn-identifier">add</span>(a, b) {
+    <span class="syn-keyword">return</span> a <span class="syn-operator">+</span> b<span class="syn-punctuation">;</span>
+}
+
+<span class="syn-keyword">print</span> <span class="syn-identifier">add</span>(<span class="syn-number">2</span>, <span class="syn-number">3</span>)<span class="syn-punctuation">;</span></code></pre>
+          </div>
+          <div class="explain-panel">
+            <h3>호출 흐름</h3>
+            <p>선언 시 함수 객체를 저장하고, 호출 시 새 Environment에서 body를 실행합니다.</p>
+            <div class="structure-list">
+              <div class="structure-row"><span class="small-index">01</span><div><strong>선언</strong><span>FunctionStmt → UserFunction</span></div></div>
+              <div class="structure-row"><span class="small-index">02</span><div><strong>호출</strong><span>parameter와 argument binding</span></div></div>
+              <div class="structure-row"><span class="small-index">03</span><div><strong>반환</strong><span>return 값을 호출 지점으로 전달</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Core Feature · Class</p>
+          <h2>Class는 method table과 This binding으로 동작합니다</h2>
+        </div>
+        <div class="stage feature-detail">
+          <div class="explain-panel">
+            <h3>객체 실행 흐름</h3>
+            <p>class 생성과 method binding을 Callable 흐름으로 처리합니다.</p>
+            <div class="structure-list">
+              <div class="structure-row"><span class="small-index">01</span><div><strong>UserClass</strong><span>method table</span></div></div>
+              <div class="structure-row"><span class="small-index">02</span><div><strong>UserInstance</strong><span>field / method lookup</span></div></div>
+              <div class="structure-row"><span class="small-index">03</span><div><strong>This binding</strong><span>instance 연결</span></div></div>
+              <div class="structure-row"><span class="small-index">04</span><div><strong>Super lookup</strong><span>parent method 탐색</span></div></div>
+            </div>
+            <span class="anchor-chip">app/assembler/runtime.py · app/executor/executor.py</span>
+          </div>
+          <div class="code-window class-example">
+            <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">class.ctrlc</span></div>
+            <pre><code><span class="syn-keyword">Class</span> <span class="syn-identifier">Robot</span> {
+    <span class="syn-identifier">move</span>() {
+        <span class="syn-keyword">print</span> <span class="syn-string">"move"</span><span class="syn-punctuation">;</span>
+    }
+}
+
+<span class="syn-keyword">Class</span> <span class="syn-identifier">SpeedRobot</span> : <span class="syn-identifier">Robot</span> {
+    <span class="syn-identifier">move</span>() {
+        <span class="syn-keyword">Super</span>.<span class="syn-identifier">move</span>()<span class="syn-punctuation">;</span>
+        <span class="syn-keyword">print</span> <span class="syn-string">"speed"</span><span class="syn-punctuation">;</span>
+    }
+}
+
+<span class="syn-keyword">var</span> r = <span class="syn-identifier">SpeedRobot</span>()<span class="syn-punctuation">;</span>
+r.<span class="syn-identifier">move</span>()<span class="syn-punctuation">;</span></code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Core Feature · Array</p>
+          <h2><code>Array()</code>로 배열을 <span class="text-blue">생성</span>할 수 있습니다</h2>
+        </div>
+        <div class="stage array-stage-new">
+          <div class="array-copy">
+            <h3>생성과 접근</h3>
+            <p>Function과 Class가 쓰던 <span class="text-blue">Callable</span>을 그대로 이용해, 새 문법 없이 Array를 구현했습니다.</p>
+            <div class="array-points">
+              <div class="array-point"><b>01</b><div><strong>Array() 호출</strong><span>NativeFunction으로 등록된 Array가 Callable 규칙에 따라 실행됩니다</span></div></div>
+              <div class="array-point"><b>02</b><div><strong>크기 검사 후 생성</strong><span>size가 정수이고 0 이상인지 확인한 뒤 <code>[None] * size</code>로 초기화합니다</span></div></div>
+              <div class="array-point"><b>03</b><div><strong>배열 사용</strong><span><code>a[i]</code> 형태로 사용하며, 위치에 따라 읽기 또는 쓰기로 구분합니다</span></div></div>
+              <div class="array-point"><b>04</b><div><strong>실행 중 검증</strong><span>index가 정수인지, 0 이상 길이 미만인지 Executor가 확인합니다</span></div></div>
+            </div>
+            <span class="anchor-chip">app/assembler/assembler.py · app/executor/executor.py</span>
+          </div>
+          <div class="code-window">
+            <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">array.ctrlc</span></div>
+            <pre><code><span class="syn-keyword">var</span> arr <span class="syn-operator">=</span> <span class="syn-identifier">Array</span>(<span class="syn-number">3</span>)<span class="syn-punctuation">;</span>
+arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span class="syn-string">"first"</span><span class="syn-punctuation">;</span>
+
+<span class="syn-keyword">print</span> arr[<span class="syn-number">0</span>]<span class="syn-punctuation">;</span></code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Core Feature · Import</p>
+          <h2>실행 중 <span class="text-blue">Import</span>를 만나면 다시 Pipeline을 수행합니다</h2>
+        </div>
+        <div class="stage import-layout-new">
+          <div class="import-main-message">
+            <strong>왜 ImportStmt를 별도로 두었나?</strong>
+            <p>Executor가 import를 감지하더라도, 대상 파일은 다시 Tokenize · Assemble · Check를 거친 뒤 module namespace로 등록되어야 합니다. Executor 내부에 모두 구현하면 Executor의 책임이 지나치게 커지게 됩니다.</p>
+          </div>
+          <div class="import-role-row">
+            <div class="import-role-card"><strong>Executor</strong><span>ImportStmt 실행 · module environment 연결</span></div>
+            <div class="import-role-card"><strong>ImportManager</strong><span>경로 해석 · cache · 순환 추적</span></div>
+          </div>
+          <div class="import-flow-row">
+            <div class="import-flow-step"><strong>ImportStmt</strong><span>Executor가 감지</span></div>
+            <div class="import-flow-step"><strong>File Read</strong><span><code>.ctrlc</code> source</span></div>
+            <div class="import-flow-step"><strong>Tokenizer · Assembler</strong><span>source → AST</span></div>
+            <div class="import-flow-step"><strong>Checker</strong><span>import 대상 검증</span></div>
+            <div class="import-flow-step"><strong>Module Env</strong><span>alias namespace 등록</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="embed-slide">
+        <iframe class="embed-frame" src="checker_modules.html" title="Checker Modules Architecture"></iframe>
+      </section>
+
+      <section class="embed-slide">
+        <iframe class="embed-frame" src="checker_clean_code.html" title="Checker Architecture and Clean Code"></iframe>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Shell Feature</p>
+          <h2>Shell은 실행 모드를 고르고 Pipeline으로 위임합니다</h2>
+        </div>
+        <div class="stage shell-detail">
+          <div class="shell-box">
+            <h3>실행 모드</h3>
+            <div class="mode-row">
+              <div class="mode-card"><span class="small-index">01</span><div><strong>Prompt Mode</strong><span>한 줄 입력을 즉시 실행</span></div></div>
+              <div class="mode-card"><span class="small-index">02</span><div><strong>File Mode</strong><span><code>.ctrlc</code> 파일 전체 실행</span></div></div>
+              <div class="mode-card"><span class="small-index">03</span><div><strong>Debug Mode</strong><span>breakpoint, step, watch로 상태 확인</span></div></div>
+            </div>
+          </div>
+          <div class="command-preview">
+            <h3>Shell 책임</h3>
+            <div class="command-flow">
+              <div>입력 분류 · command / code 판단</div>
+              <div>상태 관리 · history / debug context</div>
+              <div>Factory → Command.execute(shell)</div>
+              <div>Runner → 공통 Interpreter Pipeline</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Custom Language</p>
+          <h2>Custom Language Features</h2>
+        </div>
+        <div class="stage custom-board">
+          <div class="custom-main">
+            <h3>확장 방향</h3>
+            <p>팀 전용 문법도 같은 pipeline에서 처리되도록 확장했습니다.</p>
+          </div>
+          <div class="custom-cards">
+            <article class="custom-card"><strong>한글 Alias 적용</strong><span>Token에 별칭 적용</span></article>
+            <article class="custom-card"><strong><code>ctrl_c()</code></strong><span>팀 소개 native function</span></article>
+            <article class="custom-card"><strong><code>♡</code> 연산</strong><span>이름 궁합 점수 계산</span></article>
+            <article class="custom-card"><strong><code>.ctrlc</code></strong><span>파일 확장자</span></article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Custom Language · 한글 Alias</p>
+          <h2>Alias 예시</h2>
+        </div>
+        <div class="stage alias-compare">
+          <div class="alias-compare-col">
+            <p class="alias-compare-label">Alias 적용 전</p>
+            <div class="code-window compact">
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">battle_game.ctrlc</span></div>
+              <pre><code><span class="syn-keyword">for</span> (
+  <span class="syn-keyword">var</span> round <span class="syn-operator">=</span> <span class="syn-number">1</span>;
+  hero.isAlive() <span class="syn-keyword">and</span> slime.isAlive();
+  round <span class="syn-operator">=</span> round <span class="syn-operator">+</span> <span class="syn-number">1</span>
+) {
+  <span class="syn-keyword">if</span> (round <span class="syn-operator">==</span> <span class="syn-number">2</span>) {
+    hero.ultimate(slime)<span class="syn-punctuation">;</span>
+  } <span class="syn-keyword">else</span> {
+    hero.attack(slime)<span class="syn-punctuation">;</span>
+  }
+  <span class="syn-keyword">if</span> (slime.isAlive()) {
+    slime.attack(hero)<span class="syn-punctuation">;</span>
+  }
+}</code></pre>
+            </div>
+          </div>
+          <div class="alias-compare-col">
+            <p class="alias-compare-label">Alias 적용 후</p>
+            <div class="code-window compact">
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">battle_game.ctrlc</span></div>
+              <pre><code><span class="syn-keyword">또또</span> (
+  <span class="syn-keyword">값</span> 라운드 <span class="syn-operator">=</span> <span class="syn-number">1</span>;
+  히어로.생존여부() <span class="syn-keyword">이랑</span> 슬라임.생존여부();
+  라운드 <span class="syn-operator">=</span> 라운드 <span class="syn-operator">+</span> <span class="syn-number">1</span>
+) {
+  <span class="syn-keyword">만약</span> (라운드 <span class="syn-keyword">같다</span> <span class="syn-number">2</span>) {
+    히어로.필살기(슬라임)<span class="syn-punctuation">;</span>
+  } <span class="syn-keyword">아니면</span> {
+    히어로.공격(슬라임)<span class="syn-punctuation">;</span>
+  }
+  <span class="syn-keyword">만약</span> (슬라임.생존여부()) {
+    슬라임.공격(히어로)<span class="syn-punctuation">;</span>
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="stage part-splash">
+          <div class="part-number">02</div>
+          <div>
+            <p class="eyebrow">Design Patterns</p>
+            <h2>디자인 패턴</h2>
+            <p class="lead">복잡해지는 구현 지점을 패턴으로 어떻게 정리했는지 봅니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Design Patterns</p>
+          <h2>디자인 패턴 적용 사례</h2>
+        </div>
+        <div class="stage pattern-overview three">
+          <div class="pattern-overview-card">
+            <b>Composite</b>
+            <strong>AST node 구성</strong>
+            <div class="pattern-meta">
+              <span>구현: Stmt · Expr tree</span>
+              <span>효과: Checker와 Executor가 같은 구조 순회</span>
+            </div>
+          </div>
+          <div class="pattern-overview-card">
+            <b>Adapter</b>
+            <strong>Callable 호출 계약</strong>
+            <div class="pattern-meta">
+              <span>구현: Native · Function · Class call 통합</span>
+              <span>효과: Executor는 call()만 호출</span>
+            </div>
+          </div>
+          <div class="pattern-overview-card">
+            <b>Command</b>
+            <strong>Shell 명령 실행</strong>
+            <div class="pattern-meta">
+              <span>구현: Exit · Recommend · RunCode 분리</span>
+              <span>효과: PromptShell의 분기 축소</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Pattern · Composite</p>
+          <h2>Composite는 중첩 문법을 하나의 AST tree로 표현합니다</h2>
+        </div>
+        <div class="stage pattern-detail-stage">
+          <div class="pattern-case">
+            <div class="pattern-case-card">
+              <b>문제</b>
+              <strong>for, if, block이 서로 중첩됩니다</strong>
+              <p>문법마다 별도 실행 구조를 만들면 검증과 실행 코드가 쉽게 갈라집니다.</p>
+            </div>
+            <div class="pattern-case-card primary">
+              <b>패턴 적용</b>
+              <strong>Stmt와 Expr를 tree node로 조립</strong>
+              <ul>
+                <li>ForStmt 안에 VarStmt</li>
+                <li>조건은 BinaryExpr</li>
+                <li>본문은 BlockStmt</li>
+              </ul>
+            </div>
+            <div class="pattern-case-card">
+              <b>결과</b>
+              <strong>Checker와 Executor가 같은 AST를 순회</strong>
+              <p>문법이 추가되어도 node 단위로 확장하고, pipeline 전체 구조는 유지됩니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Pattern · Adapter</p>
+          <h2>Callable Adapter는 서로 다른 호출 대상을 같은 방식으로 실행합니다</h2>
+        </div>
+        <div class="stage pattern-detail-stage">
+          <div class="pattern-case">
+            <div class="pattern-case-card">
+              <b>문제</b>
+              <strong>함수, Native, Class 생성은 내부 동작이 다릅니다</strong>
+              <p>Executor가 대상별 세부 구현을 모두 알면 호출 분기가 계속 늘어납니다.</p>
+            </div>
+            <div class="pattern-case-card primary">
+              <b>패턴 적용</b>
+              <strong>모두 Callable 계약으로 맞춤</strong>
+              <ul>
+                <li>arity()로 인자 개수 확인</li>
+                <li>call(executor, args)로 실행</li>
+                <li>UserClass 생성도 같은 call</li>
+              </ul>
+            </div>
+            <div class="pattern-case-card">
+              <b>결과</b>
+              <strong>Executor는 호출 규칙 하나만 유지</strong>
+              <p>새 호출 대상을 추가해도 Executor의 핵심 흐름을 크게 바꾸지 않습니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Pattern · Command</p>
+          <h2>Command Pattern은 Shell 입력 분기를 명령 객체로 분리합니다</h2>
+        </div>
+        <div class="stage pattern-detail-stage">
+          <div class="pattern-case">
+            <div class="pattern-case-card">
+              <b>문제</b>
+              <strong>PromptShell이 입력 종류와 실행을 함께 처리</strong>
+              <p>exit, ctrlc, ctrlv, explain 같은 명령이 늘수록 if 분기와 테스트 범위가 커졌습니다.</p>
+            </div>
+            <div class="pattern-case-card primary">
+              <b>패턴 적용</b>
+              <strong>Factory가 Command를 고르고 Command가 실행</strong>
+              <ul>
+                <li>ShellCommandFactory.create()</li>
+                <li>should_save_history()</li>
+                <li>execute(shell)</li>
+              </ul>
+            </div>
+            <div class="pattern-case-card">
+              <b>결과</b>
+              <strong>Shell은 선택과 위임에 집중</strong>
+              <p>새 명령은 Command 클래스로 추가하고, history 정책도 명령별로 캡슐화합니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="stage part-splash">
+          <div class="part-number">03</div>
+          <div>
+            <p class="eyebrow">Collaboration</p>
+            <h2>협업과 품질 기준</h2>
+            <p class="lead">리뷰, 자동화, 보호 규칙으로 main 반영 기준을 맞췄습니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">BP Case 1 · Code Review</p>
+          <h2>Code Review 사례 – <span class="text-blue">Tokenizer 리팩토링 실패</span></h2>
+        </div>
+        <div class="stage review-fail-layout">
+          <div class="review-fail-images">
+            <img src="assets/code_review_image1.png" alt="PR #30 리뷰: j0shuajun의 approve 코멘트" />
+            <img src="assets/code_review_image1_2.png" alt="PR #30 리뷰: re-nos의 approve 코멘트" />
+          </div>
+          <div class="review-fail-text">
+            <strong>Code Review 후 Main 미반영</strong>
+            <p>TDD 기반 개발 후, TokenType에 따른 분기가 늘어나 자동 분류하도록 리팩토링 진행하였으나, 분류를 위한 암묵적인 규칙이 생기며 유지보수성이 떨어진다는 리뷰를 받아 close (Merge 불가)</p>
+          </div>
+          <div class="review-fail-image-bottom">
+            <img src="assets/code_review_image2.png" alt="PR #30 작성자(Jinops)의 close 사유 코멘트" />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">BP Case 1 · Code Review</p>
+          <h2>Code Review 사례 – <span class="text-blue">Tokenizer 리팩토링 재시도</span></h2>
+        </div>
+        <div class="stage shot-composition">
+          <div class="evidence-slot has-images">
+            <img src="assets/code_review_image3.png" alt="PR #40 리뷰: j0shuajun, soyeongk의 approve 및 코멘트" />
+          </div>
+          <div class="point-stack">
+            <div class="review-fail-text"><strong>최소 변경점으로 Main 반영</strong><p>Token 기능개발 고도화 후, 이전 PR의 자동분류는 over engineering으로 판단하여, 필요한 개발 범위에 맞게 리팩토링 후 PR 및 merge 완료</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">BP Case 2 · TDD</p>
+          <h2>TDD와 회귀 테스트 사례</h2>
+        </div>
+        <div class="stage shot-composition reverse">
+          <div class="point-stack">
+            <div class="point-card"><strong>Red-Green 반복</strong><p>PR #15·#18: [test] 커밋 다음 [feat] 커밋이 기능 단위로 이어짐</p></div>
+            <div class="point-card"><strong>세분화된 test-first</strong><p>토큰 하나 단위로 커밋을 쪼개 커밋 로그만으로 검증 대상 파악</p></div>
+            <div class="point-card"><strong>리뷰 효율</strong><p>17~19개 세분 커밋에도 가독성 좋다는 평가로 이어짐</p></div>
+          </div>
+          <div class="evidence-slot">
+            <img src="assets/tdd-commit-history.png" alt="PR #15 test/feat 커밋 히스토리" />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">BP Case 3 · Refactoring</p>
+          <h2>Before/After로 보는 Shell 구조 개선</h2>
+        </div>
+        <div class="stage refactor-compare">
+          <div class="refactor-card before">
+            <h3>Before</h3>
+            <div class="code-window">
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">prompt_shell.py</span></div>
+              <pre><code><span class="syn-keyword">if</span> source <span class="syn-keyword">in</span> (<span class="syn-string">"exit"</span>, <span class="syn-string">"quit"</span>):
+    self.is_running = <span class="syn-keyword">False</span>
+    <span class="syn-keyword">return</span> [<span class="syn-string">"Bye!"</span>]
+
+<span class="syn-keyword">elif</span> source == <span class="syn-string">"ctrlc"</span>:
+    <span class="syn-keyword">return</span> self.recommend_command()
+
+<span class="syn-keyword">elif</span> source == <span class="syn-string">"ctrlv"</span>:
+    <span class="syn-keyword">return</span> self.run_recommended_command()</code></pre>
+            </div>
+            <p>문제: PromptShell이 명령 선택, 실행, history 정책까지 직접 처리해 분기가 커지고 명령별 테스트 범위가 넓어졌습니다.</p>
+          </div>
+          <div class="refactor-card after">
+            <h3>After</h3>
+            <div class="code-window">
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">shell_command.py</span></div>
+              <pre><code>command = <span class="syn-identifier">ShellCommandFactory</span>.create(source)
+
+<span class="syn-keyword">if</span> command.should_save_history():
+    shell.save_history(command)
+
+outputs = command.execute(shell)
+<span class="syn-keyword">return</span> outputs</code></pre>
+            </div>
+            <p>효과: PromptShell은 command 선택과 실행 위임만 담당하고, 새 명령은 독립 Command 단위로 추가할 수 있게 되었습니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">GitHub Collaboration</p>
+          <h2>PR Template과 Makefile로 협업 절차를 표준화했습니다</h2>
+        </div>
+        <div class="stage collab-standard">
+          <div class="template-shot">
+            <img src="assets/pr-template.png" alt="PR Template: 변경 요약, 참고 사항, 관련 링크, Self-Review Checklist" />
+          </div>
+          <div class="standard-panel">
+            <h3>Makefile 명령 표준화</h3>
+            <div class="make-table">
+              <div class="make-row"><code>make install</code><span>개발 의존성 설치 기준 통일</span></div>
+              <div class="make-row"><code>make lint</code><span>black · isort · ruff 실행 순서 통일</span></div>
+              <div class="make-row"><code>make test</code><span>pytest 실행 방법을 팀 공통 명령으로 고정</span></div>
+              <div class="make-row"><code>make run</code><span>file mode 실행 방식을 한 줄 명령으로 공유</span></div>
+              <div class="make-row"><code>make debug</code><span>debug mode 진입 방법을 동일하게 사용</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">GitHub Collaboration</p>
+          <h2>GitHub Actions로 Merge 전 품질 기준을 자동 확인했습니다</h2>
+        </div>
+        <div class="stage actions-layout">
+          <div class="actions-shot">
+            <img src="assets/github-actions-checks.png" alt="GitHub Actions checks passed: codecov, gist acceptance, lint, unit tests" />
+          </div>
+          <div class="actions-points">
+            <div class="actions-point"><strong>Required Checks</strong><span>Lint, Unit Tests, Gist Acceptance를 PR 필수 통과 조건으로 둬 main 반영 전 기준을 맞췄습니다.</span></div>
+            <div class="actions-point"><strong>Coverage Signal</strong><span>Codecov patch 결과를 함께 확인해 변경 범위가 테스트 관점에서 안전한지 봅니다.</span></div>
+            <div class="actions-point"><strong>Review 전에 자동 검증</strong><span>사람 리뷰는 설계와 의도에 집중하고, 반복 검사는 Actions가 먼저 확인합니다.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Team 3 · Ctrl-C</p>
+          <h2>우리의 한 줄 소감</h2>
+        </div>
+        <div class="stage reflection-grid">
+          <div class="reflection-card"><strong>김명준</strong><span>직접 개발한 내용이 아닌 코드를 리뷰하는 것이 꽤나 노력이 필요하다는 것을 몸소 체감했어요. 디자인 패턴을 생각하면서 구현하는 것도 어려워 보이더라구요. 그래도 코드 리뷰와 평소 개발 습관이 얼마나 중요한 지 다시 생각해보는 좋은 계기가 되었습니다. 우리 팀원분들 고생하셨고 감사합니다!</span></div>
+          <div class="reflection-card"><strong>권소영</strong><span>개발하랴 리뷰하랴 바쁜 일정이었지만 모두들 한 마음 한 뜻으로 진행했던 터라 큰 이슈 없이 잘 마무리된 것 같습니다. 모두 고생 많으셨어요!!</span></div>
+          <div class="reflection-card"><strong>김민준</strong><span>여러명이서 개발을 한 경험이 거의 없었는데 이번 기회에 함께 개발하고 리뷰 하면서 많이 배울 수 있었습니다. 팀원분들 모두 고생 많으셨고 감사드립니다.</span></div>
+          <div class="reflection-card"><strong>박진우</strong><span>생각했던 것 보다 더 유익한 Code Review Agent 과정이었습니다. AI 시대에 맞게 나 자신도 발빠르게 변화해야 하는데, 이번 과정을 통해 그 흐름에 잘 따라갈 수 있었습니다. 그리고 평소에는 뵈기 힘든 타 부서의 동료분들과 협업하면서 많이 배우고 생각이 넓어질 수 있었습니다. 고생하셨습니다!</span></div>
+          <div class="reflection-card"><strong>이예진</strong><span>unit test를 계속 작성하고 관리하며 개발해 나가는 과정이 처음엔 번거로웠지만, 여러 사람과 협업하며 프로젝트를 진행할 때 기존 코드의 유효성을 위해 꼭 필요한 과정임을 알게 되었습니다. 리뷰를 주고 받는 과정에서 제가 생각지 못했던 여러 설계 관점을 배울 수 있었습니다. 모두 고생 많으셨습니다~</span></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="progress" aria-live="polite">1 / 32</div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll("section"));
+      const progress = document.querySelector(".progress");
+
+      function currentSlideIndex() {
+        const middle = window.scrollY + window.innerHeight / 2;
+        let index = 0;
+        slides.forEach((slide, i) => {
+          if (slide.offsetTop <= middle) {
+            index = i;
+          }
+        });
+        return index;
+      }
+
+      function updateProgress() {
+        progress.textContent = `${currentSlideIndex() + 1} / ${slides.length}`;
+      }
+
+      function go(delta) {
+        const index = Math.min(
+          Math.max(currentSlideIndex() + delta, 0),
+          slides.length - 1,
+        );
+        slides[index].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener("keydown", (event) => {
+        if (["ArrowDown", "ArrowRight", "PageDown", " "].includes(event.key)) {
+          event.preventDefault();
+          go(1);
+        }
+        if (["ArrowUp", "ArrowLeft", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          go(-1);
+        }
+        if (event.key === "Home") {
+          event.preventDefault();
+          slides[0].scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        if (event.key === "End") {
+          event.preventDefault();
+          slides[slides.length - 1].scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      });
+      updateProgress();
+    </script>
+  </body>
+</html>

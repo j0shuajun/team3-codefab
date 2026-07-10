@@ -1,0 +1,15 @@
+Class Animal {
+  speak() {
+    print "sound";
+  }
+}
+
+Class Dog: Animal {
+  speak() {
+    print "bark";
+  }
+}
+
+var dog = Dog();
+dog.speak();
+print dog instanceof Dog;

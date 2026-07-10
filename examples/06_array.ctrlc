@@ -1,0 +1,6 @@
+var arr = Array(3);
+arr[0] = "first";
+arr[1] = "second";
+
+print arr[0];
+print arr[1];

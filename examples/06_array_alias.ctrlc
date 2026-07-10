@@ -1,0 +1,6 @@
+값 arr = Array(3);
+arr[0] = "first";
+arr[1] = "second";
+
+보여줘 arr[0];
+보여줘 arr[1];

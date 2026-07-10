@@ -1,0 +1,4 @@
+import "09_import_lib.ctrlc" alias lib;
+
+print lib.pi;
+print lib.add(1, 2);

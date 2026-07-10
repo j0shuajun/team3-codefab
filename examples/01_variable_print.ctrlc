@@ -1,0 +1,8 @@
+var name = "CodeFab";
+print name;
+
+name = "Ctrl-C";
+print name;
+
+print 1 + 2;
+print true;

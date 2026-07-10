@@ -1,0 +1,7 @@
+값 total = 0;
+
+반복 (값 i = 0; i 작다 3; i = i + 1) {
+  total = total + i;
+}
+
+보여줘 total;

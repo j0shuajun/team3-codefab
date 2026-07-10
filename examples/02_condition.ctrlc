@@ -1,0 +1,7 @@
+var score = 90;
+
+if (score >= 80) {
+  print "pass";
+} else {
+  print "retry";
+}

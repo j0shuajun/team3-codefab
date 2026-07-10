@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checker Architecture & Clean Code (Single Screen)</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --bg-canvas: #eef2f9;
+            --bg-card: #ffffff;
+            --bg-left-panel: #f8fafc;
+            --primary-blue: #2563eb;
+            --accent-blue: #3b82f6;
+            --primary-light: #eff6ff;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --border-light: #e2e8f0;
+            --code-bg: #f1f5f9;
+            --state-bg: #eff6ff;
+            --state-border: #bfdbfe;
+            --success: #10b981;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --indigo: #4f46e5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            margin: 0;
+            padding: 1.5vh 2vw; /* 전체 여백 대폭 축소 */
+            height: 100vh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; 
+        }
+
+        .slide-container {
+            background-color: var(--bg-card);
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            padding: 3vh 3vw; /* 슬라이드 내부 여백 축소 */
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Section */
+        .slide-tag {
+            flex: 0 0 auto;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+        }
+        
+        .slide-title {
+            flex: 0 0 auto;
+            font-size: 28px; /* 폰트 사이즈 약간 축소 */
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .slide-title span { color: var(--primary-blue); }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 2vw;
+            margin-top: 1vh; /* 여백 축소 */
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            flex: 0 0 auto;
+            width: 360px; /* 좌측 패널 너비 약간 축소 */
+            background-color: var(--bg-left-panel);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-light);
+            overflow-y: hidden;
+        }
+        .left-panel h2 {
+            font-size: 22px;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        .left-panel p.desc {
+            font-size: 13px;
+            color: var(--text-gray);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* 카드 간격 축소 */
+            flex: 1;
+        }
+        .step-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            border-left: 4px solid transparent;
+            transition: 0.2s;
+        }
+        .step-card:hover { border-left-color: var(--primary-blue); transform: translateX(4px); }
+        .step-num {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-top: 2px;
+        }
+        .step-text h4 {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .step-text p {
+            font-size: 12px;
+            color: var(--text-gray);
+            line-height: 1.4;
+        }
+        .file-tag {
+            margin-top: auto;
+            padding-top: 16px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--primary-blue);
+        }
+
+        /* Right Panel */
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            gap: 2vw;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Visualization Sections */
+        .viz-section {
+            flex: 1;
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 2.5vh 2vw; /* 내부 상하 패딩 축소 */
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* 잘림 방지를 위해 추가 */
+        }
+        
+        .viz-section.di-section {
+            background-color: #f8fafc;
+        }
+
+        .viz-section.clean-section {
+            background-color: var(--primary-light);
+            border-color: var(--state-border);
+        }
+
+        .viz-header {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5vh;
+            padding-bottom: 1vh;
+            border-bottom: 2px dashed var(--border-light);
+        }
+        .clean-section .viz-header { border-bottom-color: #bfdbfe; }
+        
+        .viz-header h3 {
+            font-size: 18px;
+            color: var(--text-dark);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .viz-badge {
+            background: var(--primary-blue);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* DI Diagram Styles */
+        .di-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* 수직 중앙 정렬로 균형 유지 */
+            gap: 2vh; /* 간격 축소 */
+            padding: 10px 0;
+        }
+
+        .di-node {
+            background: #ffffff;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            padding: 14px 24px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .di-node.main {
+            background: var(--text-dark);
+            border-color: var(--text-dark);
+            color: #ffffff;
+        }
+
+        .di-node.target {
+            background: var(--purple);
+            border-color: var(--purple);
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.2);
+        }
+
+        .di-node h4 { font-size: 16px; font-weight: 800; margin-bottom: 2px; }
+        .di-node p { font-size: 11px; opacity: 0.8; font-weight: 500; }
+
+        .di-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .di-state {
+            background: var(--state-bg);
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: center;
+            flex: 1;
+            max-width: 130px;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+        }
+
+        .arrow-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-gray);
+            font-size: 20px;
+            line-height: 1;
+        }
+        .arrow-flow span {
+            font-size: 11px;
+            font-weight: 700;
+            background: #e2e8f0;
+            color: var(--text-dark);
+            padding: 4px 10px;
+            border-radius: 10px;
+            margin: 4px 0; /* 위아래 마진 축소 */
+        }
+
+        /* Clean Code Cards */
+        .clean-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly; /* 여백 균등 분배로 잘림 방지 */
+            gap: 1.5vh;
+        }
+
+        .clean-card {
+            background: #ffffff;
+            border-left: 4px solid var(--primary-blue);
+            padding: 16px 20px; /* 패딩 축소 */
+            border-radius: 0 10px 10px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .clean-card.purple { border-left-color: var(--purple); }
+        .clean-card.green { border-left-color: var(--success); }
+
+        .clean-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .clean-badge {
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 11px;
+            background: #f1f5f9;
+            color: var(--text-gray);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .clean-card h4 {
+            font-size: 15px;
+            color: var(--text-dark);
+            font-weight: 800;
+            margin: 0;
+        }
+        .clean-card p {
+            font-size: 13px;
+            color: var(--text-gray);
+            line-height: 1.5;
+            margin: 0;
+        }
+        .clean-card code {
+            background: #f1f5f9;
+            color: var(--danger);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+        }
+
+        @media print {
+            *,
+            *::before,
+            *::after {
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="slide-container">
+        <!-- Header -->
+        <div class="slide-tag">ARCHITECTURE & DESIGN</div>
+        <h1 class="slide-title">유연한 <span>의존성 주입(DI)</span>과 결합도를 낮춘 <span>클린 아키텍처</span></h1>
+
+        <div class="content-wrapper">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <h2>Design Philosophy</h2>
+                <p class="desc">
+                    Checker 모듈은 단일 책임 원칙(SRP)을 준수하며, 안전한 검증과 유연한 기능 확장을 위해 객체 간의 결합도를 획기적으로 낮추었습니다.
+                </p>
+
+                <div class="step-list">
+                    <div class="step-card">
+                        <div class="step-num">01</div>
+                        <div class="step-text">
+                            <h4>의존성 주입 (DI)</h4>
+                            <p>내부에서 상태를 직접 생성하지 않고 외부에서 1회 생성 후 연쇄 주입하여, 전역 상태 오염을 방지합니다.</p>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">02</div>
+                        <div class="step-text">
+                            <h4>단일 책임 원칙 (SRP)</h4>
+                            <p>상태 저장(ScopeStack), 에러 출력(ErrorReporter), 규칙 판단(Resolver)을 엄격하게 분리하여 관리합니다.</p>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">03</div>
+                        <div class="step-text">
+                            <h4>테스트 용이성 확보</h4>
+                            <p>관심사가 분리된 구조 덕분에 Test Double(Mock) 객체를 손쉽게 교체 주입하여 독립적인 TDD 환경을 구축합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Panel - DI & Clean Code Side-by-Side -->
+            <div class="right-panel">
+                
+                <!-- DI Section -->
+                <div class="viz-section di-section">
+                    <div class="viz-header">
+                        <h3><span class="viz-badge" style="background:var(--indigo)">DI</span> 의존성 주입 아키텍처 흐름</h3>
+                    </div>
+                    
+                    <div class="di-container">
+                        <!-- Top Node -->
+                        <div class="di-node main">
+                            <h4>Checker</h4>
+                            <p>Main Orchestrator</p>
+                        </div>
+
+                        <div class="arrow-flow">
+                            ↓
+                            <span>상태 객체 1회 초기화 및 생성</span>
+                            ↓
+                        </div>
+
+                        <!-- States Row -->
+                        <div class="di-row">
+                            <div class="di-state">ScopeStack</div>
+                            <div class="di-state">ErrorReporter</div>
+                            <div class="di-state">ClassContext</div>
+                        </div>
+
+                        <div class="arrow-flow">
+                            ↓
+                            <span>생성자 파라미터로 주입 (Inject)</span>
+                            ↓
+                        </div>
+
+                        <!-- Target Node -->
+                        <div class="di-node target">
+                            <h4>Resolver</h4>
+                            <p>Rule Engine & Validator</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clean Code Section -->
+                <div class="viz-section clean-section">
+                    <div class="viz-header">
+                        <h3><span class="viz-badge" style="background:var(--purple)">CLEAN</span> 클린 코드 및 설계 원칙</h3>
+                    </div>
+                    
+                    <div class="clean-container">
+                        <!-- SRP Card -->
+                        <div class="clean-card">
+                            <div class="clean-header">
+                                <span class="clean-badge">SRP</span>
+                                <h4>상태와 판단 로직의 완벽한 분리</h4>
+                            </div>
+                            <p><code>ScopeStack</code>은 순수 메타데이터 관리(저장/복원)만 수행하고, <code>Resolver</code>는 바인딩 조건 체크 등 비즈니스 룰만 처리하도록 관심사를 철저히 분리했습니다.</p>
+                        </div>
+
+                        <!-- OCP Card -->
+                        <div class="clean-card purple">
+                            <div class="clean-header">
+                                <span class="clean-badge">OCP</span>
+                                <h4>Dispatch Table 기반 매핑 적용</h4>
+                            </div>
+                            <p>노드 검사 시 길어지는 <code>if/elif</code> 사슬을 배제하고, <code>type(node) -> handler</code> 딕셔너리를 채택해 신규 문법 추가 시 로직 수정 없이 테이블 등록만으로 확장 가능합니다.</p>
+                        </div>
+
+                        <!-- Testability Card -->
+                        <div class="clean-card green">
+                            <div class="clean-header">
+                                <span class="clean-badge">Testability</span>
+                                <h4>독립적인 단위 테스트(TDD) 보장</h4>
+                            </div>
+                            <p>내부에서 인스턴스를 직접 만들지 않으므로, 테스트 환경에서 <code>ErrorReporter</code> 등을 Dummy/Mock 객체로 쉽게 교체하여 순수 로직만 고립시켜 검증할 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

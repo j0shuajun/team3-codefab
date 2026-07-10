@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checker Modules Architecture (Single Screen)</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --bg-canvas: #eef2f9;
+            --bg-card: #ffffff;
+            --primary-blue: #2563eb;
+            --primary-light: #eff6ff;
+            --text-title: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            
+            /* Module Colors */
+            --mod-checker: #3b82f6;
+            --mod-resolver: #8b5cf6;
+            --mod-scope: #10b981;
+            --mod-error: #ef4444;
+            --mod-constant: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            margin: 0;
+            padding: 3vh 3vw;
+            height: 100vh; /* No Scroll */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; 
+        }
+
+        .slide-container {
+            background-color: var(--bg-card);
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Section */
+        .slide-tag {
+            flex: 0 0 auto;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .slide-title {
+            flex: 0 0 auto;
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--text-title);
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .overview-box {
+            flex: 0 0 auto;
+            background-color: var(--primary-light);
+            border-left: 4px solid var(--primary-blue);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .overview-box p {
+            font-size: 14px;
+            color: var(--text-body);
+            line-height: 1.5;
+        }
+        .overview-box strong {
+            color: var(--primary-blue);
+        }
+
+        /* Architecture Diagram Area */
+        .diagram-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .arch-grid {
+            display: grid;
+            grid-template-columns: 310px 310px 310px;
+            grid-template-rows: auto auto;
+            column-gap: 80px;
+            row-gap: 60px;
+        }
+
+        .item-cf { grid-area: 1 / 1 / 2 / 2; }
+        .item-chk { grid-area: 1 / 2 / 2 / 3; }
+        .item-er { grid-area: 2 / 1 / 3 / 2; }
+        .item-res { grid-area: 2 / 2 / 3 / 3; }
+        .item-ss { grid-area: 2 / 3 / 3 / 4; }
+
+        /* Module Card Styles */
+        .module-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mod-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .mod-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .mod-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-title);
+        }
+        
+        .mod-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .mod-desc {
+            font-size: 13px;
+            color: var(--text-body);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .mod-feature {
+            margin-top: 12px;
+            font-family: monospace;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Specific Module Accents */
+        .item-cf .mod-icon { background-color: var(--mod-constant); }
+        .item-cf { border-top: 4px solid var(--mod-constant); }
+
+        .item-chk .mod-icon { background-color: var(--mod-checker); border-radius: 50%; }
+        .item-chk { border-top: 4px solid var(--mod-checker); }
+
+        .item-res .mod-icon { background-color: var(--mod-resolver); }
+        .item-res { border-top: 4px solid var(--mod-resolver); }
+
+        .item-ss .mod-icon { background-color: var(--mod-scope); }
+        .item-ss { border-top: 4px solid var(--mod-scope); }
+
+        .item-er .mod-icon { background-color: var(--mod-error); }
+        .item-er { border-top: 4px solid var(--mod-error); }
+
+        /* Arrow Connections */
+        .arrow-right, .arrow-left, .arrow-down {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cbd5e1;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .arrow-right {
+            top: 50%;
+            right: -80px;
+            width: 80px;
+            transform: translateY(-50%);
+            flex-direction: column;
+        }
+
+        .arrow-left {
+            top: 50%;
+            left: -80px;
+            width: 80px;
+            transform: translateY(-50%);
+            flex-direction: column;
+        }
+
+        .arrow-down {
+            bottom: -60px;
+            left: 50%;
+            height: 60px;
+            transform: translateX(-50%);
+            flex-direction: row;
+            gap: 10px;
+        }
+
+        .arrow-label {
+            font-size: 11px;
+            background: #f8fafc;
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            border: 1px solid var(--border-color);
+            margin-bottom: 4px;
+        }
+
+        .arrow-down .arrow-label {
+            margin-bottom: 0;
+            margin-right: 4px;
+        }
+
+        @media print {
+            *,
+            *::before,
+            *::after {
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="slide-container">
+        <!-- Header -->
+        <div class="slide-tag">CHECKER MODULES · ARCHITECTURE</div>
+        <h1 class="slide-title">Checker 모듈은 5개의 독립된 하위 모듈로 협력합니다</h1>
+        
+        <!-- Overview -->
+        <div class="overview-box">
+            <p><strong>Checker 전반적인 기능 및 역할:</strong> 파서가 생성한 AST(추상 구문 트리)를 런타임 실행 전에 순회하며 정적 의미 분석(Static Semantic Analysis)을 수행합니다. 실행 전 계산 가능한 식을 최적화하고, 변수/함수의 선언 및 스코프 참조 무결성을 검증하여 런타임 오류를 사전에 차단합니다.</p>
+        </div>
+
+        <!-- Grid Architecture Diagram -->
+        <div class="diagram-area">
+            <div class="arch-grid">
+                
+                <!-- 1. Constant Folder -->
+                <div class="module-card item-cf">
+                    <div class="mod-header">
+                        <div class="mod-icon">CF</div>
+                        <div>
+                            <div class="mod-title">ConstantFolder</div>
+                            <div class="mod-subtitle">AST 사전 최적화기</div>
+                        </div>
+                    </div>
+                    <div class="mod-desc">실행 전에 미리 계산 가능한 리터럴 연산을 찾아 평가하고 단일 리터럴 노드로 치환하여 트리를 간소화합니다.</div>
+                    <div class="mod-feature">1 + 2 * 3 ➔ Literal(7)</div>
+                    
+                    <!-- Arrow to Checker -->
+                    <div class="arrow-right">
+                        <span class="arrow-label">최적화된 AST 전달</span>
+                        <span style="line-height: 0.8;">➔</span>
+                    </div>
+                </div>
+
+                <!-- 2. Checker (Main) -->
+                <div class="module-card item-chk">
+                    <div class="mod-header">
+                        <div class="mod-icon">C</div>
+                        <div>
+                            <div class="mod-title">Checker</div>
+                            <div class="mod-subtitle">메인 진입점 & 오케스트레이터</div>
+                        </div>
+                    </div>
+                    <div class="mod-desc">분석 파이프라인의 핵심 컨트롤러입니다. 하위 상태 객체들을 단 한 번만 초기화하고, Resolver를 호출하여 전체 분석을 지휘합니다.</div>
+                    <div class="mod-feature">check(statements) ➔ list[str]</div>
+
+                    <!-- Arrow to Resolver -->
+                    <div class="arrow-down">
+                        <span class="arrow-label">의존성 주입 & 분석 위임</span>
+                        <span style="line-height: 1;">↓</span>
+                    </div>
+                </div>
+
+                <!-- 3. Error Reporter -->
+                <div class="module-card item-er">
+                    <div class="mod-header">
+                        <div class="mod-icon">ER</div>
+                        <div>
+                            <div class="mod-title">ErrorReporter</div>
+                            <div class="mod-subtitle">오류 수집 및 포맷팅</div>
+                        </div>
+                    </div>
+                    <div class="mod-desc">Resolver가 검사 중 발견한 의미론적 오류를 수집합니다. 검사 로직과 UI/출력 로직을 완벽히 분리합니다.</div>
+                </div>
+
+                <!-- 4. Resolver -->
+                <div class="module-card item-res">
+                    <div class="mod-header">
+                        <div class="mod-icon">Re</div>
+                        <div>
+                            <div class="mod-title">Resolver</div>
+                            <div class="mod-subtitle">바인딩 검증 및 룰 엔진</div>
+                        </div>
+                    </div>
+                    <div class="mod-desc">AST를 DFS로 순회하며 변수/함수 선언 규칙, 초기화 여부 검사 등을 수행하고 정적 바인딩 거리(distance)를 계산합니다.</div>
+                    <div class="mod-feature">ExprResolver & StmtResolver</div>
+
+                    <!-- Arrow to Error Reporter -->
+                    <div class="arrow-left">
+                        <span class="arrow-label">에러 보고</span>
+                        <span style="line-height: 0.8;">←</span>
+                    </div>
+
+                    <!-- Arrow to Scope Stack -->
+                    <div class="arrow-right">
+                        <span class="arrow-label">상태 의존</span>
+                        <span style="line-height: 0.8;">➔</span>
+                    </div>
+                </div>
+
+                <!-- 5. Scope Stack -->
+                <div class="module-card item-ss">
+                    <div class="mod-header">
+                        <div class="mod-icon">SS</div>
+                        <div>
+                            <div class="mod-title">ScopeStack</div>
+                            <div class="mod-subtitle">정적 스코프 상태 관리</div>
+                        </div>
+                    </div>
+                    <div class="mod-desc">런타임과 분리된 스코프 계층을 Stack 구조로 추적합니다. 변수의 선언 및 초기화 상태 메타데이터만을 순수하게 관리합니다.</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
