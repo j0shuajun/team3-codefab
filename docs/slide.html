@@ -1603,6 +1603,17 @@
           linear-gradient(135deg, rgba(28, 96, 239, 0.12), rgba(255, 255, 255, 0.86)),
           rgba(255, 255, 255, 0.7);
         border: 1px dashed rgba(28, 96, 239, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .evidence-slot img {
+        max-width: 70%;
+        max-height: 80%;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(28, 96, 239, 0.15);
       }
 
       .point-stack {
@@ -4680,11 +4691,13 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
         </div>
         <div class="stage shot-composition reverse">
           <div class="point-stack">
-            <div class="point-card"><strong>실패 고정</strong><p>구현 전에 깨져야 하는 케이스를 먼저 남겼습니다.</p></div>
-            <div class="point-card"><strong>회귀 방지</strong><p>import, debug, checker 오류를 테스트로 관리했습니다.</p></div>
-            <div class="point-card"><strong>자동 검증</strong><p>Actions가 PR마다 같은 기준으로 실행했습니다.</p></div>
+            <div class="point-card"><strong>Red-Green 반복</strong><p>PR #15·#18: [test] 커밋 다음 [feat] 커밋이 기능 단위로 이어짐</p></div>
+            <div class="point-card"><strong>세분화된 test-first</strong><p>토큰 하나 단위로 커밋을 쪼개 커밋 로그만으로 검증 대상 파악</p></div>
+            <div class="point-card"><strong>리뷰 효율</strong><p>17~19개 세분 커밋에도 가독성 좋다는 평가로 이어짐</p></div>
           </div>
-          <div class="evidence-slot"></div>
+          <div class="evidence-slot">
+            <img src="assets/tdd-commit-history.png" alt="PR #15 test/feat 커밋 히스토리" />
+          </div>
         </div>
       </section>
 
