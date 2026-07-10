@@ -24,6 +24,34 @@
         --code-text: #eef5ff;
       }
 
+      @font-face {
+        font-family: "CodeFabTitle";
+        src:
+          local("KIMM_Light"),
+          local("한국기계연구원_Light"),
+          local("KIMMLight");
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: "CodeFabTitle";
+        src:
+          local("KIMM_Bold"),
+          local("한국기계연구원_Bold"),
+          local("KIMMBold");
+        font-weight: 700;
+      }
+
+      @font-face {
+        font-family: "CodeFabBody";
+        src:
+          local("A2Z"),
+          local("에이투지체"),
+          local("A2Z 4 Regular"),
+          local("에이투지체 4 Regular");
+        font-weight: 100 900;
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -34,7 +62,7 @@
         color: var(--ink);
         background: var(--paper);
         font-family:
-          "에이투지체", "A2G", Pretendard, -apple-system,
+          "CodeFabBody", "A2Z", "에이투지체", Pretendard, -apple-system,
           BlinkMacSystemFont, "Segoe UI", sans-serif;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
@@ -52,8 +80,8 @@
         padding: 56px min(6vw, 76px);
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        gap: 24px;
+        justify-content: flex-start;
+        gap: 20px;
         scroll-snap-align: start;
         overflow: hidden;
         background:
@@ -90,38 +118,43 @@
 
       h1 {
         max-width: 980px;
-        font-size: 96px;
+        font-size: 88px;
         line-height: 0.98;
         letter-spacing: 0;
         font-weight: 800;
+        word-break: keep-all;
         font-family:
-          "한구기계연구원", "KIMM", Pretendard, -apple-system,
+          "CodeFabTitle", "KIMM_Bold", "한국기계연구원_Bold", Pretendard, -apple-system,
           BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       h2 {
-        max-width: 1080px;
-        font-size: 56px;
+        max-width: 1240px;
+        font-size: 36px;
         line-height: 1.1;
         letter-spacing: 0;
         font-weight: 800;
+        word-break: keep-all;
         font-family:
-          "한구기계연구원", "KIMM", Pretendard, -apple-system,
+          "CodeFabTitle", "KIMM_Bold", "한국기계연구원_Bold", Pretendard, -apple-system,
           BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       h3 {
-        font-size: 28px;
+        font-size: 25px;
         line-height: 1.25;
         font-weight: 800;
+        word-break: keep-all;
       }
 
       p,
       li,
       td,
       th {
-        font-size: 24px;
+        font-size: 21px;
         line-height: 1.42;
+        word-break: keep-all;
+        overflow-wrap: normal;
       }
 
       .eyebrow {
@@ -149,8 +182,9 @@
       .lead {
         max-width: 1040px;
         color: var(--muted);
-        font-size: 34px;
+        font-size: 21px;
         line-height: 1.42;
+        word-break: keep-all;
       }
 
       .note {
@@ -276,6 +310,7 @@
         grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
         gap: 70px;
         align-items: center;
+        min-height: calc(100vh - 112px);
       }
 
       .cover-copy {
@@ -900,16 +935,17 @@
       .slide-title {
         display: grid;
         gap: 12px;
+        margin-bottom: 2px;
       }
 
       .slide-title h2 {
-        max-width: 1320px;
+        max-width: 1180px;
       }
 
       .stage {
         border: 1px solid rgba(28, 96, 239, 0.12);
         border-radius: 22px;
-        padding: 34px;
+        padding: 30px;
         background: rgba(255, 255, 255, 0.94);
         box-shadow: 0 22px 46px rgba(28, 96, 239, 0.08);
       }
@@ -992,17 +1028,23 @@
 
       .team-even-grid {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         grid-auto-rows: 1fr;
         gap: 14px;
       }
 
       .team-even-card {
-        min-height: 260px;
+        grid-column: span 2;
+        min-height: 198px;
         border-radius: 18px;
         padding: 24px;
         background: #eef4ff;
         border-top: 6px solid rgba(28, 96, 239, 0.42);
+      }
+
+      .team-even-card:nth-child(4),
+      .team-even-card:nth-child(5) {
+        grid-column: span 3;
       }
 
       .team-even-card strong {
@@ -1014,7 +1056,7 @@
         display: block;
         margin-top: 14px;
         color: var(--muted);
-        font-size: 19px;
+        font-size: 18px;
         line-height: 1.34;
       }
 
@@ -1230,22 +1272,22 @@
 
       .part-splash {
         display: grid;
-        grid-template-columns: 0.42fr 1.58fr;
+        grid-template-columns: 116px minmax(0, 1fr);
         gap: 34px;
         align-items: center;
-        min-height: 480px;
+        min-height: 456px;
       }
 
       .part-number {
         display: grid;
         place-items: center;
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
+        width: 94px;
+        height: 94px;
+        border-radius: 20px;
         background: #eef4ff;
         color: var(--blue);
         border: 2px solid rgba(28, 96, 239, 0.24);
-        font-size: 50px;
+        font-size: 34px;
         font-weight: 800;
       }
 
@@ -1676,14 +1718,16 @@
 
       .agenda-summary strong {
         max-width: 420px;
-        font-size: 46px;
+        font-size: 36px;
         line-height: 1.12;
+        word-break: keep-all;
       }
 
       .agenda-summary span {
         color: var(--muted);
-        font-size: 24px;
+        font-size: 21px;
         line-height: 1.38;
+        word-break: keep-all;
       }
 
       .agenda-steps {
@@ -1719,14 +1763,15 @@
 
       .agenda-step strong {
         display: block;
-        font-size: 28px;
+        font-size: 24px;
+        white-space: nowrap;
       }
 
       .agenda-step span {
         display: block;
         margin-top: 8px;
         color: var(--muted);
-        font-size: 20px;
+        font-size: 16px;
         line-height: 1.34;
       }
 
@@ -1756,6 +1801,11 @@
       .goal-card ul {
         display: grid;
         gap: 16px;
+      }
+
+      .goal-card li {
+        font-size: 20px;
+        white-space: nowrap;
       }
 
       .goal-bridge {
@@ -1811,14 +1861,16 @@
 
       .mode-card strong {
         display: block;
-        font-size: 25px;
+        font-size: 22px;
+        white-space: nowrap;
       }
 
       .mode-card span {
         display: block;
         margin-top: 4px;
         color: var(--muted);
-        font-size: 19px;
+        font-size: 16px;
+        white-space: nowrap;
       }
 
       .pipeline-box {
@@ -1861,34 +1913,42 @@
 
       .pipeline-unit strong {
         display: block;
-        margin-top: 22px;
-        font-size: 24px;
+        margin-top: 18px;
+        font-size: 22px;
+        white-space: nowrap;
       }
 
       .pipeline-unit span {
         display: block;
         margin-top: 12px;
         color: var(--muted);
-        font-size: 17px;
-        line-height: 1.34;
+        font-size: 16px;
+        line-height: 1.32;
+        word-break: keep-all;
       }
 
       .feature-map {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         grid-auto-rows: 1fr;
         gap: 14px;
         margin-top: 28px;
       }
 
       .feature-map-card {
-        min-height: 176px;
+        grid-column: span 2;
+        min-height: 132px;
         border-radius: 18px;
         padding: 22px;
         background: #eef4ff;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+      }
+
+      .feature-map-card:nth-child(4),
+      .feature-map-card:nth-child(5) {
+        grid-column: span 3;
       }
 
       .feature-map-card b {
@@ -1898,21 +1958,24 @@
 
       .feature-map-card strong {
         display: block;
-        font-size: 27px;
+        font-size: 24px;
         line-height: 1.18;
+        word-break: keep-all;
+        white-space: nowrap;
       }
 
       .feature-map-card span {
         color: var(--muted);
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.3;
+        word-break: keep-all;
       }
 
       .feature-detail {
         display: grid;
         grid-template-columns: 0.94fr 1.06fr;
-        gap: 26px;
-        align-items: stretch;
+        gap: 22px;
+        align-items: center;
       }
 
       .feature-detail.reverse {
@@ -1921,7 +1984,7 @@
 
       .explain-panel {
         border-radius: 22px;
-        padding: 30px;
+        padding: 24px;
         background: #eef4ff;
       }
 
@@ -1932,13 +1995,13 @@
 
       .explain-panel p {
         color: var(--muted);
-        font-size: 24px;
+        font-size: 19px;
       }
 
       .structure-list {
         display: grid;
-        gap: 13px;
-        margin-top: 22px;
+        gap: 10px;
+        margin-top: 18px;
       }
 
       .structure-row {
@@ -1947,21 +2010,24 @@
         gap: 14px;
         align-items: start;
         border-radius: 16px;
-        padding: 18px;
+        padding: 13px 16px;
         background: #ffffff;
       }
 
       .structure-row strong {
         display: block;
-        font-size: 24px;
+        font-size: 22px;
+        white-space: nowrap;
       }
 
       .structure-row span {
         display: block;
         margin-top: 5px;
         color: var(--muted);
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.32;
+        word-break: keep-all;
+        white-space: nowrap;
       }
 
       .code-center {
@@ -1991,6 +2057,13 @@
       .feature-column h3 {
         color: var(--blue);
         margin-bottom: 18px;
+        white-space: nowrap;
+      }
+
+      .feature-column p,
+      .custom-main p,
+      .pattern-note p {
+        word-break: keep-all;
       }
 
       .mini-diagram {
@@ -2040,8 +2113,9 @@
         display: block;
         margin-top: 8px;
         color: var(--muted);
-        font-size: 19px;
+        font-size: 18px;
         line-height: 1.34;
+        word-break: keep-all;
       }
 
       .rule-grid {
@@ -2068,8 +2142,9 @@
         display: block;
         margin-top: 8px;
         color: var(--muted);
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.3;
+        word-break: keep-all;
       }
 
       .shell-detail {
@@ -2140,8 +2215,9 @@
         display: block;
         margin-top: 10px;
         color: var(--muted);
-        font-size: 19px;
+        font-size: 18px;
         line-height: 1.32;
+        white-space: nowrap;
       }
 
       .pattern-overview {
@@ -2165,15 +2241,17 @@
       .pattern-overview-card strong {
         display: block;
         margin-top: 12px;
-        font-size: 31px;
+        font-size: 28px;
+        white-space: nowrap;
       }
 
       .pattern-overview-card span {
         display: block;
         margin-top: 10px;
         color: var(--muted);
-        font-size: 20px;
+        font-size: 18px;
         line-height: 1.32;
+        word-break: keep-all;
       }
 
       .anchor-chip {
@@ -2212,7 +2290,7 @@
 
       .pattern-note p {
         color: var(--muted);
-        font-size: 23px;
+        font-size: 20px;
       }
 
       .pseudo-board {
@@ -2228,8 +2306,9 @@
         border-radius: 16px;
         padding: 18px;
         background: #eef4ff;
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 800;
+        word-break: keep-all;
       }
 
       .pseudo-node.sub {
@@ -2244,18 +2323,20 @@
 
       .pattern-effect {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
+        grid-template-columns: 1fr;
+        gap: 10px;
         margin-top: 20px;
       }
 
       .pattern-effect div {
         border-radius: 14px;
-        padding: 16px;
+        padding: 12px 16px;
         background: #ffffff;
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 800;
-        line-height: 1.3;
+        line-height: 1.24;
+        word-break: keep-all;
+        white-space: nowrap;
       }
 
       .mode-card > .small-index,
@@ -2344,18 +2425,18 @@
         }
 
         h2 {
-          font-size: 50px;
+          font-size: 36px;
         }
 
         h3 {
-          font-size: 25px;
+          font-size: 22px;
         }
 
         p,
         li,
         td,
         th {
-          font-size: 21px;
+          font-size: 18px;
         }
 
         pre {
@@ -2363,7 +2444,7 @@
         }
 
         .lead {
-          font-size: 30px;
+          font-size: 21px;
         }
 
         .panel,
@@ -2433,16 +2514,16 @@
         </div>
         <div class="stage clean-agenda">
           <div class="agenda-summary">
-            <strong><span class="text-blue">언어 구현</span>과 협업 과정을 함께 봅니다</strong>
-            <span>기본 요구사항을 어떤 구조로 실행했고, 기능 확장과 설계 패턴을 어디에 적용했는지 순서대로 설명합니다.</span>
+            <strong><span class="text-blue">언어 구현</span> 흐름</strong>
+            <span>구조, 기능, 패턴, 협업 기준 순서로 정리했습니다.</span>
           </div>
           <div class="agenda-steps">
             <div class="agenda-step"><b>01</b><div><strong>팀 소개</strong><span>역할과 구현 분담</span></div></div>
             <div class="agenda-step"><b>02</b><div><strong>프로젝트 목표</strong><span>새로운 확장자 <code>.ctrlc</code></span></div></div>
             <div class="agenda-step"><b>03</b><div><strong>전체 구조</strong><span>Shell과 interpreter pipeline</span></div></div>
-            <div class="agenda-step"><b>04</b><div><strong>주요 기능</strong><span>문법, 함수, class, import, checker</span></div></div>
-            <div class="agenda-step"><b>05</b><div><strong>디자인 패턴</strong><span>AST, Callable, Command 구조</span></div></div>
-            <div class="agenda-step"><b>06</b><div><strong>협업과 품질</strong><span>Review, TDD, Actions, protection</span></div></div>
+            <div class="agenda-step"><b>04</b><div><strong>주요 기능</strong><span>문법 · 함수 · class · import</span></div></div>
+            <div class="agenda-step"><b>05</b><div><strong>디자인 패턴</strong><span>AST · Callable · Command</span></div></div>
+            <div class="agenda-step"><b>06</b><div><strong>협업과 품질</strong><span>Review · TDD · Actions</span></div></div>
           </div>
         </div>
       </section>
@@ -2450,28 +2531,28 @@
       <section>
         <div class="slide-title">
           <p class="eyebrow">Team</p>
-          <h2>역할을 나누고, PR 단위로 <span class="text-blue">하나의 Interpreter</span>에 합쳤습니다</h2>
+          <h2>팀 역할과 구현 분담</h2>
         </div>
         <div class="stage team-even-grid">
           <div class="team-even-card">
             <strong>김명준<span class="team-lead-mark">팀장</span></strong>
-            <span>architecture, infra, CI, coverage, document</span>
+            <span>architecture · infra · CI · docs</span>
           </div>
           <div class="team-even-card">
             <strong>권소영</strong>
-            <span>assembler, executor, function, class, import</span>
+            <span>assembler · executor · function · class</span>
           </div>
           <div class="team-even-card">
             <strong>김민준</strong>
-            <span>expression, statement, shell, file/debug mode</span>
+            <span>expression · statement · shell</span>
           </div>
           <div class="team-even-card">
             <strong>박진우</strong>
-            <span>tokenizer, array, custom language</span>
+            <span>tokenizer · array · custom syntax</span>
           </div>
           <div class="team-even-card">
             <strong>이예진</strong>
-            <span>checker, optimizer, custom function</span>
+            <span>checker · optimizer · custom function</span>
           </div>
         </div>
       </section>
@@ -2479,24 +2560,24 @@
       <section>
         <div class="slide-title">
           <p class="eyebrow">Project Goal</p>
-          <h2>새로운 확장자 <code>.ctrlc</code>를 <span class="text-blue">실행 가능한 언어</span>로 만듭니다</h2>
+          <h2><code>.ctrlc</code> 실행 목표</h2>
         </div>
         <div class="stage goal-compare">
           <div class="goal-card">
             <h3>입력</h3>
             <ul>
-              <li><code>.ctrlc</code> source file</li>
-              <li>prompt에서 입력한 한 줄 코드</li>
-              <li>debug 대상으로 실행할 프로그램</li>
+              <li><code>.ctrlc</code> source</li>
+              <li>prompt 한 줄 입력</li>
+              <li>debug 실행 대상</li>
             </ul>
           </div>
           <div class="goal-bridge"><span>→</span></div>
           <div class="goal-card result">
             <h3>결과</h3>
             <ul>
-              <li>source를 Token과 Expr/Stmt AST로 구조화</li>
-              <li>Checker로 scope, class, import 규칙을 실행 전에 확인</li>
-              <li>Executor가 Environment를 갱신하며 출력과 오류를 생성</li>
+              <li>Token / Expr / Stmt 구조화</li>
+              <li>Checker 사전 검증</li>
+              <li>Executor 실행 결과 생성</li>
             </ul>
           </div>
         </div>
@@ -2505,7 +2586,7 @@
       <section>
         <div class="slide-title">
           <p class="eyebrow">Architecture</p>
-          <h2>Shell은 실행 방식을 나누고, Pipeline은 <span class="text-blue">같은 순서</span>로 해석합니다</h2>
+          <h2>Shell과 Pipeline 구조</h2>
         </div>
         <div class="stage architecture-flow">
           <div class="shell-box">
@@ -2517,12 +2598,12 @@
             </div>
           </div>
           <div class="pipeline-box">
-            <h3>Common Interpreter Pipeline</h3>
+            <h3>Interpreter Pipeline</h3>
             <div class="pipeline-strip">
-              <div class="pipeline-unit"><b>01</b><strong>Tokenizer</strong><span>문자열을 의미 있는 token stream으로 분리</span></div>
-              <div class="pipeline-unit"><b>02</b><strong>Assembler</strong><span>Token을 statement / expression tree로 조립</span></div>
-              <div class="pipeline-unit"><b>03</b><strong>Checker</strong><span>실행 전 scope와 class/import 규칙 검증</span></div>
-              <div class="pipeline-unit"><b>04</b><strong>Executor</strong><span>AST를 실행하며 Environment와 output 갱신</span></div>
+              <div class="pipeline-unit"><b>01</b><strong>Tokenizer</strong><span>문자열 분리</span></div>
+              <div class="pipeline-unit"><b>02</b><strong>Assembler</strong><span>Token → AST</span></div>
+              <div class="pipeline-unit"><b>03</b><strong>Checker</strong><span>정적 검증</span></div>
+              <div class="pipeline-unit"><b>04</b><strong>Executor</strong><span>결과 생성</span></div>
             </div>
           </div>
         </div>
@@ -2533,14 +2614,14 @@
           <div class="part-number">01</div>
           <div>
             <p class="eyebrow">Feature Implementation</p>
-            <h2>주요 기능은 <span class="text-blue">실행 흐름</span> 기준으로 설명합니다</h2>
-            <p class="lead">각 기능은 무엇을 입력받고, 내부에서 어떤 구조로 바뀌며, 실행 결과에 어떤 영향을 주는지 같은 방식으로 봅니다.</p>
+            <h2>기능 구현 범위</h2>
+            <p class="lead">각 기능은 입력, 내부 구조, 실행 결과 기준으로 설명합니다.</p>
             <div class="feature-map">
-              <div class="feature-map-card"><b>Basic</b><strong>기본 문법</strong><span>Stmt와 Expr로 프로그램 흐름을 표현</span></div>
-              <div class="feature-map-card"><b>Core</b><strong>함수와 Class</strong><span>Callable, This, Super로 실행 단위 확장</span></div>
-              <div class="feature-map-card"><b>Module</b><strong>Array와 Import</strong><span>데이터와 파일 단위 재사용 지원</span></div>
-              <div class="feature-map-card"><b>Safety</b><strong>Checker</strong><span>실행 전 scope와 문맥 오류 검증</span></div>
-              <div class="feature-map-card"><b>Shell</b><strong>실행 모드</strong><span>prompt, file, debug를 같은 pipeline에 연결</span></div>
+              <div class="feature-map-card"><b>Basic</b><strong>기본 문법</strong><span>Stmt / Expr</span></div>
+              <div class="feature-map-card"><b>Core</b><strong>함수 / Class</strong><span>Callable · This · Super</span></div>
+              <div class="feature-map-card"><b>Module</b><strong>Array / Import</strong><span>데이터 · 파일 재사용</span></div>
+              <div class="feature-map-card"><b>Safety</b><strong>Checker</strong><span>실행 전 검증</span></div>
+              <div class="feature-map-card"><b>Shell</b><strong>Shell Mode</strong><span>Prompt · File · Debug</span></div>
             </div>
           </div>
         </div>
@@ -2549,16 +2630,16 @@
       <section>
         <div class="slide-title">
           <p class="eyebrow">Basic Feature</p>
-          <h2>기본 문법은 <span class="text-blue">Stmt와 Expr</span>로 나뉘어 실행됩니다</h2>
+          <h2>Stmt / Expr 실행 구조</h2>
         </div>
         <div class="stage feature-detail">
           <div class="explain-panel">
             <h3>구현 구조</h3>
-            <p>실행 순서를 만드는 문장은 Stmt, 값을 계산하는 식은 Expr로 분리해 같은 pipeline에서 다룹니다.</p>
+            <p>Stmt는 실행 순서, Expr은 계산 결과를 담당합니다.</p>
             <div class="structure-list">
-              <div class="structure-row"><span class="small-index">01</span><div><strong>Tokenizer</strong><span>예약어, 식별자, 연산자를 token으로 분리</span></div></div>
-              <div class="structure-row"><span class="small-index">02</span><div><strong>Assembler</strong><span>조건문과 반복문을 Stmt tree로 조립</span></div></div>
-              <div class="structure-row"><span class="small-index">03</span><div><strong>Executor</strong><span>Stmt는 순서대로 실행하고 Expr은 값으로 평가</span></div></div>
+              <div class="structure-row"><span class="small-index">01</span><div><strong>Tokenizer</strong><span>source → token</span></div></div>
+              <div class="structure-row"><span class="small-index">02</span><div><strong>Assembler</strong><span>token → Stmt / Expr</span></div></div>
+              <div class="structure-row"><span class="small-index">03</span><div><strong>Executor</strong><span>Stmt 실행 · Expr 평가</span></div></div>
             </div>
             <span class="anchor-chip">app/assembler/statement.py · app/assembler/expr.py</span>
           </div>
@@ -2577,7 +2658,7 @@ if (total > 2) {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Core Feature · Function</p>
-          <h2>함수는 선언 시 저장되고, 호출 시 <span class="text-blue">새 scope</span>에서 실행됩니다</h2>
+          <h2>Function 실행 구조</h2>
         </div>
         <div class="stage feature-detail reverse">
           <pre class="code-center"><code>Func add(a, b) {
@@ -2587,11 +2668,11 @@ if (total > 2) {
 print add(2, 3);</code></pre>
           <div class="explain-panel">
             <h3>호출 흐름</h3>
-            <p>함수 본문은 선언 시 실행되지 않고, 호출되는 순간 closure를 부모로 둔 Environment에서 실행됩니다.</p>
+            <p>선언은 closure와 저장하고, 호출 시 새 Environment를 만듭니다.</p>
             <div class="structure-list">
-              <div class="structure-row"><span class="small-index">01</span><div><strong>FunctionStmt</strong><span>함수 이름, parameter, body를 AST에 저장</span></div></div>
-              <div class="structure-row"><span class="small-index">02</span><div><strong>UserFunction</strong><span>선언과 closure를 함께 보관</span></div></div>
-              <div class="structure-row"><span class="small-index">03</span><div><strong>call()</strong><span>argument를 parameter에 묶고 return 값을 호출 지점으로 전달</span></div></div>
+              <div class="structure-row"><span class="small-index">01</span><div><strong>FunctionStmt</strong><span>name · params · body</span></div></div>
+              <div class="structure-row"><span class="small-index">02</span><div><strong>UserFunction</strong><span>declaration + closure</span></div></div>
+              <div class="structure-row"><span class="small-index">03</span><div><strong>call()</strong><span>params binding → execute</span></div></div>
             </div>
             <span class="anchor-chip">app/assembler/runtime.py</span>
           </div>
@@ -2601,17 +2682,17 @@ print add(2, 3);</code></pre>
       <section>
         <div class="slide-title">
           <p class="eyebrow">Core Feature · Class</p>
-          <h2>Class는 생성자처럼 호출되고, method는 <span class="text-blue">This</span>에 묶입니다</h2>
+          <h2>Class / This Binding</h2>
         </div>
         <div class="stage feature-detail">
           <div class="explain-panel">
             <h3>객체 실행 흐름</h3>
-            <p>Class를 Callable로 맞춰 함수 호출과 같은 경로에서 instance 생성, method binding, 상속 탐색을 처리합니다.</p>
+            <p>class 생성과 method binding을 Callable 흐름으로 처리합니다.</p>
             <div class="structure-list">
-              <div class="structure-row"><span class="small-index">01</span><div><strong>UserClass</strong><span>class name, method table, superclass 저장</span></div></div>
-              <div class="structure-row"><span class="small-index">02</span><div><strong>UserInstance</strong><span>field를 보관하고 method lookup을 class에 위임</span></div></div>
-              <div class="structure-row"><span class="small-index">03</span><div><strong>This binding</strong><span>method 호출 전 현재 instance를 <code>This</code>에 연결</span></div></div>
-              <div class="structure-row"><span class="small-index">04</span><div><strong>Super lookup</strong><span>상위 class에서 method를 찾아 현재 instance로 실행</span></div></div>
+              <div class="structure-row"><span class="small-index">01</span><div><strong>UserClass</strong><span>method table</span></div></div>
+              <div class="structure-row"><span class="small-index">02</span><div><strong>UserInstance</strong><span>field / method lookup</span></div></div>
+              <div class="structure-row"><span class="small-index">03</span><div><strong>This binding</strong><span>instance 연결</span></div></div>
+              <div class="structure-row"><span class="small-index">04</span><div><strong>Super lookup</strong><span>parent method 탐색</span></div></div>
             </div>
             <span class="anchor-chip">app/assembler/runtime.py · app/executor/executor.py</span>
           </div>
@@ -2631,12 +2712,12 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Core Feature · Data & Import</p>
-          <h2>Array와 Import는 데이터를 담고, 파일 단위로 <span class="text-blue">기능을 재사용</span>합니다</h2>
+          <h2>Array와 Import</h2>
         </div>
         <div class="stage dual-feature">
           <div class="feature-column">
             <h3>Static Array</h3>
-            <p><code>Array(size)</code>로 고정 크기 list를 만들고, index 접근은 Executor가 타입과 범위를 확인합니다.</p>
+            <p>고정 크기 list와 index 접근을 지원합니다.</p>
             <div class="mini-diagram">
               <div>Array(3)</div>
               <div>arr[0] = value</div>
@@ -2645,7 +2726,7 @@ Class SpeedRobot : Robot {
           </div>
           <div class="feature-column">
             <h3>Library Import</h3>
-            <p>다른 <code>.ctrlc</code> 파일을 같은 Tokenizer와 Assembler로 읽고, alias namespace를 통해 선언에 접근합니다.</p>
+            <p>외부 <code>.ctrlc</code> 선언을 alias로 묶습니다.</p>
             <div class="mini-diagram">
               <div>import "math.ctrlc" alias math</div>
               <div>Tokenizer → Assembler 재사용</div>
@@ -2658,19 +2739,19 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Safety Feature · Checker</p>
-          <h2>Checker는 실행 전에 <span class="text-blue">줄일 것과 막을 것</span>을 나눕니다</h2>
+          <h2>Checker 실행 전 검증</h2>
         </div>
         <div class="stage checker-board">
           <div class="checker-flow">
-            <div class="checker-step"><strong>ConstantFolder</strong><span>리터럴끼리 계산 가능한 expression은 미리 LiteralExpr로 치환</span></div>
-            <div class="checker-step"><strong>ScopeStack</strong><span>선언, 초기화 여부, 정적 scope distance를 추적</span></div>
-            <div class="checker-step"><strong>Resolver</strong><span>Stmt와 Expr를 나눠 This, Super, return, import 규칙을 확인</span></div>
+            <div class="checker-step"><strong>ConstantFolder</strong><span>계산 가능한 expression을 LiteralExpr로 치환</span></div>
+            <div class="checker-step"><strong>ScopeStack</strong><span>선언, 초기화, scope distance 추적</span></div>
+            <div class="checker-step"><strong>Resolver</strong><span>This, Super, return, import 규칙 확인</span></div>
           </div>
           <div class="rule-grid">
-            <div class="rule-card"><strong>Scope</strong><span>중복 선언, 미초기화 변수, alias 충돌</span></div>
-            <div class="rule-card"><strong>Class</strong><span>This/Super 위치, 자기 상속, init return</span></div>
-            <div class="rule-card"><strong>Import</strong><span>중복 import, 순환 import, 허용 선언 제한</span></div>
-            <div class="rule-card"><strong>Report</strong><span>실행 전 오류를 source line 기준으로 전달</span></div>
+            <div class="rule-card"><strong>Scope</strong><span>중복 선언 · 미초기화 변수</span></div>
+            <div class="rule-card"><strong>Class</strong><span>This/Super · 자기 상속</span></div>
+            <div class="rule-card"><strong>Import</strong><span>중복 import · 순환 import</span></div>
+            <div class="rule-card"><strong>Report</strong><span>source line 기준 오류</span></div>
           </div>
         </div>
       </section>
@@ -2678,16 +2759,16 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Safety Feature · Static Binding</p>
-          <h2>정적 바인딩은 변수 위치를 실행 전에 계산합니다</h2>
+          <h2>Static Binding</h2>
         </div>
         <div class="stage pattern-explain">
           <div class="pattern-note">
             <h3>왜 필요한가</h3>
-            <p>중첩 scope가 깊어질수록 실행 중 이름을 계속 탐색하면 비용과 동작 예측이 어려워집니다.</p>
+            <p>변수 위치를 실행 전에 계산해 lookup 흐름을 단순화합니다.</p>
             <div class="pattern-effect">
-              <div>Checker가 선언 위치를 먼저 찾음</div>
-              <div>Expr node에 distance 저장</div>
-              <div>Executor는 저장된 거리로 바로 접근</div>
+              <div>선언 위치 계산</div>
+              <div>Expr에 distance 저장</div>
+              <div>Environment 직접 접근</div>
             </div>
             <span class="anchor-chip">app/checker/scope_stack.py · app/executor/environment.py</span>
           </div>
@@ -2703,7 +2784,7 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Shell Feature</p>
-          <h2>Shell은 세 가지 모드를 같은 실행기로 연결합니다</h2>
+          <h2>Shell Mode와 Command</h2>
         </div>
         <div class="stage shell-detail">
           <div class="shell-box">
@@ -2718,9 +2799,9 @@ Class SpeedRobot : Robot {
             <h3>Prompt 명령 처리</h3>
             <div class="command-flow">
               <div>source line</div>
-              <div>ShellCommandFactory.create(source)</div>
+              <div>Factory.create(source)</div>
               <div>Command.execute(shell)</div>
-              <div>CodeFabRunner → common pipeline</div>
+              <div>Runner → Pipeline</div>
             </div>
             <span class="anchor-chip">app/shell/commands.py · app/shell/shell.py</span>
           </div>
@@ -2735,13 +2816,13 @@ Class SpeedRobot : Robot {
         <div class="stage custom-board">
           <div class="custom-main">
             <h3>확장 방향</h3>
-            <p>교안 기반 interpreter 위에 팀 전용 문법과 발표용 함수를 얹어, 같은 pipeline 안에서 처리되도록 만들었습니다.</p>
+            <p>팀 전용 문법도 같은 pipeline에서 처리되도록 확장했습니다.</p>
           </div>
           <div class="custom-cards">
-            <article class="custom-card"><strong>한글 alias</strong><span>영어 keyword와 같은 token type으로 정규화해 실행 흐름을 공유합니다.</span></article>
-            <article class="custom-card"><strong><code>ctrl_c()</code></strong><span>팀 소개와 역할을 출력하는 custom native function입니다.</span></article>
-            <article class="custom-card"><strong><code>♡</code> 연산</strong><span>문자열 피연산자를 받아 이름 궁합 점수를 계산합니다.</span></article>
-            <article class="custom-card"><strong><code>.ctrlc</code></strong><span>파일 모드와 import 기준이 되는 팀 전용 확장자입니다.</span></article>
+            <article class="custom-card"><strong>한글 alias</strong><span>keyword token으로 정규화</span></article>
+            <article class="custom-card"><strong><code>ctrl_c()</code></strong><span>팀 소개 native function</span></article>
+            <article class="custom-card"><strong><code>♡</code> 연산</strong><span>문자열 기반 점수 계산</span></article>
+            <article class="custom-card"><strong><code>.ctrlc</code></strong><span>file mode와 import 기준</span></article>
           </div>
         </div>
       </section>
@@ -2751,8 +2832,8 @@ Class SpeedRobot : Robot {
           <div class="part-number">02</div>
           <div>
             <p class="eyebrow">Design Patterns</p>
-            <h2>구현에 적용한 디자인 패턴</h2>
-            <p class="lead">반복되는 구현 문제를 어떤 구조로 정리했는지 패턴별로 연결해서 설명합니다.</p>
+            <h2>디자인 패턴</h2>
+            <p class="lead">복잡해지는 구현 지점을 패턴으로 어떻게 정리했는지 봅니다.</p>
           </div>
         </div>
       </section>
@@ -2760,31 +2841,31 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Design Patterns</p>
-          <h2>디자인 패턴은 <span class="text-blue">복잡도가 커지는 지점</span>에 적용했습니다</h2>
+          <h2>패턴 적용 위치</h2>
         </div>
         <div class="stage pattern-overview">
           <div class="pattern-overview-card">
             <b>AST 구조</b>
             <strong>Composite-style AST</strong>
-            <span>Stmt와 Expr node가 서로를 포함하는 tree가 되어 Checker와 Executor가 같은 구조를 따라갑니다.</span>
+            <span>Stmt와 Expr node가 tree로 중첩됩니다.</span>
             <span class="anchor-chip">expr.py · statement.py</span>
           </div>
           <div class="pattern-overview-card">
             <b>호출 규칙</b>
             <strong>Callable Adapter</strong>
-            <span>native 함수, 사용자 함수, class 생성자를 모두 <code>arity()</code>와 <code>call()</code> 규칙으로 맞춥니다.</span>
+            <span>함수와 class 생성을 call로 통일합니다.</span>
             <span class="anchor-chip">runtime.py · executor.py</span>
           </div>
           <div class="pattern-overview-card">
             <b>생성 책임</b>
             <strong>Factory-like Creation</strong>
-            <span>source 입력은 Tokenizer와 Assembler를 지나 token과 AST node로 만들어집니다.</span>
+            <span>source를 token과 AST로 변환합니다.</span>
             <span class="anchor-chip">tokenizer.py · assembler.py</span>
           </div>
           <div class="pattern-overview-card">
             <b>Shell 명령</b>
             <strong>Command Pattern</strong>
-            <span>prompt 입력을 command 객체로 바꾸고, Shell은 <code>execute(shell)</code>만 호출합니다.</span>
+            <span>prompt 입력을 command 객체로 바꿉니다.</span>
             <span class="anchor-chip">commands.py · shell.py</span>
           </div>
         </div>
@@ -2793,16 +2874,16 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Pattern · Composite</p>
-          <h2>Composite-style AST: 코드를 <span class="text-blue">트리 구조</span>로 다룹니다</h2>
+          <h2>Composite-style AST</h2>
         </div>
         <div class="stage pattern-explain">
           <div class="pattern-note">
             <h3>적용 지점</h3>
-            <p>조건문, 반복문, 함수 본문처럼 내부에 다른 문장과 식이 들어가는 구조를 Stmt/Expr node tree로 표현했습니다.</p>
+            <p>중첩 문법을 Stmt / Expr node tree로 표현합니다.</p>
             <div class="pattern-effect">
-              <div>문법 추가 위치가 명확함</div>
-              <div>Checker와 Executor가 같은 AST를 사용함</div>
-              <div>중첩 구조를 자연스럽게 표현함</div>
+              <div>문법 추가 위치 명확</div>
+              <div>Checker / Executor 공유</div>
+              <div>중첩 구조 표현</div>
             </div>
             <span class="anchor-chip">app/assembler/expr.py · app/assembler/statement.py</span>
           </div>
@@ -2819,22 +2900,22 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Pattern · Adapter</p>
-          <h2>Callable Adapter: 서로 다른 호출 대상을 <span class="text-blue">같은 규칙</span>으로 실행합니다</h2>
+          <h2>Callable Adapter</h2>
         </div>
         <div class="stage pattern-explain reverse">
           <div class="pseudo-board">
-            <div class="pseudo-node callout">Executor.evaluate_call()</div>
+            <div class="pseudo-node callout">evaluate_call()</div>
             <div class="pseudo-node sub">callee.arity()</div>
             <div class="pseudo-node sub">callee.call(executor, args)</div>
-            <div class="pseudo-node">NativeFunction · UserFunction · UserClass</div>
+            <div class="pseudo-node">Native · UserFunction · UserClass</div>
           </div>
           <div class="pattern-note">
             <h3>적용 지점</h3>
-            <p>내장 함수, 사용자 함수, class 생성은 내부 동작이 다르지만 Executor는 Callable 규칙만 알면 됩니다.</p>
+            <p>Executor는 대상 종류와 무관하게 arity와 call만 호출합니다.</p>
             <div class="pattern-effect">
-              <div>호출 검증 로직을 한 곳에 둠</div>
-              <div>class 생성도 함수 호출처럼 처리</div>
-              <div>native function 확장이 쉬움</div>
+              <div>호출 검증 통합</div>
+              <div>class 생성도 call</div>
+              <div>native 확장 간단</div>
             </div>
             <span class="anchor-chip">app/assembler/runtime.py · app/executor/executor.py</span>
           </div>
@@ -2844,16 +2925,16 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Pattern · Factory-like</p>
-          <h2>Factory-like Creation: source를 실행 가능한 <span class="text-blue">객체 구조</span>로 만듭니다</h2>
+          <h2>Factory-like Creation</h2>
         </div>
         <div class="stage pattern-explain">
           <div class="pattern-note">
             <h3>적용 지점</h3>
-            <p>엄격한 Factory Method라기보다는, token과 AST node 생성 책임을 Tokenizer와 Assembler에 모은 생성 구조입니다.</p>
+            <p>Tokenizer와 Assembler가 token과 AST 생성 책임을 가집니다.</p>
             <div class="pattern-effect">
-              <div>문법 추가 경로가 일정함</div>
-              <div>import도 같은 parser 흐름 재사용</div>
-              <div>source와 실행 구조를 분리</div>
+              <div>문법 추가 경로 일정</div>
+              <div>import parser 재사용</div>
+              <div>source와 실행 분리</div>
             </div>
             <span class="anchor-chip">app/assembler/tokenizer.py · app/assembler/assembler.py</span>
           </div>
@@ -2870,22 +2951,22 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">Pattern · Command</p>
-          <h2>Command Pattern: Shell 명령을 <span class="text-blue">독립 실행 단위</span>로 분리했습니다</h2>
+          <h2>Command Pattern</h2>
         </div>
         <div class="stage pattern-explain reverse">
           <div class="pseudo-board">
-            <div class="pseudo-node callout">PromptShell.run_line(source)</div>
-            <div class="pseudo-node sub">ShellCommandFactory.create(source)</div>
+            <div class="pseudo-node callout">PromptShell.run_line()</div>
+            <div class="pseudo-node sub">CommandFactory.create()</div>
             <div class="pseudo-node sub">Exit · Recommend · Rerun · Explain · RunCode</div>
             <div class="pseudo-node">command.execute(shell)</div>
           </div>
           <div class="pattern-note">
             <h3>적용 지점</h3>
-            <p>PromptShell이 모든 명령 분기를 직접 처리하지 않고, 입력을 Command 객체로 바꾼 뒤 실행만 위임합니다.</p>
+            <p>Shell 입력을 Command 객체로 만들고 실행 책임을 분리합니다.</p>
             <div class="pattern-effect">
-              <div>명령별 실행 책임 분리</div>
-              <div>history 저장 여부를 command가 결정</div>
-              <div>새 shell 명령 추가 범위 축소</div>
+              <div>명령 책임 분리</div>
+              <div>history 정책 캡슐화</div>
+              <div>명령 추가 범위 축소</div>
             </div>
             <span class="anchor-chip">app/shell/commands.py · app/shell/shell.py</span>
           </div>
@@ -2897,8 +2978,8 @@ Class SpeedRobot : Robot {
           <div class="part-number">03</div>
           <div>
             <p class="eyebrow">Collaboration</p>
-            <h2>협업 방식과 품질 기준</h2>
-            <p class="lead">코드 리뷰, 테스트 자동화, 보호 규칙을 통해 main에 들어가는 변경의 기준을 맞췄습니다.</p>
+            <h2>협업과 품질 기준</h2>
+            <p class="lead">리뷰, 자동화, 보호 규칙으로 main 반영 기준을 맞췄습니다.</p>
           </div>
         </div>
       </section>
@@ -2911,9 +2992,9 @@ Class SpeedRobot : Robot {
         <div class="stage shot-composition">
           <div class="evidence-slot"></div>
           <div class="point-stack">
-            <div class="point-card"><strong>의도 공유</strong><p>PR template로 변경 이유와 검증 범위를 먼저 맞췄습니다.</p></div>
-            <div class="point-card"><strong>관점 확보</strong><p>최소 2명 approve 기준으로 merge 전 확인 관점을 늘렸습니다.</p></div>
-            <div class="point-card"><strong>수정 근거</strong><p>debug 출력, import 경로, checker 누락을 리뷰로 보강했습니다.</p></div>
+            <div class="point-card"><strong>의도 공유</strong><p>PR template로 변경 이유와 검증 범위를 맞췄습니다.</p></div>
+            <div class="point-card"><strong>관점 확보</strong><p>최소 2명 approve 기준으로 확인 관점을 늘렸습니다.</p></div>
+            <div class="point-card"><strong>수정 근거</strong><p>debug, import, checker 누락을 리뷰로 보강했습니다.</p></div>
           </div>
         </div>
       </section>
@@ -2925,9 +3006,9 @@ Class SpeedRobot : Robot {
         </div>
         <div class="stage shot-composition reverse">
           <div class="point-stack">
-            <div class="point-card"><strong>실패 고정</strong><p>기능 구현 전에 깨져야 하는 케이스를 테스트로 먼저 남겼습니다.</p></div>
-            <div class="point-card"><strong>회귀 방지</strong><p>import, debug, checker 오류를 반복 가능한 테스트로 관리했습니다.</p></div>
-            <div class="point-card"><strong>자동 검증</strong><p>GitHub Actions가 PR마다 같은 기준으로 테스트를 실행했습니다.</p></div>
+            <div class="point-card"><strong>실패 고정</strong><p>구현 전에 깨져야 하는 케이스를 먼저 남겼습니다.</p></div>
+            <div class="point-card"><strong>회귀 방지</strong><p>import, debug, checker 오류를 테스트로 관리했습니다.</p></div>
+            <div class="point-card"><strong>자동 검증</strong><p>Actions가 PR마다 같은 기준으로 실행했습니다.</p></div>
           </div>
           <div class="evidence-slot"></div>
         </div>
@@ -2961,13 +3042,13 @@ Class SpeedRobot : Robot {
       <section>
         <div class="slide-title">
           <p class="eyebrow">GitHub Collaboration</p>
-          <h2>PR은 같은 흐름으로 작성하고 검토했습니다</h2>
+          <h2>PR 작성과 검토 흐름</h2>
         </div>
         <div class="stage review-pipeline">
-          <div class="review-step"><b>01</b><strong>Branch</strong><span>작은 기능 단위로 작업 범위를 나눕니다.</span></div>
-          <div class="review-step"><b>02</b><strong>PR Template</strong><span>변경 요약, 검증 결과, self-review를 기록합니다.</span></div>
-          <div class="review-step"><b>03</b><strong>Review</strong><span>재현 가능한 예시와 테스트 추가 여부를 확인합니다.</span></div>
-          <div class="review-step"><b>04</b><strong>Merge</strong><span>approve와 required check 이후 main에 반영합니다.</span></div>
+          <div class="review-step"><b>01</b><strong>Branch</strong><span>기능 단위 branch</span></div>
+          <div class="review-step"><b>02</b><strong>PR Template</strong><span>요약 · 검증 · 리뷰</span></div>
+          <div class="review-step"><b>03</b><strong>Review</strong><span>예시와 테스트 확인</span></div>
+          <div class="review-step"><b>04</b><strong>Merge</strong><span>승인 · 검사 · 병합</span></div>
         </div>
       </section>
 
