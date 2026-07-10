@@ -3033,7 +3033,7 @@
       }
 
       .array-stage-new .code-window {
-        width: min(100%, 500px);
+        width: min(100%, 560px);
         min-height: 310px;
         align-self: center;
       }
@@ -3712,18 +3712,13 @@
       .array-point span { margin-top: 4px; color: var(--muted); font-size: 14px; }
 
       .array-stage-new .code-window {
-        width: 100%;
+        width: min(100%, 560px);
+        margin: auto;
         min-height: 390px;
         display: flex;
         flex-direction: column;
       }
 
-      .array-stage-new .code-window pre {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
 
       .import-stage {
         display: grid;
@@ -4437,13 +4432,14 @@ r.<span class="syn-identifier">move</span>()<span class="syn-punctuation">;</spa
         <div class="stage array-stage-new">
           <div class="array-copy">
             <h3>생성과 접근</h3>
-            <p>Function과 Class가 사용하는 Callable 규칙으로 Array를 생성합니다.</p>
+            <p>Function과 Class가 쓰던 <span class="text-blue">Callable</span>을 그대로 이용해, 새 문법 없이 Array를 구현했습니다.</p>
             <div class="array-points">
-              <div class="array-point"><b>01</b><div><strong>Array() 호출</strong><span>NativeFunction 등록 · Callable.call()로 생성</span></div></div>
-              <div class="array-point"><b>02</b><div><strong>크기 검사 후 생성</strong><span>0 이상의 정수 확인 · <code>[None] * size</code> 초기화</span></div></div>
-              <div class="array-point"><b>03</b><div><strong>배열 사용</strong><span><code>a[i]</code> → IndexGetExpr / IndexSetExpr</span></div></div>
-              <div class="array-point"><b>04</b><div><strong>실행 중 검증</strong><span>index 정수 여부와 범위 검사</span></div></div>
+              <div class="array-point"><b>01</b><div><strong>Array() 호출</strong><span>NativeFunction으로 등록된 Array가 Callable 규칙에 따라 실행됩니다</span></div></div>
+              <div class="array-point"><b>02</b><div><strong>크기 검사 후 생성</strong><span>size가 정수이고 0 이상인지 확인한 뒤 <code>[None] * size</code>로 초기화합니다</span></div></div>
+              <div class="array-point"><b>03</b><div><strong>배열 사용</strong><span><code>a[i]</code> 형태로 사용하며, 위치에 따라 읽기 또는 쓰기로 구분합니다</span></div></div>
+              <div class="array-point"><b>04</b><div><strong>실행 중 검증</strong><span>index가 정수인지, 0 이상 길이 미만인지 Executor가 확인합니다</span></div></div>
             </div>
+            <span class="anchor-chip">app/assembler/assembler.py · app/executor/executor.py</span>
           </div>
           <div class="code-window">
             <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">array.ctrlc</span></div>
