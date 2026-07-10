@@ -185,7 +185,6 @@ second
 ### ctrl_c()
 
 ```txt
-print 36;
 ctrl_c();
 ```
 
