@@ -109,6 +109,18 @@
           linear-gradient(24deg, rgba(219, 232, 254, 0.5) 0%, #ffffff 48%, #ffffff 100%);
       }
 
+      section.embed-slide {
+        padding: 0;
+      }
+
+      .embed-frame {
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        border: 0;
+        display: block;
+      }
+
       h1,
       h2,
       h3,
@@ -323,7 +335,8 @@
       }
 
       .cover-copy .lead {
-        max-width: 760px;
+        max-width: none;
+        white-space: nowrap;
       }
 
       .network-visual {
@@ -4557,18 +4570,11 @@
       <section>
         <div class="cover-layout">
           <div class="cover-copy">
-            <p class="eyebrow">CRA Team 3 · Ctrl-C</p>
+            <p class="eyebrow">CRA Team 3 · Team Ctrl-C</p>
             <h1>CodeFab</h1>
             <p class="lead">
               새로운 확장자 <code>.ctrlc</code>로 코드를 분석하고 실행하는 Interpreter
             </p>
-            <div class="badge-row">
-              <span class="badge">Language</span>
-              <span class="badge">Pipeline</span>
-              <span class="badge">Shell</span>
-              <span class="badge">Design Patterns</span>
-              <span class="badge">Collaboration</span>
-            </div>
           </div>
           <div class="network-visual" aria-hidden="true">
             <svg viewBox="0 0 640 430">
@@ -4609,7 +4615,7 @@
 
       <section>
         <div class="slide-title">
-          <p class="eyebrow">Team</p>
+          <p class="eyebrow">Team 3 · Ctrl-C</p>
           <h2>팀 역할과 구현 분담</h2>
         </div>
         <div class="stage team-even-grid">
@@ -4912,16 +4918,16 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
       <section>
         <div class="slide-title">
           <p class="eyebrow">Core Feature · Import</p>
-          <h2><span class="text-blue">Import</span>는 실행 중 새 파일을 다시 Pipeline에 태웁니다</h2>
+          <h2>실행 중 <span class="text-blue">Import</span>를 만나면 다시 Pipeline을 수행합니다</h2>
         </div>
         <div class="stage import-layout-new">
           <div class="import-main-message">
             <strong>왜 ImportStmt를 별도로 두었나?</strong>
-            <p>Executor가 import를 감지하더라도, 대상 파일은 다시 Tokenize · Assemble · Check를 거친 뒤 module namespace로 등록되어야 합니다.</p>
+            <p>Executor가 import를 감지하더라도, 대상 파일은 다시 Tokenize · Assemble · Check를 거친 뒤 module namespace로 등록되어야 합니다. Executor 내부에 모두 구현하면 Executor의 책임이 지나치게 커지게 됩니다.</p>
           </div>
           <div class="import-role-row">
             <div class="import-role-card"><strong>Executor</strong><span>ImportStmt 실행 · module environment 연결</span></div>
-            <div class="import-role-card"><strong>ImportManager</strong><span>경로 해석 · cache · 순환 추적 · 재파싱 위임</span></div>
+            <div class="import-role-card"><strong>ImportManager</strong><span>경로 해석 · cache · 순환 추적</span></div>
           </div>
           <div class="import-flow-row">
             <div class="import-flow-step"><strong>ImportStmt</strong><span>Executor가 감지</span></div>
@@ -4930,45 +4936,15 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
             <div class="import-flow-step"><strong>Checker</strong><span>import 대상 검증</span></div>
             <div class="import-flow-step"><strong>Module Env</strong><span>alias namespace 등록</span></div>
           </div>
-          <div class="import-check-table">
-            <div class="import-check-card"><strong>Checker가 확인</strong><span>import 대상 AST 내부의 scope, this/super, return 규칙을 기존 파일처럼 검증합니다.</span></div>
-            <div class="import-check-card"><strong>ImportManager가 확인</strong><span>파일 경로, cache hit, 순환 import 추적처럼 파일 단위 상태를 관리합니다.</span></div>
-            <div class="import-check-card"><strong>ImportStmt가 연결</strong><span>검증이 끝난 module environment를 alias 이름으로 현재 실행 환경에 등록합니다.</span></div>
-          </div>
         </div>
       </section>
 
-      <section>
-        <div class="slide-title">
-          <p class="eyebrow">Safety Feature · Checker</p>
-          <h2>Checker 실행 전 검증</h2>
-        </div>
-        <div class="stage checker-board">
-          <div class="checker-flow">
-            <div class="checker-step"><strong>ConstantFolder</strong><span>계산 가능한 expression을 LiteralExpr로 치환</span></div>
-            <div class="checker-step"><strong>ScopeStack</strong><span>선언, 초기화, scope distance 추적</span></div>
-            <div class="checker-step"><strong>Resolver</strong><span>This, Super, return, import 규칙 확인</span></div>
-          </div>
-          <div class="rule-grid">
-            <div class="rule-card"><strong>Scope</strong><span>중복 선언 · 미초기화 변수</span></div>
-            <div class="rule-card"><strong>Class</strong><span>This/Super · 자기 상속</span></div>
-            <div class="rule-card"><strong>Import</strong><span>중복 import · 순환 import</span></div>
-            <div class="rule-card"><strong>Report</strong><span>source line 기준 오류</span></div>
-          </div>
-        </div>
+      <section class="embed-slide">
+        <iframe class="embed-frame" src="checker_modules.html" title="Checker Modules Architecture"></iframe>
       </section>
 
-      <section>
-        <div class="slide-title">
-          <p class="eyebrow">Safety Feature · Static Binding</p>
-          <h2>Static Binding</h2>
-        </div>
-        <div class="stage binding-horizontal">
-          <div class="binding-step"><b>01. 변수 사용</b><strong>VariableExpr(name)</strong><span>어떤 scope의 선언을 가리키는지 아직 결정되지 않은 상태입니다.</span></div>
-          <div class="binding-step"><b>02. Checker</b><strong>scope depth 계산</strong><span>ScopeStack에서 선언 위치를 찾아 distance를 계산합니다.</span></div>
-          <div class="binding-step"><b>03. AST 기록</b><strong>expr.distance = depth</strong><span>계산한 거리를 Expr에 저장해 실행 시 다시 탐색하지 않습니다.</span></div>
-          <div class="binding-step"><b>04. Executor</b><strong>get_at(distance)</strong><span>정해진 상위 Environment로 바로 이동해 값을 읽습니다.</span></div>
-        </div>
+      <section class="embed-slide">
+        <iframe class="embed-frame" src="checker_clean_code.html" title="Checker Architecture and Clean Code"></iframe>
       </section>
 
       <section>
@@ -5341,7 +5317,7 @@ outputs = command.execute(shell)
       </section>
     </main>
 
-    <div class="progress" aria-live="polite">1 / 30</div>
+    <div class="progress" aria-live="polite">1 / 31</div>
 
     <script>
       const slides = Array.from(document.querySelectorAll("section"));

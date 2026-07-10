@@ -1,7 +1,7 @@
 # CodeFab implementation details
 
 이 문서는 CodeFab의 실제 구현 경계와 데이터 흐름을 설명한다. 큰 그림을 먼저 보고 싶다면
-`docs/CONCEPTS.md`를 읽고, 언어 문법과 사용 예시는 `docs/custom_language.md`를 함께 보면 된다.
+`docs/CONCEPTS.md`를 읽고, 언어 문법과 사용 예시는 `docs/CUSTOMLANGUAGE.md`를 함께 보면 된다.
 
 ## 한눈에 보는 실행 흐름
 
@@ -41,7 +41,7 @@ debug 중 알맞은 실행 모드를 선택한다.
 | `make debug sample.cfab` | 디버그 모드 실행 | 줄 단위 step, breakpoint, watch 확인 |
 
 `ctrl_c()`, `explain`, 한글 키워드는 사용자가 코드를 작성하고 이해하는 방식을 넓히는 기능이다.
-정확한 문법과 출력 형식은 `docs/custom_language.md`와 해당 구현 PR을 함께 확인한다.
+정확한 문법과 출력 형식은 `docs/CUSTOMLANGUAGE.md`와 해당 구현 PR을 함께 확인한다.
 
 ## 주요 데이터 계약
 
