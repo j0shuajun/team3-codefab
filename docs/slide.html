@@ -1617,14 +1617,19 @@
       }
 
       .evidence-slot.has-images {
-        height: 420px;
+        align-self: start;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
         min-height: 0;
         border-style: solid;
-        background: rgba(255, 255, 255, 0.7);
-        padding: 18px;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
+        padding: 10px;
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 8px;
         overflow: hidden;
       }
 
@@ -1634,9 +1639,6 @@
         min-height: 0;
         width: 100%;
         object-fit: contain;
-        border-radius: 12px;
-        border: 1px solid rgba(28, 96, 239, 0.18);
-        box-shadow: 0 12px 26px rgba(28, 96, 239, 0.1);
         background: #fff;
       }
 
@@ -1651,7 +1653,8 @@
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
         gap: 18px;
-        height: 420px;
+        aspect-ratio: 16 / 9;
+        height: auto;
       }
 
       .review-fail-images {
@@ -2565,6 +2568,39 @@
         font-size: 18px;
         line-height: 1.5;
         white-space: pre;
+        overflow-x: auto;
+      }
+
+      .alias-compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+
+      .alias-compare-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .alias-compare-label {
+        margin: 0;
+        text-align: center;
+        font-weight: 800;
+        font-size: 15px;
+        letter-spacing: 0.04em;
+        color: var(--blue);
+      }
+
+      .code-window.compact {
+        width: 100%;
+        margin: 0;
+      }
+
+      .code-window.compact pre {
+        padding: 18px 16px 20px;
+        font-size: 14.5px;
       }
 
       .code-window pre code {
@@ -4652,10 +4688,59 @@ arr[<span class="syn-number">0</span>] <span class="syn-operator">=</span> <span
             <p>팀 전용 문법도 같은 pipeline에서 처리되도록 확장했습니다.</p>
           </div>
           <div class="custom-cards">
-            <article class="custom-card"><strong>한글 alias</strong><span>keyword token으로 정규화</span></article>
+            <article class="custom-card"><strong>한글 Alias 적용</strong><span>Token에 별칭 적용</span></article>
             <article class="custom-card"><strong><code>ctrl_c()</code></strong><span>팀 소개 native function</span></article>
-            <article class="custom-card"><strong><code>♡</code> 연산</strong><span>문자열 기반 점수 계산</span></article>
-            <article class="custom-card"><strong><code>.ctrlc</code></strong><span>file mode와 import 기준</span></article>
+            <article class="custom-card"><strong><code>♡</code> 연산</strong><span>이름 궁합 점수 계산</span></article>
+            <article class="custom-card"><strong><code>.ctrlc</code></strong><span>파일 확장자</span></article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="slide-title">
+          <p class="eyebrow">Custom Language · 한글 Alias</p>
+          <h2>Alias 예시</h2>
+        </div>
+        <div class="stage alias-compare">
+          <div class="alias-compare-col">
+            <p class="alias-compare-label">Alias 적용 전</p>
+            <div class="code-window compact">
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">battle_game.ctrlc</span></div>
+              <pre><code><span class="syn-keyword">for</span> (
+  <span class="syn-keyword">var</span> round <span class="syn-operator">=</span> <span class="syn-number">1</span>;
+  hero.isAlive() <span class="syn-keyword">and</span> slime.isAlive();
+  round <span class="syn-operator">=</span> round <span class="syn-operator">+</span> <span class="syn-number">1</span>
+) {
+  <span class="syn-keyword">if</span> (round <span class="syn-operator">==</span> <span class="syn-number">2</span>) {
+    hero.ultimate(slime)<span class="syn-punctuation">;</span>
+  } <span class="syn-keyword">else</span> {
+    hero.attack(slime)<span class="syn-punctuation">;</span>
+  }
+  <span class="syn-keyword">if</span> (slime.isAlive()) {
+    slime.attack(hero)<span class="syn-punctuation">;</span>
+  }
+}</code></pre>
+            </div>
+          </div>
+          <div class="alias-compare-col">
+            <p class="alias-compare-label">Alias 적용 후</p>
+            <div class="code-window compact">
+              <div class="code-toolbar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-tab">battle_game.cfab</span></div>
+              <pre><code><span class="syn-keyword">또또</span> (
+  <span class="syn-keyword">값</span> 라운드 <span class="syn-operator">=</span> <span class="syn-number">1</span>;
+  히어로.생존여부() <span class="syn-keyword">이랑</span> 슬라임.생존여부();
+  라운드 <span class="syn-operator">=</span> 라운드 <span class="syn-operator">+</span> <span class="syn-number">1</span>
+) {
+  <span class="syn-keyword">만약</span> (라운드 <span class="syn-keyword">같다</span> <span class="syn-number">2</span>) {
+    히어로.필살기(슬라임)<span class="syn-punctuation">;</span>
+  } <span class="syn-keyword">아니면</span> {
+    히어로.공격(슬라임)<span class="syn-punctuation">;</span>
+  }
+  <span class="syn-keyword">만약</span> (슬라임.생존여부()) {
+    슬라임.공격(히어로)<span class="syn-punctuation">;</span>
+  }
+}</code></pre>
+            </div>
           </div>
         </div>
       </section>
