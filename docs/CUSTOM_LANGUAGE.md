@@ -1,55 +1,49 @@
 # CodeFab custom language
 
-이 문서는 CodeFab 언어를 어떻게 쓰는지 설명한다. GitHub issue #12의 ideation에서는 이모티콘,
-한글 keyword, `ctrl c` 기능이 후보로 나왔다. 현재 문서는 그중 `ctrl_c()`, `explain`, 한글 키워드 별칭을
-CodeFab에서 사용할 기능으로 정리한다.
+## 실행
 
-## 언어의 현재 방향
+| 목적 | 명령 |
+|---|---|
+| Prompt shell 실행 | `make run` |
+| 파일 실행 | `make run examples/01_variable_print.ctrlc` |
+| Debug mode 실행 | `make debug examples/debug_test.ctrlc` |
 
-CodeFab은 "작게 시작해 언어 구성요소를 직접 구현해보는" 학습형 언어다. 문법은 Lox 계열과 비슷하지만,
-팀 프로젝트에서 직접 설계한 기능이 조금씩 붙어 있다.
+직접 실행할 때는 다음 명령을 사용할 수 있다.
 
-- 변수, 조건문, 반복문으로 기본 흐름을 만든다.
-- 함수와 클래스로 코드를 묶는다.
-- 배열과 property 접근으로 상태를 다룬다.
-- CodeFab 코드 안에서 `ctrl_c()`를 호출해 Ctrl-C 팀원을 소개한다.
-- `explain`으로 코드가 해석되는 흐름을 확인한다.
-- 한글 키워드 별칭으로 더 친숙하게 코드를 작성한다.
-- debug mode에서 줄 단위 실행과 watch를 관찰한다.
-
-## 빠른 예시
-
-```txt
-var total = 0;
-
-for (var i = 0; i < 3; i = i + 1) {
-  total = total + i;
-}
-
-print total;
+```bash
+python -m app.main
+python -m app.main file examples/01_variable_print.ctrlc
+python -m app.main debug examples/debug_test.ctrlc
 ```
 
-예상 출력:
+## 기본 규칙
 
-```txt
-3
-```
+- 문장은 `;`로 끝낸다.
+- 블록은 `{ ... }`로 묶는다.
+- 조건식과 `for` 절은 `( ... )`로 감싼다.
+- 문자열은 큰따옴표(`"`)로 감싼다.
+- 문자열 안의 backslash(`\`)는 사용할 수 없다.
+- 한글 alias를 포함한 소스 파일은 UTF-8로 저장한다.
 
-## 기본 문법
-
-### 값과 출력
+## 값과 출력
 
 ```txt
 print 1 + 2;
 print "Code" + "Fab";
 print true;
+print false;
 ```
 
-- 숫자는 내부적으로 `float`로 읽지만, 정수값이면 `1`처럼 출력한다.
-- 문자열끼리는 `+`로 연결할 수 있다.
-- 숫자와 문자열을 섞어 더하면 런타임 오류다.
+출력:
 
-### 변수
+```txt
+3
+CodeFab
+true
+false
+```
+
+## 변수
 
 ```txt
 var name = "CodeFab";
@@ -59,9 +53,56 @@ name = "Ctrl-C";
 print name;
 ```
 
-같은 스코프에서 같은 이름을 다시 선언하면 checker가 오류로 잡는다.
+초깃값을 생략하면 `nil`이다.
 
-### 조건문
+```txt
+var value;
+print value;
+```
+
+출력:
+
+```txt
+nil
+```
+
+## 연산자
+
+```txt
+print 1 + 2 * 3;
+print (1 + 2) * 3;
+print 10 - 4 - 3;
+print 8 / 2;
+print -3 + 2;
+
+print 1 < 2;
+print 3 >= 5;
+print 1 == 1;
+print 1 != 2;
+print !false;
+
+print true and false;
+print true or false;
+```
+
+출력:
+
+```txt
+7
+9
+3
+4
+-1
+true
+false
+true
+true
+true
+false
+true
+```
+
+## 조건문
 
 ```txt
 var score = 90;
@@ -73,15 +114,23 @@ if (score >= 80) {
 }
 ```
 
-### 반복문
+## 반복문
 
 ```txt
+var total = 0;
+
 for (var i = 0; i < 3; i = i + 1) {
-  print i;
+  total = total + i;
 }
+
+print total;
 ```
 
-Debug mode에서는 `for` 전체가 한 번에 지나가지 않고 body 안쪽 statement까지 step으로 들어갈 수 있다.
+출력:
+
+```txt
+3
+```
 
 ## 함수
 
@@ -93,10 +142,27 @@ Func addOne(x) {
 print addOne(10);
 ```
 
-함수는 parameter 개수와 호출 인자 수가 맞아야 한다. 함수 밖에서 `return`을 쓰거나 parameter 이름을 중복하면
-checker가 오류로 보고한다.
+출력:
 
-## 배열
+```txt
+11
+```
+
+## 내장 함수
+
+### add(a, b)
+
+```txt
+print add(1, 2);
+```
+
+출력:
+
+```txt
+3
+```
+
+### Array(size)
 
 ```txt
 var arr = Array(3);
@@ -104,15 +170,51 @@ arr[0] = "first";
 arr[1] = "second";
 
 print arr[0];
+print arr[1];
 ```
 
-주의할 점:
+출력:
 
-- `Array(size)`의 size는 0 이상의 정수여야 한다.
-- 배열이 아닌 값에 `value[index]`를 쓰면 오류다.
-- index는 정수 숫자여야 하며 범위를 벗어나면 오류다.
+```txt
+first
+second
+```
 
-## 클래스와 상속
+`size`와 index는 정수 숫자여야 한다. 범위를 벗어난 index는 실행 오류다.
+
+### ctrl_c()
+
+```txt
+print 36;
+ctrl_c();
+```
+
+`ctrl_c()`는 Ctrl-C 팀 소개를 출력한다.
+
+## 클래스
+
+```txt
+Class Robot {
+  init(name) {
+    This.name = name;
+  }
+
+  greet() {
+    print This.name;
+  }
+}
+
+var robot = Robot("Bolt");
+robot.greet();
+```
+
+출력:
+
+```txt
+Bolt
+```
+
+## 상속
 
 ```txt
 Class Animal {
@@ -123,6 +225,7 @@ Class Animal {
 
 Class Dog: Animal {
   speak() {
+    Super.speak();
     print "bark";
   }
 }
@@ -130,89 +233,160 @@ Class Dog: Animal {
 var dog = Dog();
 dog.speak();
 print dog instanceof Dog;
+print dog instanceof Animal;
 ```
 
-지원되는 개념:
-
-- `Class` 선언
-- method 호출
-- `This`로 현재 인스턴스 접근
-- `Super.method()`로 부모 method 접근
-- `instanceof`로 인스턴스와 클래스 관계 확인
-
-checker가 막는 대표 사례:
-
-- 클래스 밖에서 `This` 사용
-- 부모 클래스가 없는데 `Super` 사용
-- 클래스가 자기 자신을 상속
-- `init`에서 값을 반환
-
-## CodeFab 특화 기능
-
-Issue #12의 `ctrl c 기능` 아이디어는 두 갈래로 구분해서 이해하는 편이 자연스럽다. prompt shell의 `ctrlc`와
-`ctrlv`는 이전 입력을 바탕으로 명령을 추천하고 다시 실행하는 shell 기능이다. 반면 custom language의
-`ctrl_c()`는 CodeFab 코드 안에서 호출하는 내장 함수이며, 팀 Ctrl-C와 팀원들을 소개하는 역할을 한다.
+출력:
 
 ```txt
-print 36;
-ctrl_c();
+sound
+bark
+true
+true
 ```
 
-예상되는 사용 방식:
+## import
 
-- 사용자가 CodeFab 코드를 실행한다.
-- `ctrl_c()`가 팀명, 팀 의미, 팀원 목록을 출력한다.
-- 발표나 예제 코드에서 "우리 팀이 만든 custom language"라는 정체성을 보여준다.
+불러올 파일에는 `import`, `var`, `Func`, `Class` 선언만 둘 수 있다.
 
-예상 출력:
+`examples/09_import_lib.ctrlc`
 
 ```txt
-36
-Ctrl-C: 서로의 강점을 복사해 함께 성장하는 팀
-김명준, 권소영, 김민준, 박진우, 이예진
+var pi = 3.14;
+
+Func add(a, b) {
+  return a + b;
+}
 ```
 
-## 구현 중인 기능
+`examples/09_import.ctrlc`
 
-| 기능 | 의도 | 예시 방향 |
-|---|---|---|
-| `ctrl_c()` | CodeFab 코드 안에서 Ctrl-C 팀 소개 | `ctrl_c();` |
-| `explain` | 코드, 오류, 실행 흐름을 사람이 읽기 쉽게 설명 | `explain { print 1 + 2; }` 또는 유사 구문 |
-| 한글 키워드 | 영어 키워드가 낯선 사용자도 읽기 쉽게 작성 | `출력`, `만약`, `반복`, `함수`, `클래스` 같은 alias |
+```txt
+import "09_import_lib.ctrlc" alias lib;
 
-세 기능은 문법과 사용자 경험이 아직 조정 중이다. 따라서 문서의 예시는 방향을 보여주는 것이며,
-최종 token 이름이나 정확한 호출 형태는 구현 PR에서 확정한다.
+print lib.pi;
+print lib.add(1, 2);
+```
 
-## 실행 방법
+출력:
 
-| 하고 싶은 일 | 명령 |
+```txt
+3.14
+3
+```
+
+import 경로는 실행 파일 위치를 기준으로 해석된다.
+
+## 이름 궁합 연산자
+
+```txt
+print "김철수" ♡ "이영희";
+```
+
+출력:
+
+```txt
+57
+```
+
+`♡`는 비어 있지 않은 한글 문자열 두 개에만 사용할 수 있다.
+
+## Prompt shell 명령
+
+Prompt shell은 `make run`으로 실행한다.
+
+| 명령 | 사용법 |
 |---|---|
-| 한 줄씩 실행 | `make run` |
-| 파일 실행 | `make run sample.cfab` |
-| 디버그 실행 | `make debug sample.cfab` |
+| `exit` / `quit` | shell 종료 |
+| `ctrlc` | 실행 기록에서 자주 쓴 CodeFab 명령 추천 |
+| `ctrlv` | `ctrlc`가 추천한 명령 재실행 |
+| `explain <code>` | token, AST, checker, 실행 결과 확인 |
 
-## Alias
-Token 값을 alias로 입력해도 실행이 가능하다.
+예시:
 
-| TokenType | 원본 | alias |
-|---|---|---|
-| VAR | var | 값, 만들게 |
-| PRINT | print | 출력, 보여줘, 찍어줘 |
-| FUNC | Func | 함수, 펑펑 |
-| RETURN | return | 반환, 돌려줘 |
-| CLASS | Class | 클래스, 틀, 붕어빵틀 |
-| THIS | This | 이것, 나야 |
-| SUPER | Super | 부모, 엄빠 |
-| IF | if | 만약, 혹시 |
-| ELSE | else | 아니면 |
-| FOR | for | 반복, 또또 |
-| TRUE | true | 참, ㅇㅇ |
-| FALSE | false | 거짓, ㄴㄴ |
-| AND | and | 그리고, 이랑 |
-| OR | or | 또는, 이나 |
-| GREATER | > | 크다 |
-| LESS | < | 작다 |
-| EQUAL_EQUAL | == | 같다, 똑같아 |
-| BANG_EQUAL | != | 다르다, 달라 |
-| GREATER_EQUAL | >= | 크거나같다 |
-| LESS_EQUAL | <= | 작거나같다 |
+```txt
+CodeFab> print 36;
+36
+CodeFab> ctrlc
+Ctrl+C 추천 명령어: print 36;
+ctrlv 를 입력하면 추천 명령어를 다시 실행합니다.
+CodeFab> ctrlv
+36
+```
+
+```txt
+CodeFab> explain print 1 + 2 * 3;
+[Tokens]
+PRINT NUMBER PLUS NUMBER STAR NUMBER SEMICOLON EOF
+
+[AST]
+PrintStmt(BinaryExpr(LiteralExpr(1.0), +, BinaryExpr(LiteralExpr(2.0), *, LiteralExpr(3.0))))
+
+[Checker]
+No errors
+
+[Result]
+[Output]
+7
+```
+
+## Debug mode 명령
+
+Debug mode는 `make debug <file>`로 실행한다.
+
+| 명령 | 사용법 |
+|---|---|
+| `step` | 현재 문장을 실행하고 블록, 조건문, 반복문 안으로 들어감 |
+| `next` | 현재 문장을 실행하되 블록 안으로 들어가지 않음 |
+| `continue` | 다음 breakpoint 또는 프로그램 종료까지 실행 |
+| `break <line>` | breakpoint 추가 |
+| `breakpoints` | breakpoint 목록 출력 |
+| `remove <line>` | breakpoint 제거 |
+| `watch <name>` | 변수 감시 추가 |
+| `unwatch <name>` | 변수 감시 제거 |
+| `watches` | 감시 중인 변수 출력 |
+| `inspect` | 현재 scope 변수 출력 |
+| `exit` / `quit` | debug mode 종료 |
+
+## 한글 alias
+
+| 원본 | alias |
+|---|---|
+| `var` | `값`, `만들게` |
+| `print` | `출력`, `보여줘`, `찍어줘` |
+| `Func` | `함수`, `펑펑` |
+| `return` | `반환`, `돌려줘` |
+| `Class` | `클래스`, `틀`, `붕어빵틀` |
+| `This` | `이것`, `나야` |
+| `Super` | `부모`, `엄빠` |
+| `if` | `만약`, `혹시` |
+| `else` | `아니면` |
+| `for` | `반복`, `또또` |
+| `true` | `참`, `ㅇㅇ` |
+| `false` | `거짓`, `ㄴㄴ` |
+| `and` | `그리고`, `이랑` |
+| `or` | `또는`, `이나` |
+| `>` | `크다` |
+| `<` | `작다` |
+| `==` | `같다`, `똑같아` |
+| `!=` | `다르다`, `달라` |
+| `>=` | `크거나같다` |
+| `<=` | `작거나같다` |
+
+예시:
+
+```txt
+값 total = 0;
+
+반복 (값 i = 0; i 작다 3; i = i + 1) {
+  total = total + i;
+}
+
+보여줘 total;
+```
+
+출력:
+
+```txt
+3
+```
